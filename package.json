@@ -1,0 +1,43 @@
+{
+  "name": "3dm-ini",
+  "displayName": "3DMigoto INI",
+  "description": "Extension for working with .ini files used by 3DMigoto.",
+  "author": {
+    "name": "AGMG"
+  },
+  "publisher": "LupoMikti",
+  "contributors": [
+    {
+      "name": "SinsOfSeven@sinsofseven",
+      "url": "https://github.com/SinsOfSeven"
+    },
+    {
+      "name": "!someone name has 63B long?",
+      "url": "https://github.com/lewis252310"
+    },
+    {
+      "name": "LupoMikti@lupomikti",
+      "url": "https://github.com/lupomikti"
+    }
+  ],
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "3dm-ini",
+      "aliases": ["3dm-ini", "3dm.ini","3dmigoto"],
+      "extensions": [".ini"],
+      "configuration": "./threedm-ini.language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "3dm-ini",
+      "scopeName": "source.ini.3dm",
+      "path": "./syntaxes/threedm-ini.tmLanguage.json"
+    }]
+  }
+}

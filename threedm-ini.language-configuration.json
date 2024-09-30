@@ -1,0 +1,56 @@
+{
+  "comments": {
+    // symbol used for single line comment
+    "lineComment": ";"
+  },
+  // symbols used as brackets
+  "brackets": [
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"]
+  ],
+  // symbols that are auto closed when typing
+  "autoClosingPairs": [
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"],
+    {
+      "open": "\"",
+      "close": "\"",
+      "notIn": ["string"]
+    },
+    {
+      "open": "'",
+      "close": "'",
+      "notIn": ["string","comment"]
+    }
+  ],
+  // symbols that can be used to surround a selection
+  "surroundingPairs": [
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"],
+    ["\"", "\""],
+    ["'", "'"]
+  ],
+  // just a way to define custom comment folding, almost as a way to make block comments
+  "folding": {
+    "markers": {
+      "start": "^\\s*(?:if|;{)",
+      "end": "^\\s*(?:endif|;.*})"
+    }
+  },
+  "onEnterRules": [
+    {
+      "beforeText": "^\\s*;.*$",
+      "action": {
+        "indent": "none",
+        "appendText": ";"
+      }
+    }
+  ],
+  "indentationRules": {
+    "increaseIndentPattern": "^\\s*(?:(?:else |el)?if|else).*?\\s*$",
+    "decreaseIndentPattern": "^\\s*(?:(?:else |el)?if|else|endif).*?\\s*$"
+  }
+}

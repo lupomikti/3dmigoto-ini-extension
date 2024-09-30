@@ -1,0 +1,621 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "version": "0.3.0",
+  "scopeName": "source.ini.3dm",
+  "name": "3dm-ini",
+  "patterns": [
+    {
+      "include": "#namespace"
+    },
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#section"
+    }
+  ],
+  "repository": {
+    "namespace": {
+      "name": "meta.head.namespace.ini.3dm",
+      "begin": "(?i)^(?=namespace)",
+      "end": "$|\\n",
+      "patterns": [
+        {
+          "begin": "(?i)(namespace)\\b\\s*(=)\\s*\\b",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.namespace.definition.ini.3dm"
+            },
+            "2": {
+              "name": "keyword.operator.namespace.ini.3dm"
+            }
+          },
+          "end": "$|\\n",
+          "patterns": [
+            {
+              "name": "enitity.other.namespace.path.ini.3dm",
+              "match": "(?i)\\w+(?:(?:\\\\|/)[\\w\\-.]+)+"
+            }
+          ]
+        }
+      ]
+    },
+    "comment": {
+      "begin": "(?i)(?=^.*?;)",
+      "end": "$|\\n",
+      "patterns": [
+        {
+          "name": "comment.line.semicolon.ini.3dm",
+          "match": "(?i)^([ \\t]+)?(;)(.*)$",
+          "captures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.ini.3dm"
+            },
+            "2": {
+              "name": "punctuation.definition.comment.ini.3dm"
+            },
+            "3": {
+              "name": "comment.line.semicolon.content.ini.3dm"
+            }
+          }
+        },
+        {
+          "name": "invalid.illegal",
+          "match": "(?i)^(.+)(;)([\\S ]+)$",
+          "captures": {
+            "2": {
+              "name": "punctuation.definition.comment.ini.3dm"
+            },
+            "3": {
+              "name": "comment.line.semicolon.content.ini.3dm"
+            }
+          }
+        }
+      ]
+    },
+    "section": {
+      "name": "meta.structure.section.ini.3dm",
+      "begin": "(?i)(?:^(\\[)(\\S+)(\\])$)(?<=^\\[\\S+\\]$)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.entity.ini.3dm"
+        },
+        "3": {
+          "name": "punctuation.definition.entity.ini.3dm"
+        },
+        "2": {
+          "name": "entity.name.section.group-title.ini.3dm",
+          "patterns": [
+            {
+              "match": "(?i)Constants",
+              "name": "entity.name.section.group-title.ini.3dm.constants"
+            },
+            {
+              "match": "(?i)Present",
+              "name": "entity.name.section.group-title.ini.3dm.present"
+            },
+            {
+              "match": "(?i)Key.+",
+              "name": "entity.name.section.group-title.ini.3dm.key"
+            },
+            {
+              "match": "(?i)TextureOverride.+",
+              "name": "entity.name.section.group-title.ini.3dm.texture-override"
+            },
+            {
+              "match": "(?i)ShaderOverride.+",
+              "name": "entity.name.section.group-title.ini.3dm.shader-override"
+            },
+            {
+              "match": "(?i)CustomShader.+",
+              "name": "entity.name.section.group-title.ini.3dm.custom-shader"
+            },
+            {
+              "match": "(?i)CommandList.+",
+              "name": "entity.name.section.group-title.ini.3dm.command-list"
+            },
+            {
+              "match": "(?i)Resource.+",
+              "name": "entity.name.section.group-title.ini.3dm.resource"
+            },
+            {
+              "match": "(?i)ShaderRegex.+",
+              "name": "entity.name.section.group-title.ini.3dm.shader-regex"
+            }
+          ]
+        }
+      },
+      "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
+      "patterns": [
+        {
+          "name": "meta.structure.section.constants.ini.3dm",
+          "begin": "(?i)(?<=^\\[Constants\\]$)",
+          "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#declaration"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.present.ini.3dm",
+          "begin": "(?i)(?<=^\\[Present\\]$)",
+          "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#conditional-expression"
+            },
+            {
+              "include": "#definition"
+            },
+            {
+              "include": "#declaration"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.key.ini.3dm",
+          "begin": "(?i)(?<=^\\[Key\\S+\\]$)",
+          "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#conditional-expression"
+            },
+            {
+              "include": "#definition"
+            },
+            {
+              "include": "#declaration"
+            },
+            {
+              "include": "#comment"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.texture-override.ini.3dm",
+          "begin": "(?i)(?<=^\\[TextureOverride.+\\]$)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#conditional-expression"
+            },
+            {
+              "include": "#definition"
+            },
+            {
+              "include": "#declaration"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.shader-override.ini.3dm",
+          "begin": "(?i)(?<=^\\[ShaderOverride.+\\]$)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#conditional-expression"
+            },
+            {
+              "include": "#definition"
+            },
+            {
+              "include": "#declaration"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.custom-shader.ini.3dm",
+          "begin": "(?i)(?<=^\\[CustomShader.+\\]$)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#conditional-expression"
+            },
+            {
+              "include": "#definition"
+            },
+            {
+              "include": "#declaration"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.command-list.ini.3dm",
+          "begin": "(?i)(?<=^\\[CommandList.+\\]$)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#conditional-expression"
+            },
+            {
+              "include": "#definition"
+            },
+            {
+              "include": "#declaration"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.resource.ini.3dm",
+          "begin": "(?i)(?<=^\\[Resource.+\\]$)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#definition"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.shader-regex-pattern.ini.3dm",
+          "begin": "(?i)(?<=^\\[ShaderRegex.+\\.Pattern.*\\]$)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "contentName": "meta.embedded.block.js_regexp",
+          "patterns": [
+            {
+              "include": "source.js.regexp"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.shader-regex.ini.3dm",
+          "begin": "(?i)(?<!^\\[ShaderRegex.+\\.Pattern.*\\]$)(?<=^\\[ShaderRegex.+\\]$)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#conditional-expression"
+            },
+            {
+              "include": "#definition"
+            },
+            {
+              "include": "#declaration"
+            }
+          ]
+        }
+      ]
+    },
+    "conditional-expression": {
+      "name": "meta.expression.conditional-expression.ini.3dm",
+      "begin": "(?i)^[ \\t]*(?:(if|elif|else if)(?= )|(else$|endif$))",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.flow.ini.3dm"
+        },
+        "2": {
+          "name": "keyword.control.flow.ini.3dm"
+        }
+      },
+      "end": "$|\\n",
+      "patterns": [
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#constant"
+        },
+        {
+          "include": "#operational-expression"
+        }
+      ]
+    },
+    "definition": {
+      "name": "meta.structure.definition.ini.3dm",
+      "match": "(?i)^[ \\t]*(\\w+)\\s*(=)\\s*([@\\w\\$.\\-,+/* %=\\\\!><\"\\[\\]';|&()]*)(?:$|\\n)",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#Lword"
+            }
+          ]
+        },
+        "2": {
+          "name": "punctuation.separator.key-value.ini.3dm"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#RValue"
+            }
+          ]
+        }
+      }
+    },
+    "declaration": {
+      "name": "meta.structure.declaration.ini.3dm",
+      "match": "(?i)^[ \\t]*((?:(?:\\w+) +){0,2}(?:[$\\w\\-.\\\\/]+))\\s*(?:(=)\\s*([=$!@\\w.\\-,+/* %\\\\()\"|&><]+))?(?:$|\\n)",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#Lexpression"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.operator.declaration.ini.3dm"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#RValue"
+            }
+          ]
+        }
+      }
+    },
+    "Lword": {
+      "patterns": [
+        {
+          "name": "keyword.other.ini.3dm.key-section",
+          "match": "(?i)(condition|key|back|type|warp|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)"
+        },
+        {
+          "name": "keyword.other.ini.3dm.texture-override",
+          "match": "(?i)(hash|handling|stereomode|format|width|height|width_multiply|height_multiply|iteration|filter_index|expand_region_copy|deny_cpu_read)"
+        },
+        {
+          "name": "keyword.other.ini.3dm.texture-override",
+          "match": "(?i)(match_(?:type|usage|bind_flags|cpu_access_flags|misc_flags|byte_width|stride|mips|format|width|height|depth|array|msaa|msaa_quality|first_vertex|first_index|first_instance|vertex_count|index_count|instance_count|priority))"
+        },
+        {
+          "name": "keyword.other.ini.3dm.custom-shader",
+          "match": "(?i)(max_executions_per_frame|flags|blend(?:_factor|_state_merge|)|alpha(?:_to_coverage|)|mask|sample_mask|depth(?:_enable|_write_mask|_func|_stencil_state_merge|_clip_enable|_bias|_bias_clamp)|stencil(?:_enable|_read_mask|_write_mask|_front|stencil_back|stencil_ref)|fill|cull|front|slope_scaled_depth_bias|depth|scissor_enable|multisample_enable|antialiased_line_enable|rasterizer_state_merge|topology|sampler|src_alpha_sat|zero|one)"
+        },
+        {
+          "name": "keyword.other.ini.3dm.shader-override-command-list",
+          "match": "(?i)(hash|handling|allow_duplicate_hash|depth_filter|partner|model|disable_scissor|filter_index)"
+        },
+        {
+          "name": "keyword.other.ini.3dm.resource",
+          "match": "(?i)(type|filename|format|stride|data|array)"
+        },
+        {
+          "include": "#functional-keyword"
+        },
+        {
+          "include": "#variable"
+        }
+      ]
+    },
+    "functional-keyword": {
+      "name": "keyword.other.function.ini.3dm",
+      "match": "(?i)\\b(draw(?:indexed)?|ref(?:erence)?|copy|run|store|analyse_options|set_viewport|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor)\\b"
+    },
+    "Lexpression": {
+      "name": "meta.expression.ini.3dm",
+      "match": "(?i)((?:[\\w ]+) +){0,2}([$\\w\\-.\\\\/]+)",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "name": "storage.modifier.ini.3dm",
+              "match": "(?i)(global|local|persist)(?= )"
+            },
+            {
+              "name": "keyword.control.ini.3dm",
+              "match": "(?i)(pre|post)(?= )"
+            }
+          ]
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "#functional-keyword"
+            },
+            {
+              "include": "#variable"
+            },
+            {
+              "include": "#constant"
+            }
+          ]
+        }
+      }
+    },
+    "operational-expression": {
+      "comment": "An operational expression is meant to be a combination of a mathematical expression and a comparison expression; we can do this because comparisons evaluate to either 0 or 1 and thus can be used in mathematical expressions.",
+      "patterns": [
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#constant"
+        },
+        {
+          "include": "#illegal-operator"
+        },
+        {
+          "include": "#operator"
+        },
+        {
+          "include": "#round-braces"
+        }
+      ]
+    },
+    "illegal-operator": {
+        "patterns": [
+            {
+                "name": "invalid.illegal.operator.ini.3dm",
+                "match": "(?xi)-- | \\+\\+ | ^"
+            }
+        ]
+    },
+    "operator": {
+      "match": "(?xi) (\\*\\* | \\* | \\+ | - | % | // | /) | (!== | != | === | == | >= | <= | > | < | ! | && | \\|\\|)",
+      "captures": {
+        "1": {
+          "name": "keyword.operator.math.ini.3dm"
+        },
+        "2": {
+          "name": "keyword.operator.comparison.ini.3dm"
+        }
+      }
+    },
+    "round-braces": {
+      "begin": "\\(",
+      "end": "\\)",
+      "beginCaptures": {
+          "0": {
+              "name": "punctuation.parenthesis.begin.ini.3dm"
+          }
+      },
+      "endCaptures": {
+          "0": {
+              "name": "punctuation.parenthesis.end.ini.3dm"
+          }
+      },
+      "patterns": [
+          {
+              "include": "#operational-expression"
+          }
+      ]
+    },
+    "functional-expression": {
+      "name": "meta.expression.functional.ini.3dm",
+      "comment": "A functional expression is one that behaves like a function in this environment which does not have functions clearly defined.",
+      "match": "([a-zA-Z_]+)(?= )\\s*(.+)",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#functional-keyword"
+            }
+          ]
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "#functional-keyword"
+            },
+            {
+              "include": "#variable"
+            },
+            {
+              "include": "#constant"
+            }
+          ]
+        }
+      }
+    },
+    "RValue": {
+      "patterns": [
+        {
+          "include": "#operation"
+        },
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#constant"
+        },
+        {
+          "include": "#string"
+        }
+      ]
+    },
+    "operation": {
+      "patterns": [
+        {
+          "include": "#operational-expression"
+        },
+        {
+          "include": "#functional-expression"
+        }
+      ]
+    },
+    "variable": {
+      "patterns": [
+        {
+          "name": "variable.other.readwrite.ini.3dm",
+          "match": "(?i)(\\$)[a-z_\\\\][\\w.\\-\\\\]+",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.variable.ini.3dm"
+            }
+          }
+        },
+        {
+          "name": "variable.language.shader.ini.3dm",
+          "match": "\\b(?i)([vhdgpc]s(?:-t\\d{1,3})?|[pc]-u)\\b"
+        },
+        {
+          "name": "variable.language.buffer.ini.3dm",
+          "match": "\\b(?i)(?<!\\.)((([vhdgpc]-)cb|vb)\\d{1,3}|ib)\\b"
+        },
+        {
+          "name": "variable.parameter.ini.3dm",
+          "match": "\\b(?i)([xyzwo]\\d{1,3})\\b"
+        },
+        {
+          "name": "variable.language.dump.type.ini.3dm",
+          "match": "\\b(?i)(?<!\\.)(?:dump_rt|dump_tex|dump_cb|dump_vb|dump_ib|buf|txt)\\b"
+        },
+        {
+          "name": "variable.language.ini.3dm",
+          "match": "\\b(?i)(?:time|hunting|none|skip|this)\\b"
+        }
+      ]
+    },
+    "constant": {
+      "patterns": [
+        {
+          "name": "constant.langauge.window.ini.3dm",
+          "match": "\\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_screen_x|cursor_screen_y|cursor_window_x|cursor_window_y|cursor_x|cursor_y)\\b"
+        },
+        {
+          "name": "constant.language.draw.ini.3dm",
+          "match": "(?i)vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type"
+        },
+        {
+          "name": "constant.language.numeric.ini.3dm",
+          "match": "\\b(?i)(?:null|inf|NaN)\\b"
+        },
+        {
+          "name": "constant.numeric.ini.3dm",
+          "match": "\\b\\d+(?:\\.\\d+)?\\b"
+        },
+        {
+          "name": "constant.other.path.ini.3dm",
+          "match": "(?i)(?=.*[\\\\/]+)(?:\\.?(?:\\\\|/)?[\\w@\\-.]+(?:(?:\\\\|/)[\\w@\\-.]+)+)"
+        }
+      ]
+    },
+    "string": {
+      "name": "string.quoted.double.ini.3dm",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.ini.3dm",
+          "match": "\\\\."
+        }
+      ]
+    }
+  }
+}
