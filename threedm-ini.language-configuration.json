@@ -11,6 +11,7 @@
   ],
   // symbols that are auto closed when typing
   "autoClosingPairs": [
+    [";<",";>"],
     ["{", "}"],
     ["[", "]"],
     ["(", ")"],
@@ -36,21 +37,30 @@
   // just a way to define custom comment folding, almost as a way to make block comments
   "folding": {
     "markers": {
-      "start": "^\\s*(?:if|;{)",
-      "end": "^\\s*(?:endif|;.*})"
+      "start": "^\\s*;<",
+      "end": "^\\s*;.*>"
     }
   },
+  // indentOutdent with appendText doesn't actually work fully. It outdents properly but does not indent. We are taking advantage of that here
   "onEnterRules": [
     {
-      "beforeText": "^\\s*;.*$",
+      "beforeText": "^\\s*;<.*",
+      "afterText": ";>$",
+      "action": {
+        "indent": "indentOutdent",
+        "appendText": ";; "
+      }
+    },
+    {
+      "beforeText": "^\\s*;;.*(?<!>$)$",
       "action": {
         "indent": "none",
-        "appendText": ";"
+        "appendText": ";; "
       }
-    }
+    },
   ],
   "indentationRules": {
     "increaseIndentPattern": "^\\s*(?:(?:else |el)?if|else).*?\\s*$",
-    "decreaseIndentPattern": "^\\s*(?:(?:else |el)?if|else|endif).*?\\s*$"
+    "decreaseIndentPattern": "^\\s*(?:(?:else |el)if|else|endif).*?\\s*$"
   }
 }
