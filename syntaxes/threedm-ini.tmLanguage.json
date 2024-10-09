@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "scopeName": "source.ini.3dm",
   "name": "3dm-ini",
   "patterns": [
@@ -582,7 +582,7 @@
     },
     "conditional-expression": {
       "name": "meta.expression.conditional-expression.ini.3dm",
-      "begin": "(?i)^[ \\t]*(?:(if|elif|else if)(?= )|(else$|endif$))",
+      "begin": "(?i)^[ \\t]*(?:(if|elif|else if)(?= )|(else[ \\t]*$|endif[ \\t]*$))",
       "beginCaptures": {
         "1": {
           "name": "keyword.control.flow.ini.3dm"
@@ -593,12 +593,6 @@
       },
       "end": "$|\\n",
       "patterns": [
-        {
-          "include": "#variable"
-        },
-        {
-          "include": "#constant"
-        },
         {
           "include": "#operational-expression"
         }
@@ -761,12 +755,6 @@
           "include": "#operation"
         },
         {
-          "include": "#variable"
-        },
-        {
-          "include": "#constant"
-        },
-        {
           "include": "#string"
         }
       ]
@@ -805,7 +793,7 @@
         "patterns": [
             {
                 "name": "invalid.illegal.operator.ini.3dm",
-                "match": "(?xi) -- | \\+\\+ | ^"
+                "match": "(?xi) -{2,} | \\+{2,} | \\*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [!><]{2,} | &{3,} | \\|{3,} | \\^+"
             }
         ]
     },
@@ -845,7 +833,7 @@
     "functional-expression": {
       "name": "meta.expression.functional.ini.3dm",
       "comment": "A functional expression is one that behaves like a function in this environment which does not have functions clearly defined.",
-      "match": "(?i)(\\w+)(?= )\\s*(.+)",
+      "match": "(?i)([a-z_]+|stereo2mono)\\s+([\\w.\\-\\\\$@' ]+)",
       "captures": {
         "1": {
           "patterns": [
@@ -875,6 +863,22 @@
     },
     "variable": {
       "patterns": [
+        {
+          "name": "variable.language.buffer.ini.3dm",
+          "match": "\\b(?i)(?<!\\.)((([vhdgpc]s?-)cb|vb)\\d{1,3}|[ib]b)\\b"
+        },
+        {
+          "name": "variable.language.shader.ini.3dm",
+          "match": "\\b(?i)([vhdgpc]s(?:-[tu]\\d{1,3})?|[pc]-u)\\b"
+        },
+        {
+          "name": "variable.parameter.ini.3dm",
+          "match": "\\b(?i)([xyzwo]\\d{0,3})\\b"
+        },
+        {
+          "name": "variable.language.ini.3dm",
+          "match": "\\b(?i)(?:time|special|none|skip|auto|this)\\b"
+        },
         {
           "name": "meta.variable.ini.3dm",
           "match": "(?i)(\\$)(?:([a-z_]\\w+)|(\\\\)([\\w.@' \\-\\\\]+)(\\\\)(\\w+))",
@@ -919,22 +923,6 @@
               "name": "entity.name.function.ini.3dm"
             }
           }
-        },
-        {
-          "name": "variable.language.buffer.ini.3dm",
-          "match": "\\b(?i)(?<!\\.)((([vhdgpc]s?-)cb|vb)\\d{1,3}|[ib]b)\\b"
-        },
-        {
-          "name": "variable.language.shader.ini.3dm",
-          "match": "\\b(?i)([vhdgpc]s(?:-[tu]\\d{1,3})?|[pc]-u)\\b"
-        },
-        {
-          "name": "variable.parameter.ini.3dm",
-          "match": "\\b(?i)([xyzwo]\\d{0,3})\\b"
-        },
-        {
-          "name": "variable.language.ini.3dm",
-          "match": "\\b(?i)(?:time|special|none|skip|auto|this)\\b"
         }
       ]
     },
