@@ -3,6 +3,9 @@
   "version": "0.2.7",
   "scopeName": "source.ini.3dm",
   "name": "3dm-ini",
+  "fileTypes": [
+    "ini"
+  ],
   "patterns": [
     {
       "include": "#namespace"
@@ -22,6 +25,7 @@
       "patterns": [
         {
           "begin": "(?i)(namespace)\\b\\s*(=)\\s*\\b",
+          "end": "$|\\n",
           "beginCaptures": {
             "1": {
               "name": "keyword.other.namespace.definition.ini.3dm"
@@ -30,7 +34,6 @@
               "name": "keyword.operator.namespace.ini.3dm"
             }
           },
-          "end": "$|\\n",
           "patterns": [
             {
               "name": "entity.name.namespace.ini.3dm",
@@ -76,11 +79,9 @@
     "section": {
       "name": "meta.structure.section.ini.3dm",
       "begin": "(?i)(?:^(\\[)(\\S+)(\\])$)(?<=^\\[\\S+\\]$)",
+      "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
       "beginCaptures": {
         "1": {
-          "name": "punctuation.definition.entity.ini.3dm"
-        },
-        "3": {
           "name": "punctuation.definition.entity.ini.3dm"
         },
         "2": {
@@ -187,14 +188,16 @@
               "name": "entity.name.section.group-title.ini.3dm.clear-unordered-access-view"
             }
           ]
+        },
+        "3": {
+          "name": "punctuation.definition.entity.ini.3dm"
         }
       },
-      "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
       "patterns": [
         {
           "name": "meta.structure.section.constants.ini.3dm",
           "begin": "(?i)(?<=^\\[Constants\\]$)",
-          "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -207,7 +210,7 @@
         {
           "name": "meta.structure.section.present.ini.3dm",
           "begin": "(?i)(?<=^\\[Present\\]$)",
-          "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -226,8 +229,7 @@
         {
           "name": "meta.structure.section.key.ini.3dm",
           "begin": "(?i)(?<=^\\[Key\\S+\\]$)",
-          "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
-          "comment": "#comment must be placed last here in order to make it possible to use ; as a key character and not be treated as an invalid comment.",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
           "patterns": [
             {
               "include": "#conditional-expression"
@@ -337,7 +339,6 @@
           "begin": "(?i)(?<=^\\[ShaderRegex.+\\.Pattern.*\\]$)",
           "end": "(?i)(?=^\\[.+\\]$|\\z)",
           "contentName": "meta.embedded.block.js_regexp",
-          "comment": "3DM ini actually uses pcre2, so this is just a placeholder until the full pcre2 syntax is added to the grammar... which apparently not even anyone maintaining a perl tmlanguage has done yet",
           "patterns": [
             {
               "include": "#comment"
@@ -583,6 +584,7 @@
     "conditional-expression": {
       "name": "meta.expression.conditional-expression.ini.3dm",
       "begin": "(?i)^[ \\t]*(?:(if|elif|else if)(?= )|(else[ \\t]*$|endif[ \\t]*$))",
+      "end": "$|\\n",
       "beginCaptures": {
         "1": {
           "name": "keyword.control.flow.ini.3dm"
@@ -591,7 +593,6 @@
           "name": "keyword.control.flow.ini.3dm"
         }
       },
-      "end": "$|\\n",
       "patterns": [
         {
           "include": "#operational-expression"
@@ -615,7 +616,7 @@
         "3": {
           "patterns": [
             {
-              "include": "#RValue"
+              "include": "#Rvalue"
             }
           ]
         }
@@ -638,7 +639,7 @@
         "3": {
           "patterns": [
             {
-              "include": "#RValue"
+              "include": "#Rvalue"
             }
           ]
         }
@@ -749,7 +750,7 @@
         }
       }
     },
-    "RValue": {
+    "Rvalue": {
       "patterns": [
         {
           "include": "#operation"
@@ -769,70 +770,8 @@
         }
       ]
     },
-    "operational-expression": {
-      "comment": "An operational expression is meant to be a combination of a mathematical expression and a comparison expression; we can do this because comparisons evaluate to either 0 or 1 and thus can be used in mathematical expressions.",
-      "patterns": [
-        {
-          "include": "#variable"
-        },
-        {
-          "include": "#constant"
-        },
-        {
-          "include": "#illegal-operator"
-        },
-        {
-          "include": "#operator"
-        },
-        {
-          "include": "#round-braces"
-        }
-      ]
-    },
-    "illegal-operator": {
-        "patterns": [
-            {
-                "name": "invalid.illegal.operator.ini.3dm",
-                "match": "(?xi) -{2,} | \\+{2,} | \\*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [!><]{2,} | &{3,} | \\|{3,} | \\^+"
-            }
-        ]
-    },
-    "operator": {
-      "match": "(?xi) (\\*\\* | \\* | \\+ | - | % | // | /) | (!== | != | === | == | >= | <= | > | < ) | ( ! | && | \\|\\|)",
-      "captures": {
-        "1": {
-          "name": "keyword.operator.math.ini.3dm"
-        },
-        "2": {
-          "name": "keyword.operator.comparison.ini.3dm"
-        },
-        "3": {
-          "name": "keyword.operator.logical.ini.3dm"
-        }
-      }
-    },
-    "round-braces": {
-      "begin": "\\(",
-      "end": "\\)",
-      "beginCaptures": {
-          "0": {
-              "name": "punctuation.parenthesis.begin.ini.3dm"
-          }
-      },
-      "endCaptures": {
-          "0": {
-              "name": "punctuation.parenthesis.end.ini.3dm"
-          }
-      },
-      "patterns": [
-          {
-              "include": "#operational-expression"
-          }
-      ]
-    },
     "functional-expression": {
       "name": "meta.expression.functional.ini.3dm",
-      "comment": "A functional expression is one that behaves like a function in this environment which does not have functions clearly defined.",
       "match": "(?i)([a-z_]+|stereo2mono)\\s+([\\w.\\-\\\\$@' ]+)",
       "captures": {
         "1": {
@@ -860,6 +799,66 @@
     "functional-keyword": {
       "name": "keyword.other.function.ini.3dm",
       "match": "(?i)\\b(one|zero|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor)\\b"
+    },
+    "operational-expression": {
+      "patterns": [
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#constant"
+        },
+        {
+          "include": "#illegal-operator"
+        },
+        {
+          "include": "#operator"
+        },
+        {
+          "include": "#round-braces"
+        }
+      ]
+    },
+    "illegal-operator": {
+      "patterns": [
+        {
+          "name": "invalid.illegal.operator.ini.3dm",
+          "match": "(?xi) -{2,} | \\+{2,} | \\*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [!><]{2,} | &{3,} | \\|{3,} | \\^+ "
+        }
+      ]
+    },
+    "operator": {
+      "match": "(?xi) ( \\*\\* | \\* | \\+ | - | % | // | / ) | ( !== | != | === | == | >= | <= | > | < ) | ( ! | && | \\|\\| )",
+      "captures": {
+        "1": {
+          "name": "keyword.operator.math.ini.3dm"
+        },
+        "2": {
+          "name": "keyword.operator.comparison.ini.3dm"
+        },
+        "3": {
+          "name": "keyword.operator.logical.ini.3dm"
+        }
+      }
+    },
+    "round-braces": {
+      "begin": "\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.parenthesis.begin.ini.3dm"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.parenthesis.end.ini.3dm"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#operational-expression"
+        }
+      ]
     },
     "variable": {
       "patterns": [
