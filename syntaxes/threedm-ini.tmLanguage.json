@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "scopeName": "source.ini.3dm",
   "name": "3dm-ini",
   "fileTypes": [
@@ -877,7 +877,7 @@
         },
         {
           "name": "meta.variable.ini.3dm",
-          "match": "(?i)(\\$)(?:([a-z_]\\w+)|(\\\\)([\\w.@' \\-\\\\]+)(\\\\)(\\w+))",
+          "match": "(?xi) (\\$) (?: ([a-z_]\\w+)  |  (\\\\)([\\w.@' \\-\\\\]+)(\\\\) ([a-z_]\\w+) )",
           "captures": {
             "1": {
               "name": "punctuation.definition.variable.ini.3dm"

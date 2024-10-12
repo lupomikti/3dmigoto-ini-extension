@@ -1,5 +1,5 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-version = "0.2.8"
+version = "0.2.9"
 scopeName = "source.ini.3dm"
 name = "3dm-ini"
 fileTypes = ["ini"]
@@ -70,33 +70,248 @@ beginCaptures.2.patterns = [
     {match = '(?i)ClearUnorderedAccessView(?:Uint|Float)', name = "entity.name.section.group-title.ini.3dm.clear-unordered-access-view"},
 ]
 beginCaptures.3 = {name = "punctuation.definition.entity.ini.3dm"}
+
+[[repository.section.patterns]]
+name = "meta.structure.section.constants.ini.3dm"
+begin = '(?i)(?<=^\[Constants\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
 patterns = [
-    # Yes, I know this section is quite hard to read in the TOML and should be split into their own tables
-    {name = "meta.structure.section.constants.ini.3dm", begin = '(?i)(?<=^\[Constants\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#declaration"}]},
-    {name = "meta.structure.section.present.ini.3dm", begin = '(?i)(?<=^\[Present\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.key.ini.3dm", begin = '(?i)(?<=^\[Key\S+\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"},{include = "#comment"}]},
-    {name = "meta.structure.section.texture-override.ini.3dm", begin = '(?i)(?<=^\[TextureOverride.+\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.shader-override.ini.3dm", begin = '(?i)(?<=^\[ShaderOverride.+\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.custom-shader.ini.3dm", begin = '(?i)(?<=^\[(?:BuiltIn)?CustomShader.+\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.command-list.ini.3dm", begin = '(?i)(?<=^\[(?:BuiltIn)?CommandList.+\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.resource.ini.3dm", begin = '(?i)(?<=^\[Resource.+\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    # 3DM ini actually uses pcre2, so this is just a placeholder until the full pcre2 syntax is added to the grammar... which apparently not even anyone maintaining a perl tmlanguage has done yet
-    {name = "meta.structure.section.shader-regex-pattern.ini.3dm", begin = '(?i)(?<=^\[ShaderRegex.+\.Pattern.*\]$)', end = '(?i)(?=^\[.+\]$|\z)', contentName = "meta.embedded.block.js_regexp", patterns = [{include = "#comment"},{include = "source.js.regexp"}]},
-    {name = "meta.structure.section.shader-regex.ini.3dm", begin = '(?i)(?<!^\[ShaderRegex.+\.Pattern.*\]$)(?<=^\[ShaderRegex.+\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.include.ini.3dm", begin = '(?i)(?<=^\[Include.*\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.preset.ini.3dm", begin = '(?i)(?<=^\[Preset.*\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.logging.ini.3dm", begin = '(?i)(?<=^\[Logging\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    {name = "meta.structure.section.hunting.ini.3dm", begin = '(?i)(?<=^\[Hunting\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    {name = "meta.structure.section.system.ini.3dm", begin = '(?i)(?<=^\[System\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    {name = "meta.structure.section.device.ini.3dm", begin = '(?i)(?<=^\[Device\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    {name = "meta.structure.section.stereo.ini.3dm", begin = '(?i)(?<=^\[Stereo\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    {name = "meta.structure.section.rendering.ini.3dm", begin = '(?i)(?<=^\[Rendering\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    {name = "meta.structure.section.profile.ini.3dm", begin = '(?i)(?<=^\[Profile\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    {name = "meta.structure.section.convergence-map.ini.3dm", begin = '(?i)(?<=^\[ConvergenceMap\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    {name = "meta.structure.section.loader.ini.3dm", begin = '(?i)(?<=^\[Loader\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#definition"}]},
-    {name = "meta.structure.section.clear-render-target-view.ini.3dm", begin = '(?i)(?<=^\[ClearRenderTargetView\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.clear-depth-stencil-view.ini.3dm", begin = '(?i)(?<=^\[ClearDepthStencilView\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
-    {name = "meta.structure.section.clear-unordered-access-view.ini.3dm", begin = '(?i)(?<=^\[ClearUnorderedAccessView(?:Uint|Float)\]$)', end = '(?i)(?=^\[.+\]$|\z)', patterns = [{include = "#comment"},{include = "#conditional-expression"},{include = "#definition"},{include = "#declaration"}]},
+    {include = "#comment"},
+    {include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.present.ini.3dm"
+begin = '(?i)(?<=^\[Present\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.key.ini.3dm"
+begin = '(?i)(?<=^\[Key\S+\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+	{include = "#comment"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.texture-override.ini.3dm"
+begin = '(?i)(?<=^\[TextureOverride.+\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.shader-override.ini.3dm"
+begin = '(?i)(?<=^\[ShaderOverride.+\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.custom-shader.ini.3dm"
+begin = '(?i)(?<=^\[(?:BuiltIn)?CustomShader.+\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.command-list.ini.3dm"
+begin = '(?i)(?<=^\[(?:BuiltIn)?CommandList.+\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.resource.ini.3dm"
+begin = '(?i)(?<=^\[Resource.+\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+# 3DM ini actually uses pcre2, so this is just a placeholder until the full pcre2 syntax is added to the grammar...
+# which apparently not even anyone maintaining a perl tmlanguage has done yet, so yippee, guess I've gotta do that myself
+name = "meta.structure.section.shader-regex-pattern.ini.3dm"
+begin = '(?i)(?<=^\[ShaderRegex.+\.Pattern.*\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+contentName = "meta.embedded.block.js_regexp"
+patterns = [
+    {include = "#comment"},
+	{include = "source.js.regexp"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.shader-regex.ini.3dm"
+begin = '(?i)(?<!^\[ShaderRegex.+\.Pattern.*\]$)(?<=^\[ShaderRegex.+\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.include.ini.3dm"
+begin = '(?i)(?<=^\[Include.*\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.preset.ini.3dm"
+begin = '(?i)(?<=^\[Preset.*\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.logging.ini.3dm"
+begin = '(?i)(?<=^\[Logging\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.hunting.ini.3dm"
+begin = '(?i)(?<=^\[Hunting\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.system.ini.3dm"
+begin = '(?i)(?<=^\[System\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.device.ini.3dm"
+begin = '(?i)(?<=^\[Device\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.stereo.ini.3dm"
+begin = '(?i)(?<=^\[Stereo\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.rendering.ini.3dm"
+begin = '(?i)(?<=^\[Rendering\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.profile.ini.3dm"
+begin = '(?i)(?<=^\[Profile\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.convergence-map.ini.3dm"
+begin = '(?i)(?<=^\[ConvergenceMap\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.loader.ini.3dm"
+begin = '(?i)(?<=^\[Loader\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#definition"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.clear-render-target-view.ini.3dm"
+begin = '(?i)(?<=^\[ClearRenderTargetView\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.clear-depth-stencil-view.ini.3dm"
+begin = '(?i)(?<=^\[ClearDepthStencilView\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.clear-unordered-access-view.ini.3dm"
+begin = '(?i)(?<=^\[ClearUnorderedAccessView(?:Uint|Float)\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+patterns = [
+    {include = "#comment"},
+	{include = "#conditional-expression"},
+	{include = "#definition"},
+	{include = "#declaration"},
 ]
 
 [repository.conditional-expression]
@@ -109,7 +324,7 @@ patterns = [{include = "#operational-expression"}]
 
 [repository.definition]
 name = "meta.structure.definition.ini.3dm"
-# Start of line -> optional whitespace -> a 'word' -> optinal whitespace -> = -> optional whitespace -> Rvalue -> end of line
+# Start of line -> optional whitespace -> a 'word' -> optional whitespace -> = -> optional whitespace -> Rvalue -> end of line
 match = '''(?xi) ^[ \t]* (\w+) \s* (=) \s* ([@\w\$.\-,+/* %=\\!><"\[\]';:|&()]*) (?:$|\n)'''
 captures.1.patterns = [{include = "#Lword"}]
 captures.2.name = "punctuation.separator.key-value.ini.3dm"
@@ -189,7 +404,8 @@ match = '(?i)\b(?:one|zero|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|
 captures.1.name = "constant.numeric.ini.3dm"
 
 [repository.operational-expression]
-# An operational expression is meant to be a combination of a mathematical expression and a comparison expression; we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
+# An operational expression is meant to be a combination of a mathematical expression and a comparison expression
+#we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
 patterns = [
     # Order is also important here. For example, illegal-operator must come before operator, both must come at the top, and round-braces must be last
     {include = "#illegal-operator"},
@@ -235,9 +451,12 @@ match = '\b(?i)(?:time|special|none|skip|auto|this)\b'
 
 [[repository.variable.patterns]]
 name = "meta.variable.ini.3dm"
-match = '''(?i)(\$)(?:([a-z_]\w+)|(\\)([\w.@' \-\\]+)(\\)(\w+))'''
+#                  $       variable   or  \     namespace    \     variable
+match = '''(?xi) (\$) (?: ([a-z_]\w+)  |  (\\)([\w.@' \-\\]+)(\\) ([a-z_]\w+) )'''
+# captures for a normal variable
 captures.1.name = "punctuation.definition.variable.ini.3dm"
 captures.2.name = "variable.other.readwrite.ini.3dm"
+# captures for a namespaced variable
 captures.3.name = "punctuation.separator.namespace.ini.3dm"
 captures.4.name = "entity.name.namespace.ini.3dm"
 captures.5.name = "punctuation.separator.namespace.ini.3dm"
@@ -245,6 +464,7 @@ captures.6.name = "variable.other.readwrite.ini.3dm"
 
 [[repository.variable.patterns]]
 name = "meta.function-call variable.function.ini.3dm"
+#                 The prefixable section names I've seen in use     \     namespace    \      user-provided name
 match = '''\b(?i)(CommandList|Resource|CustomShader|ShaderRegex)(?:(\\)([\w.@' \-\\]+)(\\))?([\w.]+)'''
 captures.1.name = "entity.name.section-type.ini.3dm"
 captures.2.name = "punctuation.separator.namespace.ini.3dm"
