@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "scopeName": "source.ini.3dm",
   "name": "3dm-ini",
   "fileTypes": [
@@ -37,7 +37,7 @@
           "patterns": [
             {
               "name": "entity.name.namespace.ini.3dm",
-              "match": "(?i)[\\w\\-.]+(?:[\\\\/][\\w\\-.]+)+"
+              "match": "(?i)[\\w\\-.]+(?:[\\\\/][\\w\\-.]+)*"
             }
           ]
         }
@@ -593,7 +593,7 @@
     },
     "definition": {
       "name": "meta.structure.definition.ini.3dm",
-      "match": "(?xi) ^[ \\t]* (\\w+) \\s* (=) \\s* ([@\\w\\$.\\-,+/* %=\\\\!><\"\\[\\]';:|&()]*) (?:$|\\n)",
+      "match": "(?xi) ^[ \\t]* (\\w+) \\s* (=) \\s* ([@\\w\\$.\\-,+/* \\t%=\\\\!><\"\\[\\]';:|&()]*) (?:$|\\n)",
       "captures": {
         "1": {
           "patterns": [
@@ -616,7 +616,7 @@
     },
     "declaration": {
       "name": "meta.structure.declaration.ini.3dm",
-      "match": "(?xi) ^[ \\t]* ( (?:(?:\\w+)\\ +){0,2}  (?:[$\\w\\-.\\\\/@ '\\[\\]]+) ) \\s* (?: (=) \\s*  ([=$!@\\w.\\-,+/* %\\\\()\"|&><]+) )? (?:$|\\n)",
+      "match": "(?xi) ^[ \\t]* ( (?:(?:\\w+)\\ +){0,2}  (?:[$\\w\\-.\\\\/@ '\\[\\]]+) ) \\s* (?: (=) \\s*  ([=$!@\\w.\\-,+/* \\t%\\\\()\"|&><]+) )? (?:$|\\n)",
       "captures": {
         "1": {
           "patterns": [
@@ -641,7 +641,7 @@
       "patterns": [
         {
           "name": "keyword.other.ini.3dm.common",
-          "match": "(?i)\\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling)"
+          "match": "(?i)\\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling|special)"
         },
         {
           "name": "keyword.other.ini.3dm.key-section",
@@ -649,7 +649,7 @@
         },
         {
           "name": "keyword.other.ini.3dm.resource",
-          "match": "(?i)\\b(type|filename|stride|data|array|max_copies_per_frame)"
+          "match": "(?i)\\b(type|filename|stride|data|array|max_copies_per_frame|mode|bind_flags)"
         },
         {
           "name": "keyword.other.ini.3dm.texture-override",
@@ -764,7 +764,7 @@
     },
     "functional-expression": {
       "name": "meta.expression.functional.ini.3dm",
-      "match": "(?i)\\b([a-z_]+|stereo2mono)\\s+([\\w$][\\w.\\-\\\\@' ]+)",
+      "match": "(?i)\\b([a-z_]+|stereo2mono)\\s+([\\w$][\\w.\\-\\\\@' \\t]+)",
       "captures": {
         "1": {
           "patterns": [
@@ -790,7 +790,7 @@
     },
     "functional-keyword": {
       "name": "keyword.other.function.ini.3dm",
-      "match": "(?i)\\b(?:one|zero|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\\[(\\d+)\\])?)\\b",
+      "match": "(?i)\\b(?:one|zero|raw|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|no_view_cache|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\\[(\\d+)\\])?)\\b",
       "captures": {
         "1": {
           "name": "constant.numeric.ini.3dm"
@@ -873,7 +873,7 @@
         },
         {
           "name": "variable.language.ini.3dm",
-          "match": "\\b(?i)(?:time|special|none|skip|auto|this)\\b"
+          "match": "\\b(?i)this\\b"
         },
         {
           "name": "meta.variable.ini.3dm",
@@ -901,7 +901,7 @@
         },
         {
           "name": "meta.function-call variable.function.ini.3dm",
-          "match": "\\b(?i)(CommandList|Resource|CustomShader|ShaderRegex)(?:(\\\\)([\\w.@' \\-\\\\]+)(\\\\))?([\\w.]+)",
+          "match": "\\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\\\)([\\w.@' \\-\\\\]+)(\\\\))?([\\w.]+)",
           "captures": {
             "1": {
               "name": "entity.name.section-type.ini.3dm"
@@ -934,7 +934,7 @@
         },
         {
           "name": "meta.keyword.rword constant.language.draw.ini.3dm",
-          "match": "\\b(?i)(?:vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type)"
+          "match": "\\b(?i)(?:auto|vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type)"
         },
         {
           "name": "meta.keyword.rword constant.language.system.ini.3dm",
@@ -942,23 +942,31 @@
         },
         {
           "name": "meta.keyword.rword constant.language.dump.ini.3dm",
-          "match": "\\b(?i)(?<!\\.)(?:dump_rt|dump_tex|dump_cb|dump_vb|dump_ib|buf|txt)\\b"
+          "match": "\\b(?i)(?<!\\.)(?:dump_(?:rt|tex|[cvi]b)|buf|txt)\\b"
+        },
+        {
+          "name": "constant.language.boolean.ini.3dm",
+          "match": "\\b(?i)(?:true|false)\\b"
         },
         {
           "name": "constant.language.numeric.ini.3dm",
           "match": "\\b(?i)(?:null|inf|NaN)\\b"
         },
         {
-          "name": "constant.numeric.ini.3dm",
-          "match": "\\b\\d+(?:\\.\\d+)?\\b"
+          "name": "constant.language.ini.3dm",
+          "match": "\\b(?i)(?:time|none|skip)\\b"
         },
         {
           "name": "constant.other.path.ini.3dm",
-          "match": "(?i)(?=.*[\\\\/]+)(?:\\.?(?:\\\\|/)?[\\w@'\\-.()]+(?:(?:\\\\|/)[\\w@ '\\-.()]+)+)"
+          "match": "(?i)(?=.*[\\\\/]+)(?:(?:(?:[a-z]:|\\.)[\\\\/])?[\\w@'\\-.()]+(?:(?:\\\\|/)[\\w@ '\\-.()]+)+)"
         },
         {
           "name": "constant.other.file.ini.3dm",
-          "match": "(?i)[\\w@'\\-.()]+\\.[a-z0-9]+"
+          "match": "(?i)[\\w@'\\-.()]+\\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"
+        },
+        {
+          "name": "constant.numeric.ini.3dm",
+          "match": "\\b\\d+(?:\\.\\d+)?\\b"
         }
       ]
     },
