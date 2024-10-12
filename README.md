@@ -15,3 +15,7 @@ Of course this project would not be possible without the original contributors:
 - @lewis252310
 - @sinsofseven
 - @leotorrez
+
+## Development Info
+
+The main thing to note about how this project is set up in its current state is that instead of using YAML for the grammar and then converting to JSON, it uses TOML for the grammar and then converts to JSON. The conversion is done with a simple script in the `bin` directory; the `package.json` is set up such that while in the project root, you can type `toml-to-json` in the CLI and it will perform the conversion -- no need for `npm run`.
