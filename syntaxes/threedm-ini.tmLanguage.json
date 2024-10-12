@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "scopeName": "source.ini.3dm",
   "name": "3dm-ini",
   "fileTypes": [
@@ -37,7 +37,7 @@
           "patterns": [
             {
               "name": "entity.name.namespace.ini.3dm",
-              "match": "(?i)\\w+(?:(?:\\\\|/)[\\w\\-.]+)+"
+              "match": "(?i)[\\w\\-.]+(?:[\\\\/][\\w\\-.]+)+"
             }
           ]
         }
@@ -108,19 +108,11 @@
               "name": "entity.name.section.group-title.ini.3dm.shader-override"
             },
             {
-              "match": "(?i)BuiltInCustomShader.+",
+              "match": "(?i)(?:BuiltIn)?CustomShader.+",
               "name": "entity.name.section.group-title.ini.3dm.custom-shader"
             },
             {
-              "match": "(?i)CustomShader.+",
-              "name": "entity.name.section.group-title.ini.3dm.custom-shader"
-            },
-            {
-              "match": "(?i)BuiltInCommandList.+",
-              "name": "entity.name.section.group-title.ini.3dm.command-list"
-            },
-            {
-              "match": "(?i)CommandList.+",
+              "match": "(?i)(?:BuiltIn)?CommandList.+",
               "name": "entity.name.section.group-title.ini.3dm.command-list"
             },
             {
@@ -601,7 +593,7 @@
     },
     "definition": {
       "name": "meta.structure.definition.ini.3dm",
-      "match": "(?i)^[ \\t]*(\\w+)\\s*(=)\\s*([@\\w\\$.\\-,+/* %=\\\\!><\"\\[\\]';:|&()]*)(?:$|\\n)",
+      "match": "(?xi) ^[ \\t]* (\\w+) \\s* (=) \\s* ([@\\w\\$.\\-,+/* %=\\\\!><\"\\[\\]';:|&()]*) (?:$|\\n)",
       "captures": {
         "1": {
           "patterns": [
@@ -624,7 +616,7 @@
     },
     "declaration": {
       "name": "meta.structure.declaration.ini.3dm",
-      "match": "(?i)^[ \\t]*((?:(?:\\w+) +){0,2}(?:[$\\w\\-.\\\\/@ ']+))\\s*(?:(=)\\s*([=$!@\\w.\\-,+/* %\\\\()\"|&><]+))?(?:$|\\n)",
+      "match": "(?xi) ^[ \\t]* ( (?:(?:\\w+)\\ +){0,2}  (?:[$\\w\\-.\\\\/@ '\\[\\]]+) ) \\s* (?: (=) \\s*  ([=$!@\\w.\\-,+/* %\\\\()\"|&><]+) )? (?:$|\\n)",
       "captures": {
         "1": {
           "patterns": [
@@ -720,8 +712,8 @@
       ]
     },
     "Lexpression": {
-      "name": "meta.expression.ini.3dm",
-      "match": "(?i)((?:[\\w ]+) +){0,2}([$\\w\\-.\\\\/@ ']+)",
+      "name": "meta.structure.expression.ini.3dm",
+      "match": "(?i)((?:[\\w ]+) +){0,2}([$\\w\\-.\\\\/@ '\\[\\]]+)",
       "captures": {
         "1": {
           "patterns": [
@@ -772,7 +764,7 @@
     },
     "functional-expression": {
       "name": "meta.expression.functional.ini.3dm",
-      "match": "(?i)([a-z_]+|stereo2mono)\\s+([\\w.\\-\\\\$@' ]+)",
+      "match": "(?i)\\b([a-z_]+|stereo2mono)\\s+([\\w$][\\w.\\-\\\\@' ]+)",
       "captures": {
         "1": {
           "patterns": [
@@ -798,21 +790,26 @@
     },
     "functional-keyword": {
       "name": "keyword.other.function.ini.3dm",
-      "match": "(?i)\\b(one|zero|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor)\\b"
+      "match": "(?i)\\b(?:one|zero|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\\[(\\d+)\\])?)\\b",
+      "captures": {
+        "1": {
+          "name": "constant.numeric.ini.3dm"
+        }
+      }
     },
     "operational-expression": {
       "patterns": [
-        {
-          "include": "#variable"
-        },
-        {
-          "include": "#constant"
-        },
         {
           "include": "#illegal-operator"
         },
         {
           "include": "#operator"
+        },
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#constant"
         },
         {
           "include": "#round-braces"
@@ -957,7 +954,7 @@
         },
         {
           "name": "constant.other.path.ini.3dm",
-          "match": "(?i)(?=.*[\\\\/]+)(?:\\.?(?:\\\\|/)?[\\w@ '\\-.()]+(?:(?:\\\\|/)[\\w@ '\\-.()]+)+)"
+          "match": "(?i)(?=.*[\\\\/]+)(?:\\.?(?:\\\\|/)?[\\w@'\\-.()]+(?:(?:\\\\|/)[\\w@ '\\-.()]+)+)"
         },
         {
           "name": "constant.other.file.ini.3dm",

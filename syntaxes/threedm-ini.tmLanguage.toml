@@ -1,5 +1,5 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-version = "0.2.7"
+version = "0.2.8"
 scopeName = "source.ini.3dm"
 name = "3dm-ini"
 fileTypes = ["ini"]
@@ -19,7 +19,7 @@ begin = '(?i)(namespace)\b\s*(=)\s*\b'
 end = '$|\n'
 beginCaptures.1.name = "keyword.other.namespace.definition.ini.3dm"
 beginCaptures.2.name = "keyword.operator.namespace.ini.3dm"
-patterns = [{name = "entity.name.namespace.ini.3dm", match = '(?i)\w+(?:(?:\\|/)[\w\-.]+)+'}]
+patterns = [{name = "entity.name.namespace.ini.3dm", match = '(?i)[\w\-.]+(?:[\\/][\w\-.]+)+'}]
 
 [repository.comment]
 begin = '(?i)(?=^.*?;)'
@@ -41,7 +41,7 @@ captures.3.name = "comment.line.semicolon.content.ini.3dm"
 [repository.section]
 name = "meta.structure.section.ini.3dm"
 begin = '(?i)(?:^(\[)(\S+)(\])$)(?<=^\[\S+\]$)'
-end = '(?i)(?=^\[\S+\]$|\z)'
+end = '(?i)(?=^\[\S+\]$|\z)' # \z is there to match the end of the file
 beginCaptures.1.name = "punctuation.definition.entity.ini.3dm"
 beginCaptures.2.name = "entity.name.section.group-title.ini.3dm"
 beginCaptures.2.patterns = [
@@ -50,10 +50,8 @@ beginCaptures.2.patterns = [
     {match = '(?i)Key.+', name = "entity.name.section.group-title.ini.3dm.key"},
     {match = '(?i)TextureOverride.+', name = "entity.name.section.group-title.ini.3dm.texture-override"},
     {match = '(?i)ShaderOverride.+', name = "entity.name.section.group-title.ini.3dm.shader-override"},
-    {match = '(?i)BuiltInCustomShader.+', name = "entity.name.section.group-title.ini.3dm.custom-shader"},
-    {match = '(?i)CustomShader.+', name = "entity.name.section.group-title.ini.3dm.custom-shader"},
-    {match = '(?i)BuiltInCommandList.+', name = "entity.name.section.group-title.ini.3dm.command-list"},
-    {match = '(?i)CommandList.+', name = "entity.name.section.group-title.ini.3dm.command-list"},
+    {match = '(?i)(?:BuiltIn)?CustomShader.+', name = "entity.name.section.group-title.ini.3dm.custom-shader"},
+    {match = '(?i)(?:BuiltIn)?CommandList.+', name = "entity.name.section.group-title.ini.3dm.command-list"},
     {match = '(?i)Resource.+', name = "entity.name.section.group-title.ini.3dm.resource"},
     {match = '(?i)ShaderRegex.+', name = "entity.name.section.group-title.ini.3dm.shader-regex"},
     {match = '(?i)Include.+', name = "entity.name.section.group-title.ini.3dm.include"},
@@ -111,19 +109,22 @@ patterns = [{include = "#operational-expression"}]
 
 [repository.definition]
 name = "meta.structure.definition.ini.3dm"
-match = '''(?i)^[ \t]*(\w+)\s*(=)\s*([@\w\$.\-,+/* %=\\!><"\[\]';:|&()]*)(?:$|\n)'''
+# Start of line -> optional whitespace -> a 'word' -> optinal whitespace -> = -> optional whitespace -> Rvalue -> end of line
+match = '''(?xi) ^[ \t]* (\w+) \s* (=) \s* ([@\w\$.\-,+/* %=\\!><"\[\]';:|&()]*) (?:$|\n)'''
 captures.1.patterns = [{include = "#Lword"}]
 captures.2.name = "punctuation.separator.key-value.ini.3dm"
 captures.3.patterns = [{include = "#Rvalue"}]
 
 [repository.declaration]
 name = "meta.structure.declaration.ini.3dm"
-match = '''(?i)^[ \t]*((?:(?:\w+) +){0,2}(?:[$\w\-.\\/@ ']+))\s*(?:(=)\s*([=$!@\w.\-,+/* %\\()"|&><]+))?(?:$|\n)'''
+# Start of line -> optional whitespace -> (0 to 2 keywords -> keyword/variable/constant) -> optional whitespace -> = -> optional whitespace -> Rvalue -> end of line
+match = '''(?xi) ^[ \t]* ( (?:(?:\w+)\ +){0,2}  (?:[$\w\-.\\/@ '\[\]]+) ) \s* (?: (=) \s*  ([=$!@\w.\-,+/* %\\()"|&><]+) )? (?:$|\n)'''
 captures.1.patterns = [{include = "#Lexpression"}]
 captures.2.name = "keyword.operator.declaration.ini.3dm"
 captures.3.patterns = [{include = "#Rvalue"}]
 
 [repository.Lword]
+# TODO: clean this section up a bit, see if I have any values here that aren't actually Lwords and should be Rwords instead.
 patterns = [
     {name = "keyword.other.ini.3dm.common", match = '(?i)\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling)'},
     {name = "keyword.other.ini.3dm.key-section", match = '(?i)\b(condition|key|back|type|warp|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)'},
@@ -146,8 +147,8 @@ patterns = [
 ]
 
 [repository.Lexpression]
-name = "meta.expression.ini.3dm"
-match = '''(?i)((?:[\w ]+) +){0,2}([$\w\-.\\/@ ']+)'''
+name = "meta.structure.expression.ini.3dm"
+match = '''(?i)((?:[\w ]+) +){0,2}([$\w\-.\\/@ '\[\]]+)'''
 captures.1.patterns = [
     {name = "storage.modifier.ini.3dm", match = '(?i)(global|local|persist)(?= )'},
     {name = "keyword.control.ini.3dm", match = '(?i)(pre|post)(?= )'},
@@ -174,7 +175,7 @@ patterns = [
 [repository.functional-expression]
 # A functional expression is one that behaves like a function in this environment which does not have clearly defined functions
 name = "meta.expression.functional.ini.3dm"
-match = '''(?i)([a-z_]+|stereo2mono)\s+([\w.\-\\$@' ]+)'''
+match = '''(?i)\b([a-z_]+|stereo2mono)\s+([\w$][\w.\-\\@' ]+)'''
 captures.1.patterns = [{include = "#functional-keyword"}]
 captures.2.patterns = [
     {include = "#functional-keyword"},
@@ -184,16 +185,17 @@ captures.2.patterns = [
 
 [repository.functional-keyword]
 name = "keyword.other.function.ini.3dm"
-match = '(?i)\b(one|zero|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor)\b'
+match = '(?i)\b(?:one|zero|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\[(\d+)\])?)\b'
+captures.1.name = "constant.numeric.ini.3dm"
 
 [repository.operational-expression]
 # An operational expression is meant to be a combination of a mathematical expression and a comparison expression; we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
 patterns = [
-    # Order is also important here. For example, illegal-operator must come before operator and round-braces must be last
-    {include = "#variable"},
-    {include = "#constant"},
+    # Order is also important here. For example, illegal-operator must come before operator, both must come at the top, and round-braces must be last
     {include = "#illegal-operator"},
     {include = "#operator"},
+    {include = "#variable"},
+    {include = "#constant"},
     {include = "#round-braces"},
 ]
 
@@ -260,7 +262,7 @@ patterns = [
     {name = "meta.keyword.rword constant.language.dump.ini.3dm", match = '\b(?i)(?<!\.)(?:dump_rt|dump_tex|dump_cb|dump_vb|dump_ib|buf|txt)\b'},
     {name = "constant.language.numeric.ini.3dm", match = '\b(?i)(?:null|inf|NaN)\b'},
     {name = "constant.numeric.ini.3dm", match = '\b\d+(?:\.\d+)?\b'},
-    {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*[\\/]+)(?:\.?(?:\\|/)?[\w@ '\-.()]+(?:(?:\\|/)[\w@ '\-.()]+)+)'''},
+    {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*[\\/]+)(?:\.?(?:\\|/)?[\w@'\-.()]+(?:(?:\\|/)[\w@ '\-.()]+)+)'''},
     {name = "constant.other.file.ini.3dm", match = '''(?i)[\w@'\-.()]+\.[a-z0-9]+'''},
 ]
 
