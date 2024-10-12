@@ -16,6 +16,65 @@ Of course this project would not be possible without the original contributors:
 - @sinsofseven
 - @leotorrez
 
+## Installation and Use
+To install you can head over to the releases tab and grab the .vsix file, then in VSCode go to the extensions tab/page, click on 'More Actions', and choose 'Install from VSIX'.
+
+Alternatively you can create the extension folder yourself after grabbing a .zip of the repo.
+
+#### Some things to note:
+Not all scopes are commonly styled by themes. For example, a lot of themes do not provide styling for the broad scope `variable.language`, opting to style things that are more specific like `variable.language.this.cpp`. Here are some scopes that I have personally created styling for in my `settings.json` for my current theme.
+
+- `variable.other.readwrite`
+- `punctuation.definition.variable`
+- `variable.language.shader.ini.3dm`, `variable.language.buffer.ini.3dm`, `variable.language.ini.3dm`
+- `punctuation.section.embedded`
+- `constant.other.path.ini.3dm`, `constant.other.file.ini.3dm` (I don't color these, but I do underline them)
+- `entity.name.namespace.ini.3dm` (themes usually style this one, I just don't like the color chosen with my theme next to the variable color, so I changed it)
+
+Here's how to edit a theme via your `settings.json`:
+
+Open up your `settings.json` file; you can do this by opening the command palette (Ctrl+Shift+P on Windows), typing "Open User Settings" and choosing the one that has (JSON) next to it. In it, start a new property called `"editor.tokenColorCustomizations"` with the value an object, and in that object made a property for the name of your theme in square brackets [ ]. This will also have an object value, with a property of `"textMateRules"` whose value is an array of objects with a scope property and a settings property. That's a bit hard to follow in text, so here's an example using the Catppuccin Mocha theme:
+
+```json
+{
+    ...
+    "editor.tokenColorCustomizations": {
+        "[Catppuccin Mocha]": {
+            "textMateRules": [
+                {
+                    "scope": "variable.other.readwrite",
+                    "settings": {
+                        "foreground": "#89b4fa",
+                        "fontStyle": ""
+                    }
+                },
+                {
+                    "scope": [
+                        "variable.language.shader.ini.3dm",
+                        "variable.language.buffer.ini.3dm",
+                        "variable.language.ini.3dm"
+                    ],
+                    "settings": {
+                        "foreground": "#f38ba8",
+                        "fontStyle": ""
+                    }
+                },
+                {
+                    "scope": [
+                        "constant.other.path.ini.3dm",
+                        "constant.other.file.ini.3dm"
+                    ],
+                    "settings": {
+                        "fontStyle": "underline"
+                    }
+                }
+            ]
+        }
+    }
+    ...
+}
+```
+
 ## Development Info
 
 The main thing to note about how this project is set up in its current state is that instead of using YAML for the grammar and then converting to JSON, it uses TOML for the grammar and then converts to JSON. The conversion is done with a simple script in the `bin` directory; the `package.json` is set up such that while in the project root, you can type `toml-to-json` in the CLI and it will perform the conversion -- no need for `npm run`.
