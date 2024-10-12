@@ -1,11 +1,11 @@
 {
-  "name": "3dm-ini",
+  "name": "threedm-ini",
   "displayName": "3DMigoto INI",
   "description": "Extension for working with .ini files used by 3DMigoto.",
   "author": {
-    "name": "AGMG"
+    "name": "LupoMikti",
+    "url": "https://github.com/lupomikti"
   },
-  "publisher": "LupoMikti",
   "contributors": [
     {
       "name": "SinsOfSeven@sinsofseven",
@@ -16,10 +16,13 @@
       "url": "https://github.com/lewis252310"
     },
     {
-      "name": "LupoMikti@lupomikti",
-      "url": "https://github.com/lupomikti"
+      "name": "AGMG"
     }
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lupomikti/3dmigoto-ini-extension.git"
+  },
   "version": "0.1.0",
   "engines": {
     "vscode": "^1.93.0"
