@@ -1,0 +1,254 @@
+"$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
+scopeName = "source.regexp"
+name = "PCRE2"
+# Everything except conditionals should be supported here. Support may be added later.
+patterns = [
+    {include = "#base"},
+    {include = "#base-extended"},
+]
+
+[repository.base]
+patterns = [
+    {include = "#group-modifiers"},
+    {include = "#group-comment"},
+    {include = "#group"},
+    {include = "#base-common"},
+]
+
+[repository.base-extended]
+patterns = [
+    {include = "#group-modifiers"},
+    {include = "#group-comment"},
+    {include = "#group-extended"},
+    {include = "#base-common"},
+]
+
+[repository.base-extended-nested]
+patterns = [
+    {include = "#group-modifiers"},
+    {include = "#group-comment"},
+    {include = "#group-extended"},
+    {include = "#extended-patterns"},
+    {include = "#base-common"},
+]
+
+[repository.base-common]
+patterns = [
+    {include = "#character-class"},
+    {include = "#anchor"},
+    {include = "#backref"},
+    {include = "#switch"},
+    {include = "#char-escape"},
+    {include = "#operator"},
+]
+
+[repository.group-modifiers]
+match = '(\()(\?([imsUJn]+|[imsUJn]*(-)[imsUJn]+))(\))'
+name = "meta.group.modifiers.regexp"
+captures.1.name = "punctuation.definition.modifier-group.begin.regexp"
+captures.2.name = "keyword.other.group.modifiers.regexp"
+captures.3.name = "storage.modifier.mode.regexp"
+captures.4.name = "puntuation.separator.unset.regexp"
+captures.5.name = "punctuation.definition.modifier-group.end.regexp"
+
+[repository.group-comment]
+match = '(\(\?#)(.*)(\))'
+name = "meta.group.comment.regexp"
+captures.1.name = "punctuation.definition.comment.begin.regexp"
+captures.2.name = "comment.block.group.regexp"
+captures.3.name = "punctuation.definition.comment.end.regexp"
+
+[[repository.group-special.patterns]]
+match = '\(\*(PRUNE|SKIP|THEN|COMMIT|FAIL|ACCEPT|(?:MARK)?:[A-Z0-9_]+)\)'
+name = "meta.group.control.regexp keyword.control.verb.regexp"
+
+[[repository.group-special.patterns]]
+match = '\(\*(UTF(?:8|16|32)?|UCP|CR|LF|(?:ANY)?CRLF|ANY|NOTEMPTY(?:_ATSTART)?|NO_JIT|BSR_(?:ANYCRLF|UNICODE)|NO_AUTO_POSSESS|NO_START_OPT)\)'
+name = "meta.group.control.regexp keyword.control.modifier.regexp"
+
+[[repository.group-special.patterns]]
+match = '(\()(\?(?:([+-]?\d+)|P=(\w+)))(\))'
+name = "meta.group.back-reference.regexp"
+captures.1.name = "punctuation.section.group.begin.regexp"
+captures.2.name = "keyword.other.group.backref.regexp"
+captures.3.name = "constant.numeric.backref.regexp"
+captures.4.name = "entity.name.function.backref.regexp"
+captures.5.name = "punctuation.section.group.end.regexp"
+
+[[repository.group-special.patterns]]
+match = '(\()(\?(?:R|(?:&|P>)(\w+)))(\))'
+name = "meta.group.recursion.regexp"
+captures.1.name = "punctuation.section.group.begin.regexp"
+captures.2.name = "keyword.other.group.recursion.regexp"
+captures.3.name = "entity.name.function.capture-group.regexp"
+captures.4.name = "punctuation.section.group.end.regexp"
+
+[[repository.group.patterns]]
+include = "#group-special"
+
+# Local Inline Modifiers
+[[repository.group.patterns]]
+begin = '(\()(\?([imsUJn]+|[imsUJn]*(-)[imsUJn]+):)'
+beginCaptures.1.name = "punctuation.section.group.begin.regexp"
+beginCaptures.2.name = "storage.modifier.mode.regexp"
+end = '\)'
+endCaptures.0.name = "punctuation.section.group.end.regexp"
+name = "meta.group.local-modifiers.regexp"
+contentName = "meta.mode.basic.regexp"
+patterns = [{include = "#base"}]
+
+# Assertions - Lookarounds, Non-capturing groups, non-incrementing group, pre-defined patterns
+[[repository.group.patterns]]
+begin = '(\()(?:(\?<?[=!])|(\?[:>])|(\?\|)|(\?\(DEFINE\)))'
+beginCaptures.1.name = "punctuation.section.group.begin.regexp"
+beginCaptures.2.name = "keyword.other.lookaround.regexp"
+beginCaptures.3.name = "keyword.other.non-capturing.regexp"
+beginCaptures.4.name = "keyword.other.non-incrementing.regexp"
+beginCaptures.5.name = "keyword.other.definition.regexp"
+end = '\)'
+endCaptures.0.name = "punctuation.section.group.end.regexp"
+name = "meta.group.assertion.regexp"
+contentName = "meta.mode.basic.regexp"
+patterns = [{include = "#base"}]
+
+# Named and unnamed capture groups
+[[repository.group.patterns]]
+begin = '''(\()(?:(\?(?:'\w+'|P?<\w+>))|(?!\?))'''
+beginCaptures.1.name = "punctuation.section.group.begin.regexp"
+beginCaptures.2.name = "entity.name.function.capture-group.regexp"
+end = '\)'
+endCaptures.0.name = "punctuation.section.group.end.regexp"
+name = "meta.group.capture-group.regexp"
+contentName = "meta.mode.basic.regexp"
+patterns = [{include = "#base"}]
+
+[[repository.group-extended.patterns]]
+include = "#group-special"
+
+# Group-modifiers but for the extended mode context
+[[repository.group-extended.patterns]]
+begin = '(\()(\?([imsUJn]*xx?[imsUJn]*|[imsUJn]*xx?[imsUJn]*(-)[imsUJn]+))(\))'
+beginCaptures.1.name = "punctuation.definition.modifier-group.begin.regexp"
+beginCaptures.2.name = "keyword.other.group.modifiers.regexp"
+beginCaptures.3.name = "storage.modifier.mode.regexp"
+beginCaptures.4.name = "punctuation.separator.unset.regexp"
+beginCaptures.5.name = "punctuation.definition.modifier-group.end.regexp"
+end = '(?:(\()(\?([imsUJn]*(-)[imsUJn]*xx?[imsUJn]*))(\))|\z)'
+endCaptures.1.name = "punctuation.definition.modifier-group.begin.regexp"
+endCaptures.2.name = "keyword.other.group.modifiers.regexp"
+endCaptures.3.name = "storage.modifier.mode.regexp"
+endCaptures.4.name = "punctuation.separator.unset.regexp"
+endCaptures.5.name = "punctuation.definition.modifier-group.end.regexp"
+name = "meta.group.modifiers.regexp"
+contentName = "meta.mode.extended.regexp"
+patterns = [{include = "#base-extended-nested"}]
+
+# Local Inline Modifiers with extended mode
+[[repository.group-extended.patterns]]
+begin = '(\()(\?([imsUJn]*xx?[imsUJn]*|[imsUJn]*xx?[imsUJn]*(-)[imsUJn]+):)'
+beginCaptures.1.name = "punctuation.section.group.begin.regexp"
+beginCaptures.2.name = "keyword.other.group.modifiers.regexp"
+beginCaptures.3.name = "storage.modifier.mode.regexp"
+beginCaptures.4.name = "punctuation.separator.unset.regexp"
+end = '\)'
+endCaptures.0.name = "punctuation.section.group.end.regexp"
+name = "meta.group.local-modifiers.regexp"
+contentName = "meta.mode.extended.regexp"
+patterns = [{include = "#base-extended-nested"}]
+
+[[repository.group-extended.patterns]]
+begin = '(\()(?:(\?<?[=!])|(\?[:>])|(\?\|))'
+beginCaptures.1.name = "punctuation.section.group.begin.regexp"
+beginCaptures.2.name = "keyword.other.lookaround.regexp"
+beginCaptures.3.name = "keyword.other.non-capturing.regexp"
+beginCaptures.4.name = "keyword.other.non-incrementing.regexp"
+end = '\)'
+endCaptures.0.name = "punctuation.section.group.end.regexp"
+name = "meta.group.assertion.regexp"
+contentName = "meta.mode.extended.regexp"
+patterns = [{include = "#base-extended-nested"}]
+
+[[repository.group-extended.patterns]]
+begin = '''(\()(?:(\?(?:'\w+'|P?<\w+>))|(?!\?))'''
+beginCaptures.1.name = "punctuation.section.group.begin.regexp"
+beginCaptures.2.name = "entity.name.function.capture-group.regexp"
+end = '\)'
+endCaptures.0.name = "punctuation.section.group.end.regexp"
+name = "meta.group.capture-group.regexp"
+contentName = "meta.mode.extended.regexp"
+patterns = [{include = "#base-extended-nested"}]
+
+[repository.extended-patterns]
+patterns = [
+    {begin = '\#+', beginCaptures.0.name = "punctuation.definition.comment.regexp", end = '\n', contentName = "comment.line.number-sign.regexp"},
+    {match = '(?<!\\)\s+', name = "meta.ignored-whitespace.regexp"},
+]
+
+[[repository.character-class.patterns]]
+begin = '(\[)(\^)?'
+beginCaptures.1.name = "punctuation.definition.character-class.begin.regexp"
+beginCaptures.2.name = "keyword.operator.negation.regexp"
+end = '(?<!:)(\])'
+endCaptures.0.name = "punctuation.definition.character-class.end.regexp"
+patterns = [
+    {include = "#posix-class"},
+    {match = '\\[\\\^\-\[\]b]', name = "constant.character.escape.character-set.regexp"},
+    {match = '(?<!\\)-', name = "punctuation.separator.sequence.regexp"},
+    {include = "#char-escape"},
+]
+
+[repository.posix-class]
+match = '\[:(?:ascii|alnum|alpha|blank|cntrl|digit|graph|lower|print|punct|space|upper|word|xdigit|[><]):\]'
+name = "constant.other.posix-class.regexp"
+
+[repository.anchor]
+match = '\\[GAZzBb]|[\^$]'
+name = "keyword.control.anchor.regexp"
+
+[repository.backref]
+patterns = [
+    # weird bs to allow octal escape sequence; says a single digit, two digits, or 4 or more digits are scoped as a backref, thus 3 digits is always scoped as octal
+    {match = '\\([1-9](?:\d|\d{3,})?)', name = "keyword.other.backref.regexp"},
+    # prefixed-match-meta-sequence; TODO: make it so ' only goes with ' and < only goes with >
+    {match = '''\\(?:g(?:\d+|\{-?\d+\}|[<']\+?\d+['>]|[{<']\w+['>}])|k[{<']\w+['>}])''', name = "keyword.other.backref.regexp"},
+]
+
+[[repository.switch.patterns]]
+match = '\\K'
+name = "keyword.control.reset.regexp"
+
+[[repository.switch.patterns]]
+begin = '\\Q'
+beginCaptures.0.name = "keyword.control.literal.regexp"
+end = '\\E'
+endCaptures.0.name = "keyword.control.literal.regexp"
+name = "meta.string-literal.regexp"
+contentName = "string.quoted.other.regexp"
+
+[[repository.char-escape.patterns]]
+match = '(?:(\\[wWsSdDhHvVXRCN])|(\\[0-7]{3}))'
+name = "meta.structure.meta-sequence.regexp"
+captures.1.name = "constant.character.escape.character-class.regexp"
+captures.2.name = "constant.character.numeric.regexp"
+
+[[repository.char-escape.patterns]]
+match = '(?:(\\[pP](?:\{\w+\}|[CLMNPSZ]))|(\\x\{[0-9a-fA-F]{4}\}|\\x[0-9a-fA-F]{2})|(\\c[A-Z]))'
+name = "meta.structure.prefixed-meta-sequence.regexp"
+captures.1.name = "constant.character.escape.unicode-property.regexp"
+captures.2.name = "constant.character.numeric.regexp"
+captures.3.name = "constant.character.escape.control.regexp"
+
+[[repository.char-escape.patterns]]
+match = '\\[ntr0]'
+name = "meta.structure.common-escapes.regexp constant.character.escape.common.regexp"
+
+[[repository.char-escape.patterns]]
+match = '\\.'
+name = "constant.character.escape.backslash.regexp"
+
+[repository.operator]
+patterns = [
+    {match = '\|', name = "keyword.operator.or.regexp"},
+    {match = '\.', name = "keyword.operator.any.regexp"},
+    {match = '(?:[?*+]|\{\d+(?:,\d*)?\})[?+]?', name = "keyword.operator.quantifier.regexp"},
+]

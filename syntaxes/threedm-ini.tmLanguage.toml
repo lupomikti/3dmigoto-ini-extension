@@ -1,5 +1,5 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-version = "0.2.10"
+version = "0.3.2"
 scopeName = "source.ini.3dm"
 name = "3dm-ini"
 fileTypes = ["ini"]
@@ -40,8 +40,25 @@ captures.3.name = "comment.line.semicolon.content.ini.3dm"
 
 [repository.section]
 name = "meta.structure.section.ini.3dm"
-begin = '(?i)(?:^(\[)(\S+)(\])$)(?<=^\[\S+\]$)'
-end = '(?i)(?=^\[\S+\]$|\z)' # \z is there to match the end of the file
+# The insanity below is necessary for the ShaderRegex Pattern matching section to not break the whole file
+# Without this, character class sets that would match a more broad section regex would be treated as section titles
+# So we must explicitly define the allowed section names in the begin and end matches
+begin = '''(?xi)
+(?:^(\[) # capture group 1
+    ((?:
+        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |
+        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Include|Preset).+
+     )
+    ) # capture group 2
+    (\])$) # capture group 3
+(?<=^\[\2\]$)'''
+end = '''(?xi)
+(?=^\[
+(?:
+  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |
+  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Include|Preset).+
+)
+\]$|\z)''' # \z is there to match the end of the file
 beginCaptures.1.name = "punctuation.definition.entity.ini.3dm"
 beginCaptures.2.name = "entity.name.section.group-title.ini.3dm"
 beginCaptures.2.patterns = [
@@ -69,7 +86,7 @@ beginCaptures.2.patterns = [
     {match = '(?i)ClearDepthStencilView', name = "entity.name.section.group-title.ini.3dm.clear-depth-stencil-view"},
     {match = '(?i)ClearUnorderedAccessView(?:Uint|Float)', name = "entity.name.section.group-title.ini.3dm.clear-unordered-access-view"},
 ]
-beginCaptures.3 = {name = "punctuation.definition.entity.ini.3dm"}
+beginCaptures.3.name = "punctuation.definition.entity.ini.3dm"
 
 [[repository.section.patterns]]
 name = "meta.structure.section.constants.ini.3dm"
@@ -96,6 +113,7 @@ name = "meta.structure.section.key.ini.3dm"
 begin = '(?i)(?<=^\[Key\S+\]$)'
 end = '(?i)(?=^\[.+\]$|\z)'
 patterns = [
+    # comment must be last here to allow for ; to be used as a hotkey value without being treated as an invalid comment
     {include = "#conditional-expression"},
 	{include = "#definition"},
 	{include = "#declaration"},
@@ -156,15 +174,23 @@ patterns = [
 ]
 
 [[repository.section.patterns]]
-# 3DM ini actually uses pcre2, so this is just a placeholder until the full pcre2 syntax is added to the grammar...
-# which apparently not even anyone maintaining a perl tmlanguage has done yet, so yippee, guess I've gotta do that myself
 name = "meta.structure.section.shader-regex-pattern.ini.3dm"
-begin = '(?i)(?<=^\[ShaderRegex.+\.Pattern.*\]$)'
+begin = '(?i)(?<=^\[ShaderRegex.+\.Pattern\]$)'
 end = '(?i)(?=^\[.+\]$|\z)'
-contentName = "meta.embedded.block.js_regexp"
+contentName = "meta.embedded.block.regexp"
 patterns = [
     {include = "#comment"},
-	{include = "source.js.regexp"},
+	{include = "source.regexp"},
+]
+
+[[repository.section.patterns]]
+name = "meta.structure.section.shader-regex-replace.ini.3dm"
+begin = '(?i)(?<=^\[ShaderRegex.+\.Pattern\.Replace\]$)'
+end = '(?i)(?=^\[.+\]$|\z)'
+# contentName = "meta.embedded.block.regexp-replace"
+patterns = [
+    {include = "#comment"},
+	{include = "source.regexp-replace"},
 ]
 
 [[repository.section.patterns]]
@@ -315,7 +341,7 @@ patterns = [
 ]
 
 [repository.conditional-expression]
-name = "meta.expression.conditional-expression.ini.3dm"
+name = "meta.expression.conditional.ini.3dm"
 begin = '(?i)^[ \t]*(?:(if|elif|else if)(?= )|(else[ \t]*$|endif[ \t]*$))'
 end = '$|\n'
 beginCaptures.1.name = "keyword.control.flow.ini.3dm"
@@ -324,8 +350,11 @@ patterns = [{include = "#operational-expression"}]
 
 [repository.definition]
 name = "meta.structure.definition.ini.3dm"
-# Start of line -> optional whitespace -> a 'word' -> optional whitespace -> = -> optional whitespace -> Rvalue -> end of line
-match = '''(?xi) ^[ \t]* (\w+) \s* (=) \s* ([@\w\$.\-,+/* \t%=\\!><"\[\]';:|&()]*) (?:$|\n)'''
+match = '''(?xi)
+^[ \t]* (\w+) # optional whitespace followed by a word-like
+\s* (=) \s* # kvp separator surrounded by optional whitespace
+([@\w\$.\-,+/* \t%=\\!><"\[\]';:|&()]*) # Rvalue, optional
+(?:$|\n)'''
 captures.1.patterns = [{include = "#Lword"}]
 captures.2.name = "punctuation.separator.key-value.ini.3dm"
 captures.3.patterns = [{include = "#Rvalue"}]
@@ -333,7 +362,18 @@ captures.3.patterns = [{include = "#Rvalue"}]
 [repository.declaration]
 name = "meta.structure.declaration.ini.3dm"
 # Start of line -> optional whitespace -> (0 to 2 keywords -> keyword/variable/constant) -> optional whitespace -> = -> optional whitespace -> Rvalue -> end of line
-match = '''(?xi) ^[ \t]* ( (?:(?:\w+)\ +){0,2}  (?:[$\w\-.\\/@ '\[\]]+) ) \s* (?: (=) \s*  ([=$!@\w.\-,+/* \t%\\()"|&><]+) )? (?:$|\n)'''
+match = '''(?xi)
+^[ \t]* # optional leading whitespace
+(
+  (?:(?:\w+)\ +){0,2}     # between 0 and 2 keywords inclusive
+  (?:[$\w\-.\\/@ '\[\]]+) # another keyword, a variable, or a constant
+)
+\s*
+(?:
+  (=) \s* # assignment/declaration operator, surrounded by optional whitespace
+  ([=$!@\w.\-,+/* \t%\\()"|&><]+) # Rvalue
+)? # Operator and Rvalue are optional, e.g. `global $variable` on a line by itself
+(?:$|\n)'''
 captures.1.patterns = [{include = "#Lexpression"}]
 captures.2.name = "keyword.operator.declaration.ini.3dm"
 captures.3.patterns = [{include = "#Rvalue"}]
@@ -341,28 +381,28 @@ captures.3.patterns = [{include = "#Rvalue"}]
 [repository.Lword]
 # TODO: clean this section up a bit, see if I have any values here that aren't actually Lwords and should be Rwords instead.
 patterns = [
-    {name = "keyword.other.ini.3dm.common", match = '(?i)\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling|special)'},
-    {name = "keyword.other.ini.3dm.key-section", match = '(?i)\b(condition|key|back|type|warp|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)'},
-    {name = "keyword.other.ini.3dm.resource", match = '(?i)\b(type|filename|stride|data|array|max_copies_per_frame|mode|bind_flags)'},
-    {name = "keyword.other.ini.3dm.texture-override", match = '(?i)\b(stereomode|iteration|expand_region_copy|deny_cpu_read|checktextureoverride)'},
-    {name = "keyword.other.ini.3dm.texture-override", match = '(?i)\b(match_(?:type|usage|bind_flags|cpu_access_flags|misc_flags|byte_width|stride|mips|depth|array|msaa|msaa_quality|first_vertex|first_index|first_instance|vertex_count|index_count|instance_count|priority))'},
-    {name = "keyword.other.ini.3dm.custom-shader", match = '(?i)\b(max_executions_per_frame|flags|blend(?:_factor|_state_merge|)|alpha(?:_to_coverage|)|mask|sample_mask|depth(?:_enable|_write_mask|_func|_stencil_state_merge|_clip_enable|_bias|_bias_clamp)|stencil(?:_enable|_read_mask|_write_mask|_front|stencil_back|stencil_ref)|fill|cull|front|slope_scaled_depth_bias|depth|scissor_enable|multisample_enable|antialiased_line_enable|rasterizer_state_merge|topology|sampler|src_alpha_sat|zero|one)'},
-    {name = "keyword.other.ini.3dm.shader-regex-command-list", match = '(?i)\b(shader_model|temps)'},
-    {name = "keyword.other.ini.3dm.shader-override-command-list", match = '(?i)\b(allow_duplicate_hash|depth_filter|partner|model|disable_scissor)'},
-    {name = "keyword.other.ini.3dm.include", match = '(?i)\b((?:in|ex)clude(?:_recursive)?)'},
-    {name = "keyword.other.ini.3dm.logging", match = '(?i)\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|convergence|separation|crash|show_warnings)'},
-    {name = "keyword.other.ini.3dm.hunting", match = '(?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking(?:_mode|_actions)|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune(?:1|2)_(?:up|down)|analyse_(?:frame|options))'},
-    {name = "keyword.other.ini.3dm.system", match = '(?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update))'},
-    {name = "keyword.other.ini.3dm.loader", match = '(?i)\b(target|module|require_admin|launch|delay|loader)'},
-    {name = "keyword.other.ini.3dm.device", match = '(?i)\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor)'},
-    {name = "keyword.other.ini.3dm.stereo", match = '(?i)\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)'},
-    {name = "keyword.other.ini.3dm.rendering", match = '(?i)\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl)|dump_usage|fix_(?:sv_position|ZRepair_.+|InvTransform|BackProjectionTransform\d|ObjectPosition\d(?:Multiplier)?|MatrixOperand\d(?:Multiplier)?|recompile_all_vs))'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.common", match = '(?i)\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling|special)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.key-section", match = '(?i)\b(condition|key|back|type|warp|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.resource", match = '(?i)\b(type|filename|stride|data|array|max_copies_per_frame|mode|bind_flags)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override", match = '(?i)\b(stereomode|iteration|expand_region_copy|deny_cpu_read|checktextureoverride)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override", match = '(?i)\b(match_(?:type|usage|bind_flags|cpu_access_flags|misc_flags|byte_width|stride|mips|depth|array|msaa|msaa_quality|first_vertex|first_index|first_instance|vertex_count|index_count|instance_count|priority))'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.custom-shader", match = '(?i)\b(max_executions_per_frame|flags|blend(?:_factor|_state_merge|)|alpha(?:_to_coverage|)|mask|sample_mask|depth(?:_enable|_write_mask|_func|_stencil_state_merge|_clip_enable|_bias|_bias_clamp)|stencil(?:_enable|_read_mask|_write_mask|_front|stencil_back|stencil_ref)|fill|cull|front|slope_scaled_depth_bias|depth|scissor_enable|multisample_enable|antialiased_line_enable|rasterizer_state_merge|topology|sampler|src_alpha_sat|zero|one)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.shader-regex-command-list", match = '(?i)\b(shader_model|temps)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.shader-override-command-list", match = '(?i)\b(allow_duplicate_hash|depth_filter|partner|model|disable_scissor)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.include", match = '(?i)\b((?:in|ex)clude(?:_recursive)?)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.logging", match = '(?i)\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|convergence|separation|crash|show_warnings)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.hunting", match = '(?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking(?:_mode|_actions)|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune(?:1|2)_(?:up|down)|analyse_(?:frame|options))'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.system", match = '(?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update))'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.loader", match = '(?i)\b(target|module|require_admin|launch|delay|loader)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.device", match = '(?i)\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.stereo", match = '(?i)\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.rendering", match = '(?i)\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl)|dump_usage|fix_(?:sv_position|ZRepair_.+|InvTransform|BackProjectionTransform\d|ObjectPosition\d(?:Multiplier)?|MatrixOperand\d(?:Multiplier)?|recompile_all_vs))'},
     {include = "#functional-keyword"},
     {include = "#variable"},
 ]
 
 [repository.Lexpression]
-name = "meta.structure.expression.ini.3dm"
+name = "meta.structure.left-expression.ini.3dm"
 match = '''(?i)((?:[\w ]+) +){0,2}([$\w\-.\\/@ '\[\]]+)'''
 captures.1.patterns = [
     {name = "storage.modifier.ini.3dm", match = '(?i)(global|local|persist)(?= )'},
@@ -405,7 +445,7 @@ captures.1.name = "constant.numeric.ini.3dm"
 
 [repository.operational-expression]
 # An operational expression is meant to be a combination of a mathematical expression and a comparison expression
-#we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
+# we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
 patterns = [
     # Order is also important here. For example, illegal-operator must come before operator, both must come at the top, and round-braces must be last
     {include = "#illegal-operator"},
@@ -473,22 +513,26 @@ captures.5.name = "entity.name.function.ini.3dm"
 
 [repository.constant]
 patterns = [
-    # TODO: go through these keywords and figure out which if any are able to be used on both sides of an =
+    {include = "#Rword"},
+    {name = "constant.language.boolean.ini.3dm", match = '\b(?i)(?:true|false)\b'},
+    {name = "constant.language.numeric.ini.3dm", match = '\b(?i)(?:null|inf|NaN)\b'},
+    {name = "constant.language.ini.3dm", match = '\b(?i)(?:time|none|skip)\b'}, # none and skip are Rwords, but I need to nail down what section(s)/Lword(s) they go with
+    {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*[\\/]+)(?:(?:(?:[a-z]:|\.)[\\/])?[\w@'\-.()]+(?:(?:\\|/)[\w@ '\-.()]+)+)'''},
+    {name = "constant.other.file.ini.3dm", match = '''(?i)[\w@'\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
+    {name = "constant.numeric.ini.3dm", match = '\b\d+(?:\.\d+)?\b'},
+]
+
+[repository.Rword]
+# TODO: go through these keywords and figure out which if any are able to be used on both sides of an =
+patterns = [
     {name = "meta.keyword.rword keyword.control.ini.3dm", match = '\b(?i)(unless_null)'},
     {name = "meta.keyword.rword constant.language.window.ini.3dm", match = '\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_screen_x|cursor_screen_y|cursor_window_x|cursor_window_y|cursor_x|cursor_y)\b'},
     {name = "meta.keyword.rword constant.language.draw.ini.3dm", match = '\b(?i)(?:auto|vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type)'},
     {name = "meta.keyword.rword constant.language.system.ini.3dm", match = '\b(?i)(?:stereo_active|sli)'},
     {name = "meta.keyword.rword constant.language.dump.ini.3dm", match = '\b(?i)(?<!\.)(?:dump_(?:rt|tex|[cvi]b)|buf|txt)\b'},
-    {name = "constant.language.boolean.ini.3dm", match = '\b(?i)(?:true|false)\b'},
-    {name = "constant.language.numeric.ini.3dm", match = '\b(?i)(?:null|inf|NaN)\b'},
-    {name = "constant.language.ini.3dm", match = '\b(?i)(?:time|none|skip)\b'},
-    {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*[\\/]+)(?:(?:(?:[a-z]:|\.)[\\/])?[\w@'\-.()]+(?:(?:\\|/)[\w@ '\-.()]+)+)'''},
-    {name = "constant.other.file.ini.3dm", match = '''(?i)[\w@'\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
-    {name = "constant.numeric.ini.3dm", match = '\b\d+(?:\.\d+)?\b'},
 ]
 
 [repository.string]
 name = "string.quoted.double.ini.3dm"
 begin = '"'
 end = '"'
-patterns = [{name = "constant.character.escape.ini.3dm", match = '\\.'}]

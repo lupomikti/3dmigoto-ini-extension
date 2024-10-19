@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "0.2.10",
+  "version": "0.3.2",
   "scopeName": "source.ini.3dm",
   "name": "3dm-ini",
   "fileTypes": [
@@ -78,8 +78,8 @@
     },
     "section": {
       "name": "meta.structure.section.ini.3dm",
-      "begin": "(?i)(?:^(\\[)(\\S+)(\\])$)(?<=^\\[\\S+\\]$)",
-      "end": "(?i)(?=^\\[\\S+\\]$|\\z)",
+      "begin": "(?xi)\r\n(?:^(\\[) # capture group 1\r\n    ((?:\r\n        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Include|Preset).+\r\n     )\r\n    ) # capture group 2\r\n    (\\])$) # capture group 3\r\n(?<=^\\[\\2\\]$)",
+      "end": "(?xi)\r\n(?=^\\[\r\n(?:\r\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Include|Preset).+\r\n)\r\n\\]$|\\z)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.entity.ini.3dm"
@@ -328,15 +328,28 @@
         },
         {
           "name": "meta.structure.section.shader-regex-pattern.ini.3dm",
-          "begin": "(?i)(?<=^\\[ShaderRegex.+\\.Pattern.*\\]$)",
+          "begin": "(?i)(?<=^\\[ShaderRegex.+\\.Pattern\\]$)",
           "end": "(?i)(?=^\\[.+\\]$|\\z)",
-          "contentName": "meta.embedded.block.js_regexp",
+          "contentName": "meta.embedded.block.regexp",
           "patterns": [
             {
               "include": "#comment"
             },
             {
-              "include": "source.js.regexp"
+              "include": "source.regexp"
+            }
+          ]
+        },
+        {
+          "name": "meta.structure.section.shader-regex-replace.ini.3dm",
+          "begin": "(?i)(?<=^\\[ShaderRegex.+\\.Pattern\\.Replace\\]$)",
+          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "source.regexp-replace"
             }
           ]
         },
@@ -574,7 +587,7 @@
       ]
     },
     "conditional-expression": {
-      "name": "meta.expression.conditional-expression.ini.3dm",
+      "name": "meta.expression.conditional.ini.3dm",
       "begin": "(?i)^[ \\t]*(?:(if|elif|else if)(?= )|(else[ \\t]*$|endif[ \\t]*$))",
       "end": "$|\\n",
       "beginCaptures": {
@@ -593,7 +606,7 @@
     },
     "definition": {
       "name": "meta.structure.definition.ini.3dm",
-      "match": "(?xi) ^[ \\t]* (\\w+) \\s* (=) \\s* ([@\\w\\$.\\-,+/* \\t%=\\\\!><\"\\[\\]';:|&()]*) (?:$|\\n)",
+      "match": "(?xi)\r\n^[ \\t]* (\\w+) # optional whitespace followed by a word-like\r\n\\s* (=) \\s* # kvp separator surrounded by optional whitespace\r\n([@\\w\\$.\\-,+/* \\t%=\\\\!><\"\\[\\]';:|&()]*) # Rvalue, optional\r\n(?:$|\\n)",
       "captures": {
         "1": {
           "patterns": [
@@ -616,7 +629,7 @@
     },
     "declaration": {
       "name": "meta.structure.declaration.ini.3dm",
-      "match": "(?xi) ^[ \\t]* ( (?:(?:\\w+)\\ +){0,2}  (?:[$\\w\\-.\\\\/@ '\\[\\]]+) ) \\s* (?: (=) \\s*  ([=$!@\\w.\\-,+/* \\t%\\\\()\"|&><]+) )? (?:$|\\n)",
+      "match": "(?xi)\r\n^[ \\t]* # optional leading whitespace\r\n(\r\n  (?:(?:\\w+)\\ +){0,2}     # between 0 and 2 keywords inclusive\r\n  (?:[$\\w\\-.\\\\/@ '\\[\\]]+) # another keyword, a variable, or a constant\r\n)\r\n\\s*\r\n(?:\r\n  (=) \\s* # assignment/declaration operator, surrounded by optional whitespace\r\n  ([=$!@\\w.\\-,+/* \\t%\\\\()\"|&><]+) # Rvalue\r\n)? # Operator and Rvalue are optional, e.g. `global $variable` on a line by itself\r\n(?:$|\\n)",
       "captures": {
         "1": {
           "patterns": [
@@ -640,67 +653,67 @@
     "Lword": {
       "patterns": [
         {
-          "name": "keyword.other.ini.3dm.common",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.common",
           "match": "(?i)\\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling|special)"
         },
         {
-          "name": "keyword.other.ini.3dm.key-section",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.key-section",
           "match": "(?i)\\b(condition|key|back|type|warp|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)"
         },
         {
-          "name": "keyword.other.ini.3dm.resource",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.resource",
           "match": "(?i)\\b(type|filename|stride|data|array|max_copies_per_frame|mode|bind_flags)"
         },
         {
-          "name": "keyword.other.ini.3dm.texture-override",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override",
           "match": "(?i)\\b(stereomode|iteration|expand_region_copy|deny_cpu_read|checktextureoverride)"
         },
         {
-          "name": "keyword.other.ini.3dm.texture-override",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override",
           "match": "(?i)\\b(match_(?:type|usage|bind_flags|cpu_access_flags|misc_flags|byte_width|stride|mips|depth|array|msaa|msaa_quality|first_vertex|first_index|first_instance|vertex_count|index_count|instance_count|priority))"
         },
         {
-          "name": "keyword.other.ini.3dm.custom-shader",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.custom-shader",
           "match": "(?i)\\b(max_executions_per_frame|flags|blend(?:_factor|_state_merge|)|alpha(?:_to_coverage|)|mask|sample_mask|depth(?:_enable|_write_mask|_func|_stencil_state_merge|_clip_enable|_bias|_bias_clamp)|stencil(?:_enable|_read_mask|_write_mask|_front|stencil_back|stencil_ref)|fill|cull|front|slope_scaled_depth_bias|depth|scissor_enable|multisample_enable|antialiased_line_enable|rasterizer_state_merge|topology|sampler|src_alpha_sat|zero|one)"
         },
         {
-          "name": "keyword.other.ini.3dm.shader-regex-command-list",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.shader-regex-command-list",
           "match": "(?i)\\b(shader_model|temps)"
         },
         {
-          "name": "keyword.other.ini.3dm.shader-override-command-list",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.shader-override-command-list",
           "match": "(?i)\\b(allow_duplicate_hash|depth_filter|partner|model|disable_scissor)"
         },
         {
-          "name": "keyword.other.ini.3dm.include",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.include",
           "match": "(?i)\\b((?:in|ex)clude(?:_recursive)?)"
         },
         {
-          "name": "keyword.other.ini.3dm.logging",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.logging",
           "match": "(?i)\\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|convergence|separation|crash|show_warnings)"
         },
         {
-          "name": "keyword.other.ini.3dm.hunting",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.hunting",
           "match": "(?i)\\b((?:done_|toggle_)?hunting|(?:next_)?marking(?:_mode|_actions)|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune(?:1|2)_(?:up|down)|analyse_(?:frame|options))"
         },
         {
-          "name": "keyword.other.ini.3dm.system",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.system",
           "match": "(?i)\\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update))"
         },
         {
-          "name": "keyword.other.ini.3dm.loader",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.loader",
           "match": "(?i)\\b(target|module|require_admin|launch|delay|loader)"
         },
         {
-          "name": "keyword.other.ini.3dm.device",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.device",
           "match": "(?i)\\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor)"
         },
         {
-          "name": "keyword.other.ini.3dm.stereo",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.stereo",
           "match": "(?i)\\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)"
         },
         {
-          "name": "keyword.other.ini.3dm.rendering",
+          "name": "meta.keyword.lword keyword.other.ini.3dm.rendering",
           "match": "(?i)\\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl)|dump_usage|fix_(?:sv_position|ZRepair_.+|InvTransform|BackProjectionTransform\\d|ObjectPosition\\d(?:Multiplier)?|MatrixOperand\\d(?:Multiplier)?|recompile_all_vs))"
         },
         {
@@ -712,7 +725,7 @@
       ]
     },
     "Lexpression": {
-      "name": "meta.structure.expression.ini.3dm",
+      "name": "meta.structure.left-expression.ini.3dm",
       "match": "(?i)((?:[\\w ]+) +){0,2}([$\\w\\-.\\\\/@ '\\[\\]]+)",
       "captures": {
         "1": {
@@ -925,24 +938,7 @@
     "constant": {
       "patterns": [
         {
-          "name": "meta.keyword.rword keyword.control.ini.3dm",
-          "match": "\\b(?i)(unless_null)"
-        },
-        {
-          "name": "meta.keyword.rword constant.language.window.ini.3dm",
-          "match": "\\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_screen_x|cursor_screen_y|cursor_window_x|cursor_window_y|cursor_x|cursor_y)\\b"
-        },
-        {
-          "name": "meta.keyword.rword constant.language.draw.ini.3dm",
-          "match": "\\b(?i)(?:auto|vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type)"
-        },
-        {
-          "name": "meta.keyword.rword constant.language.system.ini.3dm",
-          "match": "\\b(?i)(?:stereo_active|sli)"
-        },
-        {
-          "name": "meta.keyword.rword constant.language.dump.ini.3dm",
-          "match": "\\b(?i)(?<!\\.)(?:dump_(?:rt|tex|[cvi]b)|buf|txt)\\b"
+          "include": "#Rword"
         },
         {
           "name": "constant.language.boolean.ini.3dm",
@@ -970,16 +966,34 @@
         }
       ]
     },
+    "Rword": {
+      "patterns": [
+        {
+          "name": "meta.keyword.rword keyword.control.ini.3dm",
+          "match": "\\b(?i)(unless_null)"
+        },
+        {
+          "name": "meta.keyword.rword constant.language.window.ini.3dm",
+          "match": "\\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_screen_x|cursor_screen_y|cursor_window_x|cursor_window_y|cursor_x|cursor_y)\\b"
+        },
+        {
+          "name": "meta.keyword.rword constant.language.draw.ini.3dm",
+          "match": "\\b(?i)(?:auto|vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type)"
+        },
+        {
+          "name": "meta.keyword.rword constant.language.system.ini.3dm",
+          "match": "\\b(?i)(?:stereo_active|sli)"
+        },
+        {
+          "name": "meta.keyword.rword constant.language.dump.ini.3dm",
+          "match": "\\b(?i)(?<!\\.)(?:dump_(?:rt|tex|[cvi]b)|buf|txt)\\b"
+        }
+      ]
+    },
     "string": {
       "name": "string.quoted.double.ini.3dm",
       "begin": "\"",
-      "end": "\"",
-      "patterns": [
-        {
-          "name": "constant.character.escape.ini.3dm",
-          "match": "\\\\."
-        }
-      ]
+      "end": "\""
     }
   }
 }
