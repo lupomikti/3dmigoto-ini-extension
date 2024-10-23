@@ -78,8 +78,8 @@
     },
     "section": {
       "name": "meta.structure.section.ini.3dm",
-      "begin": "(?xi)\r\n(?:^(\\[) # capture group 1\r\n    ((?:\r\n        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Include|Preset).+\r\n     )\r\n    ) # capture group 2\r\n    (\\])$) # capture group 3\r\n(?<=^\\[\\2\\]$)",
-      "end": "(?xi)\r\n(?=^\\[\r\n(?:\r\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Include|Preset).+\r\n)\r\n\\]$|\\z)",
+      "begin": "(?xi)\r\n(?:^(\\[) # capture group 1\r\n    ((?:\r\n        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\r\n        Include.*\r\n     )\r\n    ) # capture group 2\r\n    (\\])$) # capture group 3\r\n(?<=^\\[\\2\\]$)",
+      "end": "(?xi)\r\n(?=^\\[\r\n(?:\r\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\r\n  Include.*\r\n)\r\n\\]$|\\z)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.entity.ini.3dm"
@@ -124,7 +124,7 @@
               "name": "entity.name.section.group-title.ini.3dm.shader-regex"
             },
             {
-              "match": "(?i)Include.+",
+              "match": "(?i)Include.*",
               "name": "entity.name.section.group-title.ini.3dm.include"
             },
             {
@@ -220,7 +220,7 @@
         },
         {
           "name": "meta.structure.section.key.ini.3dm",
-          "begin": "(?i)(?<=^\\[Key\\S+\\]$)",
+          "begin": "(?i)(?<=^\\[Key.+\\]$)",
           "end": "(?i)(?=^\\[.+\\]$|\\z)",
           "patterns": [
             {
@@ -393,7 +393,7 @@
         },
         {
           "name": "meta.structure.section.preset.ini.3dm",
-          "begin": "(?i)(?<=^\\[Preset.*\\]$)",
+          "begin": "(?i)(?<=^\\[Preset.+\\]$)",
           "end": "(?i)(?=^\\[.+\\]$|\\z)",
           "patterns": [
             {
@@ -658,7 +658,7 @@
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.key-section",
-          "match": "(?i)\\b(condition|key|back|type|warp|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)"
+          "match": "(?i)\\b(condition|key|back|smart|type|wrap|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.resource",
@@ -772,12 +772,15 @@
         },
         {
           "include": "#operational-expression"
+        },
+        {
+          "include": "#literal-list"
         }
       ]
     },
     "functional-expression": {
+      "match": "(?xi)\\b\r\n(zero | one | add | (?:inv_)?(?:src1?|dest)(?:_color|_alpha) | (?:inv_)?blend_factor |\r\n ref(?:erence)? | copy(?:_desc)? | stereo2mono | set_viewport\r\n)\r\n\\s+\r\n([\\w$][\\w.\\-\\\\@' \\t/()]+)",
       "name": "meta.expression.functional.ini.3dm",
-      "match": "(?i)\\b([a-z_]+|stereo2mono)\\s+([\\w$][\\w.\\-\\\\@' \\t]+)",
       "captures": {
         "1": {
           "patterns": [
@@ -801,8 +804,21 @@
         }
       }
     },
+    "literal-list": {
+      "match": "(?i)\\b([\\w.\\-\\\\@' \\t/()]+)",
+      "name": "meta.expression.literal-list.ini.3dm",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#constant"
+            }
+          ]
+        }
+      }
+    },
     "functional-keyword": {
-      "name": "keyword.other.function.ini.3dm",
+      "name": "keyword.other.functional.ini.3dm",
       "match": "(?i)\\b(?:one|zero|raw|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|no_view_cache|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\\[(\\d+)\\])?)\\b",
       "captures": {
         "1": {
@@ -882,7 +898,7 @@
         },
         {
           "name": "variable.parameter.ini.3dm",
-          "match": "\\b(?i)([xyzwo]\\d{0,3})\\b"
+          "match": "(?i)(?<![ \\t]*key\\s*=\\s*.+)\\b([xyzwo]\\d{0,3})\\b"
         },
         {
           "name": "variable.language.ini.3dm",
@@ -950,7 +966,7 @@
         },
         {
           "name": "constant.language.ini.3dm",
-          "match": "\\b(?i)(?:time|none|skip)\\b"
+          "match": "\\b(?i)(?:time|none|skip|disable)\\b"
         },
         {
           "name": "constant.other.path.ini.3dm",
@@ -971,6 +987,10 @@
         {
           "name": "meta.keyword.rword keyword.control.ini.3dm",
           "match": "\\b(?i)(unless_null)"
+        },
+        {
+          "name": "meta.keyword.rword keyword.other.key.ini.3dm",
+          "match": "\\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)"
         },
         {
           "name": "meta.keyword.rword constant.language.window.ini.3dm",

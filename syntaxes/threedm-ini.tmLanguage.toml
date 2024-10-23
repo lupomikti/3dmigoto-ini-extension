@@ -47,7 +47,8 @@ begin = '''(?xi)
 (?:^(\[) # capture group 1
     ((?:
         (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |
-        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Include|Preset).+
+        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |
+        Include.*
      )
     ) # capture group 2
     (\])$) # capture group 3
@@ -56,7 +57,8 @@ end = '''(?xi)
 (?=^\[
 (?:
   (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |
-  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Include|Preset).+
+  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |
+  Include.*
 )
 \]$|\z)''' # \z is there to match the end of the file
 beginCaptures.1.name = "punctuation.definition.entity.ini.3dm"
@@ -71,7 +73,7 @@ beginCaptures.2.patterns = [
     {match = '(?i)(?:BuiltIn)?CommandList.+', name = "entity.name.section.group-title.ini.3dm.command-list"},
     {match = '(?i)Resource.+', name = "entity.name.section.group-title.ini.3dm.resource"},
     {match = '(?i)ShaderRegex.+', name = "entity.name.section.group-title.ini.3dm.shader-regex"},
-    {match = '(?i)Include.+', name = "entity.name.section.group-title.ini.3dm.include"},
+    {match = '(?i)Include.*', name = "entity.name.section.group-title.ini.3dm.include"},
     {match = '(?i)Logging', name = "entity.name.section.group-title.ini.3dm.logging"},
     {match = '(?i)Hunting', name = "entity.name.section.group-title.ini.3dm.hunting"},
     {match = '(?i)System', name = "entity.name.section.group-title.ini.3dm.system"},
@@ -110,7 +112,7 @@ patterns = [
 
 [[repository.section.patterns]]
 name = "meta.structure.section.key.ini.3dm"
-begin = '(?i)(?<=^\[Key\S+\]$)'
+begin = '(?i)(?<=^\[Key.+\]$)'
 end = '(?i)(?=^\[.+\]$|\z)'
 patterns = [
     # comment must be last here to allow for ; to be used as a hotkey value without being treated as an invalid comment
@@ -217,7 +219,7 @@ patterns = [
 
 [[repository.section.patterns]]
 name = "meta.structure.section.preset.ini.3dm"
-begin = '(?i)(?<=^\[Preset.*\]$)'
+begin = '(?i)(?<=^\[Preset.+\]$)'
 end = '(?i)(?=^\[.+\]$|\z)'
 patterns = [
     {include = "#comment"},
@@ -382,7 +384,7 @@ captures.3.patterns = [{include = "#Rvalue"}]
 # TODO: clean this section up a bit, see if I have any values here that aren't actually Lwords and should be Rwords instead.
 patterns = [
     {name = "meta.keyword.lword keyword.other.ini.3dm.common", match = '(?i)\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling|special)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.key-section", match = '(?i)\b(condition|key|back|type|warp|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.key-section", match = '(?i)\b(condition|key|back|smart|type|wrap|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)'},
     {name = "meta.keyword.lword keyword.other.ini.3dm.resource", match = '(?i)\b(type|filename|stride|data|array|max_copies_per_frame|mode|bind_flags)'},
     {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override", match = '(?i)\b(stereomode|iteration|expand_region_copy|deny_cpu_read|checktextureoverride)'},
     {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override", match = '(?i)\b(match_(?:type|usage|bind_flags|cpu_access_flags|misc_flags|byte_width|stride|mips|depth|array|msaa|msaa_quality|first_vertex|first_index|first_instance|vertex_count|index_count|instance_count|priority))'},
@@ -422,15 +424,25 @@ patterns = [
 
 [repository.operation]
 patterns = [
-    # The order of these two is important. Some highlighting will break if swapped.
+    # The order of the first two is important. Some highlighting will break if operational comes before functional.
     {include = "#functional-expression"},
-    {include = "#operational-expression"}
+    {include = "#operational-expression"},
+    {include = "#literal-list"},
 ]
 
-[repository.functional-expression]
 # A functional expression is one that behaves like a function in this environment which does not have clearly defined functions
+# Since this is only included in Rvalue, there's no need to have all possible functional-keywords
+# Thus we can explicitly match for the ones expected in the main regex before using the captures to assign scopes
+# These should be ref(erence), copy(_desc), stereo2mono, set_viewport, and all the keywords that come on the right side of `blend =` except disable
+# There are probably more I'm missing but they can be added later
+[repository.functional-expression]
+match = '''(?xi)\b
+(zero | one | add | (?:inv_)?(?:src1?|dest)(?:_color|_alpha) | (?:inv_)?blend_factor |
+ ref(?:erence)? | copy(?:_desc)? | stereo2mono | set_viewport
+)
+\s+
+([\w$][\w.\-\\@' \t/()]+)'''
 name = "meta.expression.functional.ini.3dm"
-match = '''(?i)\b([a-z_]+|stereo2mono)\s+([\w$][\w.\-\\@' \t]+)'''
 captures.1.patterns = [{include = "#functional-keyword"}]
 captures.2.patterns = [
     {include = "#functional-keyword"},
@@ -438,8 +450,15 @@ captures.2.patterns = [
     {include = "#constant"},
 ]
 
+[repository.literal-list]
+match = '''(?i)\b([\w.\-\\@' \t/()]+)'''
+name = "meta.expression.literal-list.ini.3dm"
+captures.1.patterns = [
+    {include = "#constant"},
+]
+
 [repository.functional-keyword]
-name = "keyword.other.function.ini.3dm"
+name = "keyword.other.functional.ini.3dm"
 match = '(?i)\b(?:one|zero|raw|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|no_view_cache|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\[(\d+)\])?)\b'
 captures.1.name = "constant.numeric.ini.3dm"
 
@@ -482,7 +501,7 @@ match = '\b(?i)([vhdgpc]s(?:-[tu]\d{1,3})?|[pc]-u)\b'
 
 [[repository.variable.patterns]]
 name = "variable.parameter.ini.3dm"
-match = '\b(?i)([xyzwo]\d{0,3})\b'
+match = '(?i)(?<![ \t]*key\s*=\s*.+)\b([xyzwo]\d{0,3})\b'
 
 [[repository.variable.patterns]]
 name = "variable.language.ini.3dm"
@@ -516,7 +535,7 @@ patterns = [
     {include = "#Rword"},
     {name = "constant.language.boolean.ini.3dm", match = '\b(?i)(?:true|false)\b'},
     {name = "constant.language.numeric.ini.3dm", match = '\b(?i)(?:null|inf|NaN)\b'},
-    {name = "constant.language.ini.3dm", match = '\b(?i)(?:time|none|skip)\b'}, # none and skip are Rwords, but I need to nail down what section(s)/Lword(s) they go with
+    {name = "constant.language.ini.3dm", match = '\b(?i)(?:time|none|skip|disable)\b'}, # none, skip, disable are Rwords, but I need to nail down what section(s)/Lword(s) they go with
     {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*[\\/]+)(?:(?:(?:[a-z]:|\.)[\\/])?[\w@'\-.()]+(?:(?:\\|/)[\w@ '\-.()]+)+)'''},
     {name = "constant.other.file.ini.3dm", match = '''(?i)[\w@'\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
     {name = "constant.numeric.ini.3dm", match = '\b\d+(?:\.\d+)?\b'},
@@ -526,6 +545,7 @@ patterns = [
 # TODO: go through these keywords and figure out which if any are able to be used on both sides of an =
 patterns = [
     {name = "meta.keyword.rword keyword.control.ini.3dm", match = '\b(?i)(unless_null)'},
+    {name = "meta.keyword.rword keyword.other.key.ini.3dm", match = '\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)'},
     {name = "meta.keyword.rword constant.language.window.ini.3dm", match = '\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_screen_x|cursor_screen_y|cursor_window_x|cursor_window_y|cursor_x|cursor_y)\b'},
     {name = "meta.keyword.rword constant.language.draw.ini.3dm", match = '\b(?i)(?:auto|vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type)'},
     {name = "meta.keyword.rword constant.language.system.ini.3dm", match = '\b(?i)(?:stereo_active|sli)'},
