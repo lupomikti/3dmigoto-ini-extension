@@ -462,9 +462,14 @@ name = "keyword.other.functional.ini.3dm"
 match = '(?i)\b(?:one|zero|raw|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|no_view_cache|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\[(\d+)\])?)\b'
 captures.1.name = "constant.numeric.ini.3dm"
 
-[repository.operational-expression]
 # An operational expression is meant to be a combination of a mathematical expression and a comparison expression
 # we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
+[repository.operational-expression]
+# These next 3 lines exist solely because I got tired of it being the only expression with no meta scope applied
+# name requires the presence of match, match can't be used with patterns, and contentName requires begin and end
+begin = '(?i)(?:\b|(?<=.+=\s*))'
+end = '$|\n'
+contentName = "meta.expression.operational.ini.3dm"
 patterns = [
     # Order is also important here. For example, illegal-operator must come before operator, both must come at the top, and round-braces must be last
     {include = "#illegal-operator"},

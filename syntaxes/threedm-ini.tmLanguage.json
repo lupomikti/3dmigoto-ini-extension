@@ -827,6 +827,9 @@
       }
     },
     "operational-expression": {
+      "begin": "(?i)(?:\\b|(?<=.+=\\s*))",
+      "end": "$|\\n",
+      "contentName": "meta.expression.operational.ini.3dm",
       "patterns": [
         {
           "include": "#illegal-operator"
