@@ -1,5 +1,5 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-version = "0.3.2"
+version = "0.3.5"
 scopeName = "source.ini.3dm"
 name = "3dm-ini"
 fileTypes = ["ini"]
@@ -345,9 +345,10 @@ patterns = [
 [repository.conditional-expression]
 name = "meta.expression.conditional.ini.3dm"
 begin = '(?i)^[ \t]*(?:(if|elif|else if)(?= )|(else[ \t]*$|endif[ \t]*$))'
-end = '$|\n'
 beginCaptures.1.name = "keyword.control.flow.ini.3dm"
 beginCaptures.2.name = "keyword.control.flow.ini.3dm"
+end = '$|\n'
+contentName = "meta.expression.operational.ini.3dm"
 patterns = [{include = "#operational-expression"}]
 
 [repository.definition]
@@ -424,10 +425,10 @@ patterns = [
 
 [repository.operation]
 patterns = [
-    # The order of the first two is important. Some highlighting will break if operational comes before functional.
+    # The order of these three is important. Some highlighting will break if operational comes before functional, or literal-list comes after operational.
     {include = "#functional-expression"},
-    {include = "#operational-expression"},
     {include = "#literal-list"},
+    {include = "#operational-expression"},
 ]
 
 # A functional expression is one that behaves like a function in this environment which does not have clearly defined functions
@@ -451,9 +452,12 @@ captures.2.patterns = [
 ]
 
 [repository.literal-list]
-match = '''(?i)\b([\w.\-\\@' \t/()]+)'''
+match = '''(?i)\b(\w+)(?: +(\w+))+?'''
 name = "meta.expression.literal-list.ini.3dm"
 captures.1.patterns = [
+    {include = "#constant"},
+]
+captures.2.patterns = [
     {include = "#constant"},
 ]
 
@@ -465,11 +469,6 @@ captures.1.name = "constant.numeric.ini.3dm"
 # An operational expression is meant to be a combination of a mathematical expression and a comparison expression
 # we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
 [repository.operational-expression]
-# These next 3 lines exist solely because I got tired of it being the only expression with no meta scope applied
-# name requires the presence of match, match can't be used with patterns, and contentName requires begin and end
-begin = '(?i)(?:\b|(?<=.+=\s*))'
-end = '$|\n'
-contentName = "meta.expression.operational.ini.3dm"
 patterns = [
     # Order is also important here. For example, illegal-operator must come before operator, both must come at the top, and round-braces must be last
     {include = "#illegal-operator"},
@@ -484,16 +483,23 @@ name = "invalid.illegal.operator.ini.3dm"
 match = '(?xi) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [!><]{2,} | &{3,} | \|{3,} | \^+ '
 
 [repository.operator]
-match = '(?xi) ( \*\* | \* | \+ | - | % | // | / ) | ( !== | != | === | == | >= | <= | > | < ) | ( ! | && | \|\| )'
+match = '''(?xi)
+(?<! ^\s* (?:key|back) \s* = \s* .+) # prevents / and = from being highlighted when specified as a key in a Key section; - too, but this character cannot be used already, 3dmigoto doesn't like it, you have to use the vk name or hex
+(?:
+  ( \*\* | \* | \+ | - | % | // | / ) |       # arithmetic operators
+  ( !== | != | === | == | >= | <= | > | < ) | # comparison operators
+  ( ! | && | \|\| )                           # logical operators
+)'''
 captures.1.name = "keyword.operator.math.ini.3dm"
 captures.2.name = "keyword.operator.comparison.ini.3dm"
 captures.3.name = "keyword.operator.logical.ini.3dm"
 
 [repository.round-braces]
 begin = '\('
-end = '\)'
 beginCaptures.0.name = "punctuation.parenthesis.begin.ini.3dm"
+end = '\)'
 endCaptures.0.name = "punctuation.parenthesis.end.ini.3dm"
+contentName = "meta.expression.operational.nested.ini.3dm"
 patterns = [{include = "#operational-expression"}]
 
 [[repository.variable.patterns]]
