@@ -78,8 +78,8 @@
     },
     "section": {
       "name": "meta.structure.section.ini.3dm",
-      "begin": "(?xi)\r\n(?:^(\\[) # capture group 1\r\n    ((?:\r\n        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\r\n        Include.*\r\n     )\r\n    ) # capture group 2\r\n    (\\])$) # capture group 3\r\n(?<=^\\[\\2\\]$)",
-      "end": "(?xi)\r\n(?=^\\[\r\n(?:\r\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\r\n  Include.*\r\n)\r\n\\]$|\\z)",
+      "begin": "(?xi)\r\n(?:^(\\[) # capture group 1\r\n    ((?:\r\n        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\r\n        Include.*\r\n     )\r\n    )    # capture group 2\r\n    (\\]) # capture group 3\r\n[ \\t]*$)\r\n(?<=^\\[\\2\\][ \\t]*$)",
+      "end": "(?xi)\r\n(?=^\\[\r\n(?:\r\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\r\n  Include.*\r\n)\r\n\\][ \\t]*$|\\z)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.entity.ini.3dm"
@@ -188,8 +188,8 @@
       "patterns": [
         {
           "name": "meta.structure.section.constants.ini.3dm",
-          "begin": "(?i)(?<=^\\[Constants\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Constants\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -201,8 +201,8 @@
         },
         {
           "name": "meta.structure.section.present.ini.3dm",
-          "begin": "(?i)(?<=^\\[Present\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Present\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -220,8 +220,8 @@
         },
         {
           "name": "meta.structure.section.key.ini.3dm",
-          "begin": "(?i)(?<=^\\[Key.+\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Key.+\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#conditional-expression"
@@ -239,8 +239,8 @@
         },
         {
           "name": "meta.structure.section.texture-override.ini.3dm",
-          "begin": "(?i)(?<=^\\[TextureOverride.+\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[TextureOverride.+\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -258,8 +258,8 @@
         },
         {
           "name": "meta.structure.section.shader-override.ini.3dm",
-          "begin": "(?i)(?<=^\\[ShaderOverride.+\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[ShaderOverride.+\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -277,8 +277,8 @@
         },
         {
           "name": "meta.structure.section.custom-shader.ini.3dm",
-          "begin": "(?i)(?<=^\\[(?:BuiltIn)?CustomShader.+\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[(?:BuiltIn)?CustomShader.+\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -296,8 +296,8 @@
         },
         {
           "name": "meta.structure.section.command-list.ini.3dm",
-          "begin": "(?i)(?<=^\\[(?:BuiltIn)?CommandList.+\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[(?:BuiltIn)?CommandList.+\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -315,8 +315,8 @@
         },
         {
           "name": "meta.structure.section.resource.ini.3dm",
-          "begin": "(?i)(?<=^\\[Resource.+\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Resource.+\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -328,8 +328,8 @@
         },
         {
           "name": "meta.structure.section.shader-regex-pattern.ini.3dm",
-          "begin": "(?i)(?<=^\\[ShaderRegex.+\\.Pattern\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[ShaderRegex.+\\.Pattern\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "contentName": "meta.embedded.block.regexp",
           "patterns": [
             {
@@ -342,8 +342,8 @@
         },
         {
           "name": "meta.structure.section.shader-regex-replace.ini.3dm",
-          "begin": "(?i)(?<=^\\[ShaderRegex.+\\.Pattern\\.Replace\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[ShaderRegex.+\\.Pattern\\.Replace\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -355,8 +355,8 @@
         },
         {
           "name": "meta.structure.section.shader-regex.ini.3dm",
-          "begin": "(?i)(?<!^\\[ShaderRegex.+\\.Pattern.*\\]$)(?<=^\\[ShaderRegex.+\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<!^\\[ShaderRegex.+\\.Pattern.*\\]$)(?<=^\\[ShaderRegex.+\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -374,8 +374,8 @@
         },
         {
           "name": "meta.structure.section.include.ini.3dm",
-          "begin": "(?i)(?<=^\\[Include.*\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Include.*\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -393,8 +393,8 @@
         },
         {
           "name": "meta.structure.section.preset.ini.3dm",
-          "begin": "(?i)(?<=^\\[Preset.+\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Preset.+\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -412,8 +412,8 @@
         },
         {
           "name": "meta.structure.section.logging.ini.3dm",
-          "begin": "(?i)(?<=^\\[Logging\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Logging\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -425,8 +425,8 @@
         },
         {
           "name": "meta.structure.section.hunting.ini.3dm",
-          "begin": "(?i)(?<=^\\[Hunting\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Hunting\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -438,8 +438,8 @@
         },
         {
           "name": "meta.structure.section.system.ini.3dm",
-          "begin": "(?i)(?<=^\\[System\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[System\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -451,8 +451,8 @@
         },
         {
           "name": "meta.structure.section.device.ini.3dm",
-          "begin": "(?i)(?<=^\\[Device\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Device\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -464,8 +464,8 @@
         },
         {
           "name": "meta.structure.section.stereo.ini.3dm",
-          "begin": "(?i)(?<=^\\[Stereo\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Stereo\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -477,8 +477,8 @@
         },
         {
           "name": "meta.structure.section.rendering.ini.3dm",
-          "begin": "(?i)(?<=^\\[Rendering\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Rendering\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -490,8 +490,8 @@
         },
         {
           "name": "meta.structure.section.profile.ini.3dm",
-          "begin": "(?i)(?<=^\\[Profile\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Profile\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -503,8 +503,8 @@
         },
         {
           "name": "meta.structure.section.convergence-map.ini.3dm",
-          "begin": "(?i)(?<=^\\[ConvergenceMap\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[ConvergenceMap\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -516,8 +516,8 @@
         },
         {
           "name": "meta.structure.section.loader.ini.3dm",
-          "begin": "(?i)(?<=^\\[Loader\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[Loader\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -529,8 +529,8 @@
         },
         {
           "name": "meta.structure.section.clear-render-target-view.ini.3dm",
-          "begin": "(?i)(?<=^\\[ClearRenderTargetView\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[ClearRenderTargetView\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -548,8 +548,8 @@
         },
         {
           "name": "meta.structure.section.clear-depth-stencil-view.ini.3dm",
-          "begin": "(?i)(?<=^\\[ClearDepthStencilView\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[ClearDepthStencilView\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -567,8 +567,8 @@
         },
         {
           "name": "meta.structure.section.clear-unordered-access-view.ini.3dm",
-          "begin": "(?i)(?<=^\\[ClearUnorderedAccessView(?:Uint|Float)\\]$)",
-          "end": "(?i)(?=^\\[.+\\]$|\\z)",
+          "begin": "(?i)(?<=^\\[ClearUnorderedAccessView(?:Uint|Float)\\][ \\t]*$)",
+          "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
               "include": "#comment"
@@ -907,7 +907,7 @@
         },
         {
           "name": "variable.parameter.ini.3dm",
-          "match": "(?i)(?<![ \\t]*key\\s*=\\s*.+)\\b([xyzwo]\\d{0,3})\\b"
+          "match": "(?i)(?<![ \\t]*key\\s*=\\s*.+)\\b(?:(?<!$)[xyzwo]\\d{0,3})\\b"
         },
         {
           "name": "variable.language.ini.3dm",
@@ -915,7 +915,7 @@
         },
         {
           "name": "meta.variable.ini.3dm",
-          "match": "(?xi) (\\$) (?: ([a-z_]\\w+)  |  (\\\\)([\\w.@' \\-\\\\]+)(\\\\) ([a-z_]\\w+) )",
+          "match": "(?xi) (\\$) (?: ([a-z_]\\w+|[a-z])  |  (\\\\)([\\w.@' \\-\\\\]+)(\\\\) ([a-z_]\\w+|[a-z]) )",
           "captures": {
             "1": {
               "name": "punctuation.definition.variable.ini.3dm"
@@ -1003,7 +1003,7 @@
         },
         {
           "name": "meta.keyword.rword constant.language.window.ini.3dm",
-          "match": "\\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_screen_x|cursor_screen_y|cursor_window_x|cursor_window_y|cursor_x|cursor_y)\\b"
+          "match": "\\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_(?:screen_|window_|hotspot_)?[xy]|cursor_showing)\\b"
         },
         {
           "name": "meta.keyword.rword constant.language.draw.ini.3dm",
