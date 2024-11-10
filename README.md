@@ -77,4 +77,16 @@ Open up your `settings.json` file; you can do this by opening the command palett
 
 ## Development Info
 
-The main thing to note about how this project is set up in its current state is that instead of using YAML for the grammar and then converting to JSON, it uses TOML for the grammar and then converts to JSON. The conversion is done with a simple script in the `bin` directory; the `package.json` is set up such that while in the project root, you can type `toml-to-json` in the CLI and it will perform the conversion -- no need for `npm run`.
+The main thing to note about how this project is set up in its current state is that instead of using YAML for the grammar and then converting to JSON, it uses TOML for the grammar and then converts to JSON. The conversion is done with a simple script in the `bin` directory; the `package.json` is set up such that while in the project root, you can type `toml-to-json` in the CLI and it will perform the conversion -- no need for `npm run` (you do need to be sure to link it though by running `npm link`).
+
+#### VS Code Extension
+
+To build the VS Code Extension VSIX package while in its directory, do the following:
+
+`vsce package --follow-symlinks --ignoreFile "..\.vscodeignore"`
+
+If you want to have the version increment or be set to a specific one:
+
+`vsce package <version> --follow-symlinks --ignoreFile "..\.vscodeignore" -m <commit-message> --no-git-tag-version [--pre-release]`
+
+where `<version>` can be like "0.4.3" or "minor".
