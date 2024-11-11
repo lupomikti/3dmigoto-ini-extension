@@ -15,10 +15,7 @@ repository.escapes.patterns = [
     {match = '\\.', name = "constant.character.escape.regexp-replace"},
 ]
 
-[[repository.variables.patterns]]
-match = '\$\$'
-name = "constant.character.escape.regexp-replace"
-
-[[repository.variables.patterns]]
-match = '\$(?x)( \d+ | \{ \w+ \} )'
-name = "variable.other.constant.capture-content.regexp-replace"
+repository.variables.patterns = [
+    {match = '\$\$', name = "constant.character.escape.regexp-replace"},
+    {match = '\$(?x)( \d+ | \{ \w+ \} )', name = "variable.other.constant.capture-content.regexp-replace"},
+]
