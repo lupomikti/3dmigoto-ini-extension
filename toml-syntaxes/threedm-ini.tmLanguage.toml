@@ -481,7 +481,7 @@ patterns = [
 
 [[repository.illegal-operator.patterns]]
 name = "invalid.illegal.operator.ini.3dm"
-match = '(?xi) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [!><]{2,} | &{3,} | \|{3,} | \^+ '
+match = '(?xi) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [><]{2,} | &{3,} | \|{3,} | \^+ '
 
 [repository.operator]
 match = '''(?xi)
