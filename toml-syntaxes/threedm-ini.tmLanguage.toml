@@ -533,10 +533,10 @@ captures.5.name = "punctuation.separator.namespace.ini.3dm"
 captures.6.name = "variable.other.readwrite.ini.3dm"
 
 [[repository.variable.patterns]]
-name = "meta.function-call variable.function.ini.3dm"
+name = "meta.function-call variable.other.function.ini.3dm"
 #                        The prefixable section names I've seen in use              \     namespace    \      user-provided name
 match = '''\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\)([\w.@' \-\\]+)(\\))?([\w.]+)'''
-captures.1.name = "entity.name.section-type.ini.3dm"
+captures.1.name = "entity.name.function.section-type.ini.3dm"
 captures.2.name = "punctuation.separator.namespace.ini.3dm"
 captures.3.name = "entity.name.namespace.ini.3dm"
 captures.4.name = "punctuation.separator.namespace.ini.3dm"
