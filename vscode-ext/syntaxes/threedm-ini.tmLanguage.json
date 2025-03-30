@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "0.3.5",
+  "version": "0.4.0",
   "scopeName": "source.ini.3dm",
   "name": "3dm-ini",
   "fileTypes": [
@@ -78,8 +78,8 @@
     },
     "section": {
       "name": "meta.structure.section.ini.3dm",
-      "begin": "(?xi)\r\n(?:^(\\[) # capture group 1\r\n    ((?:\r\n        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\r\n        Include.*\r\n     )\r\n    )    # capture group 2\r\n    (\\]) # capture group 3\r\n[ \\t]*$)\r\n(?<=^\\[\\2\\][ \\t]*$)",
-      "end": "(?xi)\r\n(?=^\\[\r\n(?:\r\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\r\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\r\n  Include.*\r\n)\r\n\\][ \\t]*$|\\z)",
+      "begin": "(?xi)\n(?:^(\\[) # capture group 1\n    ((?:\n        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\n        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\n        Include.*\n     )\n    )    # capture group 2\n    (\\]) # capture group 3\n[ \\t]*$)\n(?<=^\\[\\2\\][ \\t]*$)",
+      "end": "(?xi)\n(?=^\\[\n(?:\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\n  Include.*\n)\n\\][ \\t]*$|\\z)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.entity.ini.3dm"
@@ -429,10 +429,10 @@
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
-              "include": "#comment"
+              "include": "#definition"
             },
             {
-              "include": "#definition"
+              "include": "#comment"
             }
           ]
         },
@@ -607,7 +607,7 @@
     },
     "definition": {
       "name": "meta.structure.definition.ini.3dm",
-      "match": "(?xi)\r\n^[ \\t]* (\\w+) # optional whitespace followed by a word-like\r\n\\s* (=) \\s* # kvp separator surrounded by optional whitespace\r\n([@\\w\\$.\\-,+/* \\t%=\\\\!><\"\\[\\]';:|&()]*) # Rvalue, optional\r\n(?:$|\\n)",
+      "match": "(?xi)\n^[ \\t]* (\\w+) # optional whitespace followed by a word-like\n\\s* (=) \\s* # kvp separator surrounded by optional whitespace\n([@\\w\\$.\\-,+/* \\t%=\\\\!><\"\\[\\]';:|&()]*) # Rvalue, optional\n(?:$|\\n)",
       "captures": {
         "1": {
           "patterns": [
@@ -630,7 +630,7 @@
     },
     "declaration": {
       "name": "meta.structure.declaration.ini.3dm",
-      "match": "(?xi)\r\n^[ \\t]* # optional leading whitespace\r\n(\r\n  (?:(?:\\w+)\\ +){0,2}     # between 0 and 2 keywords inclusive\r\n  (?:[$\\w\\-.\\\\/@ '\\[\\]]+) # another keyword, a variable, or a constant\r\n)\r\n\\s*\r\n(?:\r\n  (=) \\s* # assignment/declaration operator, surrounded by optional whitespace\r\n  ([=$!@\\w.\\-,+/* \\t%\\\\()\"|&><]+) # Rvalue\r\n)? # Operator and Rvalue are optional, e.g. `global $variable` on a line by itself\r\n(?:$|\\n)",
+      "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(\n  (?:(?:\\w+)\\ +){0,2}     # between 0 and 2 keywords inclusive\n  (?:[$\\w\\-.\\\\/@ '\\[\\]]+) # another keyword, a variable, or a constant\n)\n\\s*\n(?:\n  (=) \\s* # assignment/declaration operator, surrounded by optional whitespace\n  ([=$!@\\w.\\-,+/* \\t%\\\\()\"|&><]+) # Rvalue\n)? # Operator and Rvalue are optional, e.g. `global $variable` on a line by itself\n(?:$|\\n)",
       "captures": {
         "1": {
           "patterns": [
@@ -654,68 +654,104 @@
     "Lword": {
       "patterns": [
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.common",
-          "match": "(?i)\\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling|special)"
+          "name": "meta.keyword.lword keyword.other.ini.3dm.multi-section",
+          "match": "(?i)\\b(separation|convergence|hash|filter_index|match_priority|run|condition|format|(?:width|height)(?:_multiply)?|type)\\b"
+        },
+        {
+          "name": "meta.keyword.lword keyword.other.ini.3dm.command-list.general",
+          "match": "(?i)\\b(checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\\b"
+        },
+        {
+          "name": "meta.keyword.lword keyword.other.ini.3dm.command-list.draw-instruction",
+          "match": "(?i)\\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.key-section",
-          "match": "(?i)\\b(condition|key|back|smart|type|wrap|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)"
+          "match": "(?i)\\b(key|back|(?:release_)?delay|wrap|smart|(?:release_)?transition(?:_type)?)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.resource",
-          "match": "(?i)\\b(type|filename|stride|data|array|max_copies_per_frame|mode|bind_flags)"
+          "match": "(?i)\\b(filename|data|max_copies_per_frame|mode|(?:bind|misc)_flags|depth|mips|array|msaa(?:_quality)?|byte_width|stride)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override",
-          "match": "(?i)\\b(stereomode|iteration|expand_region_copy|deny_cpu_read|checktextureoverride)"
+          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override.resource-match",
+          "match": "(?i)\\b(stereomode|expand_region_copy|deny_cpu_read|iteration)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override",
-          "match": "(?i)\\b(match_(?:type|usage|bind_flags|cpu_access_flags|misc_flags|byte_width|stride|mips|depth|array|msaa|msaa_quality|first_vertex|first_index|first_instance|vertex_count|index_count|instance_count|priority))"
+          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override.vertex-limit",
+          "match": "(?i)\\b(override_(?:byte_stride|vertex_count))\\b"
+        },
+        {
+          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override.draw-match",
+          "match": "(?i)\\b(match_(?:(?:first_)?(?:vertex|index|instance)(?:_count)?))\\b"
+        },
+        {
+          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override.fuzzy-match",
+          "match": "(?i)\\b(match_(?:type|usage|(?:bind|cpu_access|misc)_flags|(?:byte_)?width|height|stride|mips|format|depth|array|msaa(?:_quality)?))\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.custom-shader",
-          "match": "(?i)\\b(max_executions_per_frame|flags|blend(?:_factor|_state_merge|)|alpha(?:_to_coverage|)|mask|sample_mask|depth(?:_enable|_write_mask|_func|_stencil_state_merge|_clip_enable|_bias|_bias_clamp)|stencil(?:_enable|_read_mask|_write_mask|_front|stencil_back|stencil_ref)|fill|cull|front|slope_scaled_depth_bias|depth|scissor_enable|multisample_enable|antialiased_line_enable|rasterizer_state_merge|topology|sampler|src_alpha_sat|zero|one)"
+          "match": "(?i)\\b(flags|max_executions_per_frame|topology|sampler)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.shader-regex-command-list",
-          "match": "(?i)\\b(shader_model|temps)"
+          "name": "meta.keyword.lword keyword.other.ini.3dm.custom-shader.blend-state",
+          "match": "(?i)\\b((?:blend|alpha|mask)(?:\\[([0-7])\\])?|blend_factor\\[([0-3])\\]|alpha_to_coverage|sample_mask|blend_state_merge)\\b",
+          "captures": {
+            "2": {
+              "name": "constant.numeric.ini.3dm"
+            },
+            "3": {
+              "name": "constant.numeric.ini.3dm"
+            }
+          }
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.shader-override-command-list",
-          "match": "(?i)\\b(allow_duplicate_hash|depth_filter|partner|model|disable_scissor)"
+          "name": "meta.keyword.lword keyword.other.ini.3dm.custom-shader.depth-stencil-state",
+          "match": "(?i)\\b(depth_(?:enable|write_mask|func|stencil_state_merge)|stencil_(?:enable|(?:read|write)_mask|front|back|ref))\\b"
+        },
+        {
+          "name": "meta.keyword.lword keyword.other.ini.3dm.custom-shader.rs-state",
+          "match": "(?i)\\b(fill|cull|front|depth_(?:bias(?:_clamp)?|clip_enable)|slope_scaled_depth_bias|(?:depth_clip|scissor|multisample|antialiased_line)_enable|rasterizer_state_merge)\\b"
+        },
+        {
+          "name": "meta.keyword.lword keyword.other.ini.3dm.shader-regex",
+          "match": "(?i)\\b(shader_model|temps)\\b"
+        },
+        {
+          "name": "meta.keyword.lword keyword.other.ini.3dm.shader-override",
+          "match": "(?i)\\b((?:allow_duplicate_)hash|depth_filter|partner|model|disable_scissor)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.include",
-          "match": "(?i)\\b((?:in|ex)clude(?:_recursive)?)"
+          "match": "(?i)\\b((?:in|ex)clude(?:_recursive)?|user_config)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.logging",
-          "match": "(?i)\\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|convergence|separation|crash|show_warnings)"
+          "match": "(?i)\\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|wait_for_debugger|crash|dump_all_profiles|show_warnings)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.hunting",
-          "match": "(?i)\\b((?:done_|toggle_)?hunting|(?:next_)?marking(?:_mode|_actions)|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune(?:1|2)_(?:up|down)|analyse_(?:frame|options))"
+          "match": "(?i)\\b((?:done_|toggle_)?hunting|(?:next_)?marking_mode|marking_actions|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune[123]_(?:up|down)|analyse_frame|kill_deferred)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.system",
-          "match": "(?i)\\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update))"
+          "match": "(?i)\\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.loader",
-          "match": "(?i)\\b(target|module|require_admin|launch|delay|loader)"
+          "match": "(?i)\\b(target|module|require_admin|launch|delay|loader|check_version|entry_point|hook_proc|wait_for_target)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.device",
-          "match": "(?i)\\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor)"
+          "match": "(?i)\\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor|cursor_upscaling_bypass)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.stereo",
-          "match": "(?i)\\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)"
+          "match": "(?i)\\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.rendering",
-          "match": "(?i)\\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl)|dump_usage|fix_(?:sv_position|ZRepair_.+|InvTransform|BackProjectionTransform\\d|ObjectPosition\\d(?:Multiplier)?|MatrixOperand\\d(?:Multiplier)?|recompile_all_vs))"
+          "match": "(?i)\\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl|binary)|dump_usage|fix_(?:sv_position|ZRepair_.+|BackProjectionTransform\\d|ObjectPosition\\d(?:Multiplier)?|MatrixOperand\\d(?:Multiplier)?|recompile_all_vs))\\b"
         },
         {
           "include": "#functional-keyword"
@@ -780,7 +816,7 @@
       ]
     },
     "functional-expression": {
-      "match": "(?xi)\\b\r\n(zero | one | add | (?:inv_)?(?:src1?|dest)(?:_color|_alpha) | (?:inv_)?blend_factor |\r\n ref(?:erence)? | copy(?:_desc)? | stereo2mono | set_viewport\r\n)\r\n\\s+\r\n([\\w$][\\w.\\-\\\\@' \\t/()]+)",
+      "match": "(?xi)\\b\n( copy(?:_desc(?:ription)?)? | ref(?:erence)? |\n  raw | stereo | mono | stereo2mono | set_viewport |no_view_cache | resolve_msaa\n)\n\\s+\n([\\w$][\\w.\\-\\\\@' \\t/()]+)",
       "name": "meta.expression.functional.ini.3dm",
       "captures": {
         "1": {
@@ -792,9 +828,6 @@
         },
         "2": {
           "patterns": [
-            {
-              "include": "#functional-keyword"
-            },
             {
               "include": "#variable"
             },
@@ -826,13 +859,8 @@
       }
     },
     "functional-keyword": {
-      "name": "keyword.other.functional.ini.3dm",
-      "match": "(?i)\\b(?:one|zero|raw|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|no_view_cache|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\\[(\\d+)\\])?)\\b",
-      "captures": {
-        "1": {
-          "name": "constant.numeric.ini.3dm"
-        }
-      }
+      "name": "meta.keyword.resource-usage-modifier keyword.other.functional.ini.3dm",
+      "match": "(?i)\\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa)\\b"
     },
     "operational-expression": {
       "patterns": [
@@ -862,7 +890,7 @@
       ]
     },
     "operator": {
-      "match": "(?xi)\r\n(?<! ^\\s* (?:key|back) \\s* = \\s* .+) # prevents / and = from being highlighted when specified as a key in a Key section; - too, but this character cannot be used already, 3dmigoto doesn't like it, you have to use the vk name or hex\r\n(?:\r\n  ( \\*\\* | \\* | \\+ | - | % | // | / ) |       # arithmetic operators\r\n  ( !== | != | === | == | >= | <= | > | < ) | # comparison operators\r\n  ( ! | && | \\|\\| )                           # logical operators\r\n)",
+      "match": "(?xi)\n(?<! ^\\s* (?:key|back) \\s* = \\s* .+)\n(?:\n  ( \\*\\* | \\* | \\+ | - | % | // | / ) |       # arithmetic operators\n  ( !== | != | === | == | >= | <= | > | < ) | # comparison operators\n  ( ! | && | \\|\\| )                           # logical operators\n)",
       "captures": {
         "1": {
           "name": "keyword.operator.math.ini.3dm"
@@ -899,19 +927,23 @@
       "patterns": [
         {
           "name": "variable.language.buffer.ini.3dm",
-          "match": "\\b(?i)(?<!\\.)((([vhdgpc]s?-)cb|vb)\\d{1,3}|[ib]b)\\b"
+          "match": "\\b(?i)(?<!\\.)(?:[vhdgpc]s-cb\\d{1,2}|vb\\d|ib|(?:[rf]_)?bb)\\b"
         },
         {
           "name": "variable.language.shader.ini.3dm",
-          "match": "\\b(?i)([vhdgpc]s(?:-[tu]\\d{1,3})?|[pc]-u)\\b"
+          "match": "\\b(?i)([pc]s-u\\d|s?o\\d|od|[vhdgpc]s(?:-t\\d{1,3})?)\\b"
         },
         {
           "name": "variable.parameter.ini.3dm",
-          "match": "(?i)(?<![ \\t]*key\\s*=\\s*.+)\\b(?:(?<!$)[xyzwo]\\d{0,3})\\b"
+          "match": "(?i)(?<![ \\t]*(?:key|back)\\s*=\\s*.+)\\b(?:(?<!$)[xyzw]\\d{0,3})\\b"
         },
         {
-          "name": "variable.language.ini.3dm",
-          "match": "\\b(?i)this\\b"
+          "name": "variable.language.resource-identifiers.ini.3dm",
+          "match": "\\b(?i)(this|(?:ini|stereo)params|cursor_(?:mask|color))\\b"
+        },
+        {
+          "name": "constant.language.override-parameters.ini.3dm",
+          "match": "(?xi)\n\\b(\n  (?:rt|res|window)_(?:width|height) | (?:vertex|index|instance)_count | first_(?:vertex|index|instance) |\n  thread_group_count_[xyz] | indirect_offset | draw_type | cursor_(?: showing | (?:screen_|window_|hotspot_)?[xy] ) |\n  time | hunting | sli | frame_analysis | effective_dpi | (?:raw_|eye_)?separation | convergence |\n  stereo_(?:active|available) | scissor_(?:left|top|right|bottom)\n)\\b"
         },
         {
           "name": "meta.variable.ini.3dm",
@@ -974,12 +1006,8 @@
           "match": "\\b(?i)(?:null|inf|NaN)\\b"
         },
         {
-          "name": "constant.language.ini.3dm",
-          "match": "\\b(?i)(?:time|none|skip|disable)\\b"
-        },
-        {
           "name": "constant.other.path.ini.3dm",
-          "match": "(?i)(?=.*[\\\\/]+)(?:(?:(?:[a-z]:|\\.)[\\\\/])?[\\w@'\\-.()]+(?:(?:\\\\|/)[\\w@ '\\-.()]+)+)"
+          "match": "(?i)(?=.*[\\\\/]+)(?:(?:(?:[a-z]:|\\.)[\\\\/])?[\\w@&'\\-.()]+(?:(?:\\\\|/)[\\w@& '\\-.()]+)+)"
         },
         {
           "name": "constant.other.file.ini.3dm",
@@ -994,28 +1022,108 @@
     "Rword": {
       "patterns": [
         {
-          "name": "meta.keyword.rword keyword.control.ini.3dm",
-          "match": "\\b(?i)(unless_null)"
+          "name": "meta.keyword.rword meta.keyword.multi-section constant.language.ini.3dm",
+          "match": "\\b(?i)(none|skip|hold|mono|stereo|auto|depth_stencil|texturecube)\\b"
         },
         {
-          "name": "meta.keyword.rword keyword.other.key.ini.3dm",
-          "match": "\\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)"
+          "name": "meta.keyword.rword meta.keyword.commands constant.language.draw.ini.3dm",
+          "match": "\\b(?i)(from_caller)\\b"
         },
         {
-          "name": "meta.keyword.rword constant.language.window.ini.3dm",
-          "match": "\\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_(?:screen_|window_|hotspot_)?[xy]|cursor_showing)\\b"
+          "name": "meta.keyword.rword meta.keyword.commands constant.language.handling.ini.3dm",
+          "match": "\\b(?i)(abort)\\b"
         },
         {
-          "name": "meta.keyword.rword constant.language.draw.ini.3dm",
-          "match": "\\b(?i)(?:auto|vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type)"
+          "name": "meta.keyword.rword meta.keyword.commands constant.language.special.ini.3dm",
+          "match": "\\b(?i)(upscaling_switch_bb|draw_3dmigoto_overlay)\\b"
         },
         {
-          "name": "meta.keyword.rword constant.language.system.ini.3dm",
-          "match": "\\b(?i)(?:stereo_active|sli)"
+          "name": "meta.keyword.rword meta.keyword.commands keyword.other.clear.ini.3dm",
+          "match": "\\b(?i)(int|depth|stencil)\\b"
         },
         {
-          "name": "meta.keyword.rword constant.language.dump.ini.3dm",
-          "match": "\\b(?i)(?<!\\.)(?:dump_(?:rt|tex|[cvi]b)|buf|txt)\\b"
+          "name": "meta.keyword.rword meta.keyword.commands constant.language.direct-mode-eye.ini.3dm",
+          "match": "\\b(?i)(left|right)\\b"
+        },
+        {
+          "name": "meta.keyword.rword constant.language.shader-override.ini.3dm",
+          "match": "\\b(?i)(overrule|depth_(?:(?:in)?active))\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.cull.ini.3dm",
+          "match": "\\b(?i)(front|back)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.fill.ini.3dm",
+          "match": "\\b(?i)(wireframe|solid)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.topology.ini.3dm",
+          "match": "\\b(?i)(undefined|(point|line|triangle)_list|(line|triangle)_strip|(line|triangle)_(list|strip)_adj|[123]?\\d_control_point_patch_list)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.compile-flag.ini.3dm",
+          "match": "\\b(?i)(debug|skip_(validation|optimization)|pack_matrix_(row_major|column_major)|partial_precision|force_[vp]s_software_no_opt|no_preshader|(avoid|prefer)_flow_control|enable_(strictness|backwards_compatibility|unbounded_descriptor_tables)|ieee_strictness|optimization_level[0123]|warnings_are_errors|resources_may_alias|all_resources_bound)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.resource-usage-modifier keyword.other.functional.ini.3dm",
+          "match": "\\b(?i)(unless_null)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.resource constant.language.resource-type.ini.3dm",
+          "match": "\\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.resource constant.language.bind-flag.ini.3dm",
+          "match": "\\b(?i)((?:vertex|index|constant)_buffer|shader_resource|stream_output|render_target|unordered_access|decoder|video_encoder)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.resource constant.language.misc-flag.ini.3dm",
+          "match": "\\b(?i)(generate_mips|shared|drawindirect_args|buffer_(?:allow_raw_views|structured)|resource_clamp|shared_(?:keymutex|nthandle)|gdi_compatible|restricted_content|restrict_shared_resource(?:_driver)?|guarded|tile_pool|tiled|hw_protected)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.blend-state keyword.operator.blend-operator.ini.3dm",
+          "match": "\\b(?i)(add|(?:rev_)?subtract|min|max|disable)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.blend-state constant.language.blend-factor.ini.3dm",
+          "match": "\\b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.keys constant.language.key-type.ini.3dm",
+          "match": "\\b(?i)(activate|toggle|cycle)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.keys constant.language.transition-type.ini.3dm",
+          "match": "\\b(?i)(linear|cosine)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.keys keyword.other.modifier-key.ini.3dm",
+          "match": "\\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.system constant.language.hook-option.ini.3dm",
+          "match": "\\b(?i)(deferred_contexts|(?:immediate_)?context|device|all|recommended|except_set_(?:shader_resources|sampler|rasterizer_state)|skip_dxgi_(?:factory|device))\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.device constant.language.resolution-source.ini.3dm",
+          "match": "\\b(?i)(swap_chain)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.rendering constant.language.shader-hash-type.ini.3dm",
+          "match": "\\b(?i)(3dmigoto|embedded|bytecode)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.marking constant.language.marking-mode.ini.3dm",
+          "match": "\\b(?i)(original|pink)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.marking constant.language.marking-action.ini.3dm",
+          "match": "\\b(?i)(hlsl|asm|assembly|regex|ShaderRegex|clipboard|mono_snapshot|stereo_snapshot|snapshot_if_pink)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.analysis constant.language.analysis-option.ini.3dm",
+          "match": "\\b(?i)(dump_(?:rt|depth|tex|[cvi]b)|jp(?:s|e?g)|(?:jp(?:s|e?g)_)?dds|buf|txt|desc|clear_rt|persist|filename_(?:reg|handle)|log|dump_on_(?:unmap|update)|deferred_ctx_(?:immediate|accurate)|share_dupes|symlink|dump_(?:rt|depth|tex)_(?:jps|dds)|dump_[cvi]b_txt)\\b"
         }
       ]
     },

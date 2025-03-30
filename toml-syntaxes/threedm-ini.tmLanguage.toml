@@ -1,5 +1,5 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-version = "0.3.5"
+version = "0.4.0"
 scopeName = "source.ini.3dm"
 name = "3dm-ini"
 fileTypes = ["ini"]
@@ -243,8 +243,9 @@ name = "meta.structure.section.hunting.ini.3dm"
 begin = '(?i)(?<=^\[Hunting\][ \t]*$)'
 end = '(?i)(?=^\[.+\][ \t]*$|\z)'
 patterns = [
-    {include = "#comment"},
+    # Same as with the Key* section, comment is last to allow for ; to not be treated as an invalid comment for the hotkeys
 	{include = "#definition"},
+    {include = "#comment"},
 ]
 
 [[repository.section.patterns]]
@@ -383,24 +384,30 @@ captures.2.name = "keyword.operator.declaration.ini.3dm"
 captures.3.patterns = [{include = "#Rvalue"}]
 
 [repository.Lword]
-# TODO: clean this section up a bit, see if I have any values here that aren't actually Lwords and should be Rwords instead.
 patterns = [
-    {name = "meta.keyword.lword keyword.other.ini.3dm.common", match = '(?i)\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling|special)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.key-section", match = '(?i)\b(condition|key|back|smart|type|wrap|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.resource", match = '(?i)\b(type|filename|stride|data|array|max_copies_per_frame|mode|bind_flags)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override", match = '(?i)\b(stereomode|iteration|expand_region_copy|deny_cpu_read|checktextureoverride)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override", match = '(?i)\b(match_(?:type|usage|bind_flags|cpu_access_flags|misc_flags|byte_width|stride|mips|depth|array|msaa|msaa_quality|first_vertex|first_index|first_instance|vertex_count|index_count|instance_count|priority))'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.custom-shader", match = '(?i)\b(max_executions_per_frame|flags|blend(?:_factor|_state_merge|)|alpha(?:_to_coverage|)|mask|sample_mask|depth(?:_enable|_write_mask|_func|_stencil_state_merge|_clip_enable|_bias|_bias_clamp)|stencil(?:_enable|_read_mask|_write_mask|_front|stencil_back|stencil_ref)|fill|cull|front|slope_scaled_depth_bias|depth|scissor_enable|multisample_enable|antialiased_line_enable|rasterizer_state_merge|topology|sampler|src_alpha_sat|zero|one)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.shader-regex-command-list", match = '(?i)\b(shader_model|temps)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.shader-override-command-list", match = '(?i)\b(allow_duplicate_hash|depth_filter|partner|model|disable_scissor)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.include", match = '(?i)\b((?:in|ex)clude(?:_recursive)?)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.logging", match = '(?i)\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|convergence|separation|crash|show_warnings)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.hunting", match = '(?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking(?:_mode|_actions)|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune(?:1|2)_(?:up|down)|analyse_(?:frame|options))'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.system", match = '(?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update))'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.loader", match = '(?i)\b(target|module|require_admin|launch|delay|loader)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.device", match = '(?i)\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.stereo", match = '(?i)\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.rendering", match = '(?i)\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl)|dump_usage|fix_(?:sv_position|ZRepair_.+|InvTransform|BackProjectionTransform\d|ObjectPosition\d(?:Multiplier)?|MatrixOperand\d(?:Multiplier)?|recompile_all_vs))'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.multi-section", match = '(?i)\b(separation|convergence|hash|filter_index|match_priority|run|condition|format|(?:width|height)(?:_multiply)?|type)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.command-list.general", match = '(?i)\b(checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.command-list.draw-instruction", match = '(?i)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b'}, # there is also drawauto but it is not an lword, it's a standalone like the flow control keywords
+    {name = "meta.keyword.lword keyword.other.ini.3dm.key-section", match = '(?i)\b(key|back|(?:release_)?delay|wrap|smart|(?:release_)?transition(?:_type)?)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.resource", match = '(?i)\b(filename|data|max_copies_per_frame|mode|(?:bind|misc)_flags|depth|mips|array|msaa(?:_quality)?|byte_width|stride)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override.resource-match", match = '(?i)\b(stereomode|expand_region_copy|deny_cpu_read|iteration)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override.vertex-limit", match = '(?i)\b(override_(?:byte_stride|vertex_count))\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override.draw-match", match = '(?i)\b(match_(?:(?:first_)?(?:vertex|index|instance)(?:_count)?))\b'}, # TODO: Make it required to have first or count
+    {name = "meta.keyword.lword keyword.other.ini.3dm.texture-override.fuzzy-match", match = '(?i)\b(match_(?:type|usage|(?:bind|cpu_access|misc)_flags|(?:byte_)?width|height|stride|mips|format|depth|array|msaa(?:_quality)?))\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.custom-shader", match = '(?i)\b(flags|max_executions_per_frame|topology|sampler)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.custom-shader.blend-state", match = '(?i)\b((?:blend|alpha|mask)(?:\[([0-7])\])?|blend_factor\[([0-3])\]|alpha_to_coverage|sample_mask|blend_state_merge)\b', captures.2.name = "constant.numeric.ini.3dm", captures.3.name = "constant.numeric.ini.3dm"},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.custom-shader.depth-stencil-state", match = '(?i)\b(depth_(?:enable|write_mask|func|stencil_state_merge)|stencil_(?:enable|(?:read|write)_mask|front|back|ref))\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.custom-shader.rs-state", match = '(?i)\b(fill|cull|front|depth_(?:bias(?:_clamp)?|clip_enable)|slope_scaled_depth_bias|(?:depth_clip|scissor|multisample|antialiased_line)_enable|rasterizer_state_merge)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.shader-regex", match = '(?i)\b(shader_model|temps)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.shader-override", match = '(?i)\b((?:allow_duplicate_)hash|depth_filter|partner|model|disable_scissor)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.include", match = '(?i)\b((?:in|ex)clude(?:_recursive)?|user_config)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.logging", match = '(?i)\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|wait_for_debugger|crash|dump_all_profiles|show_warnings)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.hunting", match = '(?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking_mode|marking_actions|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune[123]_(?:up|down)|analyse_frame|kill_deferred)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.system", match = '(?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.loader", match = '(?i)\b(target|module|require_admin|launch|delay|loader|check_version|entry_point|hook_proc|wait_for_target)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.device", match = '(?i)\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor|cursor_upscaling_bypass)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.stereo", match = '(?i)\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.rendering", match = '(?i)\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl|binary)|dump_usage|fix_(?:sv_position|ZRepair_.+|BackProjectionTransform\d|ObjectPosition\d(?:Multiplier)?|MatrixOperand\d(?:Multiplier)?|recompile_all_vs))\b'},
     {include = "#functional-keyword"},
     {include = "#variable"},
 ]
@@ -432,22 +439,18 @@ patterns = [
     {include = "#operational-expression"},
 ]
 
-# A functional expression is one that behaves like a function in this environment which does not have clearly defined functions
-# Since this is only included in Rvalue, there's no need to have all possible functional-keywords
-# Thus we can explicitly match for the ones expected in the main regex before using the captures to assign scopes
-# These should be ref(erence), copy(_desc), stereo2mono, set_viewport, and all the keywords that come on the right side of `blend =` except disable
-# There are probably more I'm missing but they can be added later
+# This was named before I knew these should actually be Resource Access Modifiers
+# and don't chain together like the possible values after `blend =` in a custom shader
 [repository.functional-expression]
 match = '''(?xi)\b
-(zero | one | add | (?:inv_)?(?:src1?|dest)(?:_color|_alpha) | (?:inv_)?blend_factor |
- ref(?:erence)? | copy(?:_desc)? | stereo2mono | set_viewport
+( copy(?:_desc(?:ription)?)? | ref(?:erence)? |
+  raw | stereo | mono | stereo2mono | set_viewport |no_view_cache | resolve_msaa
 )
 \s+
 ([\w$][\w.\-\\@' \t/()]+)'''
 name = "meta.expression.functional.ini.3dm"
 captures.1.patterns = [{include = "#functional-keyword"}]
 captures.2.patterns = [
-    {include = "#functional-keyword"},
     {include = "#variable"},
     {include = "#constant"},
 ]
@@ -463,9 +466,8 @@ captures.2.patterns = [
 ]
 
 [repository.functional-keyword]
-name = "keyword.other.functional.ini.3dm"
-match = '(?i)\b(?:one|zero|raw|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|no_view_cache|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\[(\d+)\])?)\b'
-captures.1.name = "constant.numeric.ini.3dm"
+name = "meta.keyword.resource-usage-modifier keyword.other.functional.ini.3dm"
+match = '(?i)\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa)\b'
 
 # An operational expression is meant to be a combination of a mathematical expression and a comparison expression
 # we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
@@ -484,8 +486,11 @@ name = "invalid.illegal.operator.ini.3dm"
 match = '(?xi) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [><]{2,} | &{3,} | \|{3,} | \^+ '
 
 [repository.operator]
+# prevents / and = from being highlighted when specified as a key in a Key section;
+# - too, but this character cannot be used already, 3dmigoto doesn't like it, you have to use the vk name or hex
+# TODO: add the Lwords in the Hunting section, use a variable to do so
 match = '''(?xi)
-(?<! ^\s* (?:key|back) \s* = \s* .+) # prevents / and = from being highlighted when specified as a key in a Key section; - too, but this character cannot be used already, 3dmigoto doesn't like it, you have to use the vk name or hex
+(?<! ^\s* (?:key|back) \s* = \s* .+)
 (?:
   ( \*\* | \* | \+ | - | % | // | / ) |       # arithmetic operators
   ( !== | != | === | == | >= | <= | > | < ) | # comparison operators
@@ -505,19 +510,30 @@ patterns = [{include = "#operational-expression"}]
 
 [[repository.variable.patterns]]
 name = "variable.language.buffer.ini.3dm"
-match = '\b(?i)(?<!\.)((([vhdgpc]s?-)cb|vb)\d{1,3}|[ib]b)\b'
+match = '\b(?i)(?<!\.)(?:[vhdgpc]s-cb\d{1,2}|vb\d|ib|(?:[rf]_)?bb)\b'
 
 [[repository.variable.patterns]]
 name = "variable.language.shader.ini.3dm"
-match = '\b(?i)([vhdgpc]s(?:-[tu]\d{1,3})?|[pc]-u)\b'
+match = '\b(?i)([pc]s-u\d|s?o\d|od|[vhdgpc]s(?:-t\d{1,3})?)\b'
 
 [[repository.variable.patterns]]
 name = "variable.parameter.ini.3dm"
-match = '(?i)(?<![ \t]*key\s*=\s*.+)\b(?:(?<!$)[xyzwo]\d{0,3})\b'
+match = '(?i)(?<![ \t]*(?:key|back)\s*=\s*.+)\b(?:(?<!$)[xyzw]\d{0,3})\b'
 
 [[repository.variable.patterns]]
-name = "variable.language.ini.3dm"
-match = '\b(?i)this\b'
+name = "variable.language.resource-identifiers.ini.3dm"
+match = '\b(?i)(this|(?:ini|stereo)params|cursor_(?:mask|color))\b'
+
+[[repository.variable.patterns]]
+# constant instead of variable scope name because their use is more like language constants
+name = "constant.language.override-parameters.ini.3dm"
+match = '''(?xi)
+\b(
+  (?:rt|res|window)_(?:width|height) | (?:vertex|index|instance)_count | first_(?:vertex|index|instance) |
+  thread_group_count_[xyz] | indirect_offset | draw_type | cursor_(?: showing | (?:screen_|window_|hotspot_)?[xy] ) |
+  time | hunting | sli | frame_analysis | effective_dpi | (?:raw_|eye_)?separation | convergence |
+  stereo_(?:active|available) | scissor_(?:left|top|right|bottom)
+)\b'''
 
 [[repository.variable.patterns]]
 name = "meta.variable.ini.3dm"
@@ -547,21 +563,43 @@ patterns = [
     {include = "#Rword"},
     {name = "constant.language.boolean.ini.3dm", match = '\b(?i)(?:true|false)\b'},
     {name = "constant.language.numeric.ini.3dm", match = '\b(?i)(?:null|inf|NaN)\b'},
-    {name = "constant.language.ini.3dm", match = '\b(?i)(?:time|none|skip|disable)\b'}, # none, skip, disable are Rwords, but I need to nail down what section(s)/Lword(s) they go with
-    {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*[\\/]+)(?:(?:(?:[a-z]:|\.)[\\/])?[\w@'\-.()]+(?:(?:\\|/)[\w@ '\-.()]+)+)'''},
+    {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*[\\/]+)(?:(?:(?:[a-z]:|\.)[\\/])?[\w@&'\-.()]+(?:(?:\\|/)[\w@& '\-.()]+)+)'''},
     {name = "constant.other.file.ini.3dm", match = '''(?i)[\w@'\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
     {name = "constant.numeric.ini.3dm", match = '\b\d+(?:\.\d+)?\b'},
 ]
 
 [repository.Rword]
-# TODO: go through these keywords and figure out which if any are able to be used on both sides of an =
+# constant scope if they only ever appear by themselves or with other rwords
+# keyword scope if they mix with non-rword things
 patterns = [
-    {name = "meta.keyword.rword keyword.control.ini.3dm", match = '\b(?i)(unless_null)'},
-    {name = "meta.keyword.rword keyword.other.key.ini.3dm", match = '\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)'},
-    {name = "meta.keyword.rword constant.language.window.ini.3dm", match = '\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_(?:screen_|window_|hotspot_)?[xy]|cursor_showing)\b'},
-    {name = "meta.keyword.rword constant.language.draw.ini.3dm", match = '\b(?i)(?:auto|vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type)'},
-    {name = "meta.keyword.rword constant.language.system.ini.3dm", match = '\b(?i)(?:stereo_active|sli)'},
-    {name = "meta.keyword.rword constant.language.dump.ini.3dm", match = '\b(?i)(?<!\.)(?:dump_(?:rt|tex|[cvi]b)|buf|txt)\b'},
+    {name = "meta.keyword.rword meta.keyword.multi-section constant.language.ini.3dm", match = '\b(?i)(none|skip|hold|mono|stereo|auto|depth_stencil|texturecube)\b'},
+    {name = "meta.keyword.rword meta.keyword.commands constant.language.draw.ini.3dm", match = '\b(?i)(from_caller)\b'}, # auto is included above
+    {name = "meta.keyword.rword meta.keyword.commands constant.language.handling.ini.3dm", match = '\b(?i)(abort)\b'}, # skip is included above
+    {name = "meta.keyword.rword meta.keyword.commands constant.language.special.ini.3dm", match = '\b(?i)(upscaling_switch_bb|draw_3dmigoto_overlay)\b'},
+    {name = "meta.keyword.rword meta.keyword.commands keyword.other.clear.ini.3dm", match = '\b(?i)(int|depth|stencil)\b'},
+    {name = "meta.keyword.rword meta.keyword.commands constant.language.direct-mode-eye.ini.3dm", match = '\b(?i)(left|right)\b'}, # mono is included above
+    {name = "meta.keyword.rword constant.language.shader-override.ini.3dm", match = '\b(?i)(overrule|depth_(?:(?:in)?active))\b'}, # none is included above | true,false are additional language constants handled elsewhere
+    {name = "meta.keyword.rword meta.keyword.custom-shader constant.language.cull.ini.3dm", match = '\b(?i)(front|back)\b'},
+    {name = "meta.keyword.rword meta.keyword.custom-shader constant.language.fill.ini.3dm", match = '\b(?i)(wireframe|solid)\b'},
+    {name = "meta.keyword.rword meta.keyword.custom-shader constant.language.topology.ini.3dm", match = '\b(?i)(undefined|(point|line|triangle)_list|(line|triangle)_strip|(line|triangle)_(list|strip)_adj|[123]?\d_control_point_patch_list)\b'},
+    {name = "meta.keyword.rword meta.keyword.custom-shader constant.language.compile-flag.ini.3dm", match = '\b(?i)(debug|skip_(validation|optimization)|pack_matrix_(row_major|column_major)|partial_precision|force_[vp]s_software_no_opt|no_preshader|(avoid|prefer)_flow_control|enable_(strictness|backwards_compatibility|unbounded_descriptor_tables)|ieee_strictness|optimization_level[0123]|warnings_are_errors|resources_may_alias|all_resources_bound)\b'},
+    {name = "meta.keyword.rword meta.keyword.resource-usage-modifier keyword.other.functional.ini.3dm", match = '\b(?i)(unless_null)\b'},
+    # This is where "meta.keyword.resource constant.language.resource-mode.ini.3dm" would go if all of its values weren't already in other sections: auto | mono | stereo
+    {name = "meta.keyword.rword meta.keyword.resource constant.language.resource-type.ini.3dm", match = '\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D)\b'}, # TextureCube is included above
+    {name = "meta.keyword.rword meta.keyword.resource constant.language.bind-flag.ini.3dm", match = '\b(?i)((?:vertex|index|constant)_buffer|shader_resource|stream_output|render_target|unordered_access|decoder|video_encoder)\b'},
+    {name = "meta.keyword.rword meta.keyword.resource constant.language.misc-flag.ini.3dm", match = '\b(?i)(generate_mips|shared|drawindirect_args|buffer_(?:allow_raw_views|structured)|resource_clamp|shared_(?:keymutex|nthandle)|gdi_compatible|restricted_content|restrict_shared_resource(?:_driver)?|guarded|tile_pool|tiled|hw_protected)\b'}, # texturecube is included above
+    # Spot for "meta.keyword.rword meta.keyword.resource storage.type.dxgi-format.ini.3dm" if I decide it's worth it to put the LONG list of types in here
+    {name = "meta.keyword.rword meta.keyword.blend-state keyword.operator.blend-operator.ini.3dm", match = '\b(?i)(add|(?:rev_)?subtract|min|max|disable)\b'}, #adding `disable` here even though it's not a blend op
+    {name = "meta.keyword.rword meta.keyword.blend-state constant.language.blend-factor.ini.3dm", match = '\b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\b'},
+    {name = "meta.keyword.rword meta.keyword.keys constant.language.key-type.ini.3dm", match = '\b(?i)(activate|toggle|cycle)\b'}, # hold is included above
+    {name = "meta.keyword.rword meta.keyword.keys constant.language.transition-type.ini.3dm", match = '\b(?i)(linear|cosine)\b'},
+    {name = "meta.keyword.rword meta.keyword.keys keyword.other.modifier-key.ini.3dm", match = '\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)\b'},
+    {name = "meta.keyword.rword meta.keyword.system constant.language.hook-option.ini.3dm", match = '\b(?i)(deferred_contexts|(?:immediate_)?context|device|all|recommended|except_set_(?:shader_resources|sampler|rasterizer_state)|skip_dxgi_(?:factory|device))\b'},
+    {name = "meta.keyword.rword meta.keyword.device constant.language.resolution-source.ini.3dm", match = '\b(?i)(swap_chain)\b'}, # depth_stencil is included above
+    {name = "meta.keyword.rword meta.keyword.rendering constant.language.shader-hash-type.ini.3dm", match = '\b(?i)(3dmigoto|embedded|bytecode)\b'},
+    {name = "meta.keyword.rword meta.keyword.marking constant.language.marking-mode.ini.3dm", match = '\b(?i)(original|pink)\b'}, # skip,mono are included above
+    {name = "meta.keyword.rword meta.keyword.marking constant.language.marking-action.ini.3dm", match = '\b(?i)(hlsl|asm|assembly|regex|ShaderRegex|clipboard|mono_snapshot|stereo_snapshot|snapshot_if_pink)\b'},
+    {name = "meta.keyword.rword meta.keyword.analysis constant.language.analysis-option.ini.3dm", match = '\b(?i)(dump_(?:rt|depth|tex|[cvi]b)|jp(?:s|e?g)|(?:jp(?:s|e?g)_)?dds|buf|txt|desc|clear_rt|persist|filename_(?:reg|handle)|log|dump_on_(?:unmap|update)|deferred_ctx_(?:immediate|accurate)|share_dupes|symlink|dump_(?:rt|depth|tex)_(?:jps|dds)|dump_[cvi]b_txt)\b'}, # hold,stereo,mono are included above
 ]
 
 [repository.string]
