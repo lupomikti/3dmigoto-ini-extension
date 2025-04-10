@@ -1,20 +1,20 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-version = "0.4.0"
+version = "0.4.1"
 scopeName = "source.ini.3dm"
 name = "3dm-ini"
 fileTypes = ["ini"]
 patterns = [
-    {include = "#namespace"},
+    {include = "#preamble"},
     {include = "#comment"},
     {include = "#section"},
 ]
 
-[repository.namespace]
-name = "meta.head.namespace.ini.3dm"
+[repository.preamble]
+name = "meta.head.preamble.ini.3dm"
 begin = '(?i)^(?=namespace)'
 end = '$|\n'
 
-[[repository.namespace.patterns]]
+[[repository.preamble.patterns]]
 begin = '(?i)(namespace)\b\s*(=)\s*\b'
 end = '$|\n'
 beginCaptures.1.name = "keyword.other.namespace.definition.ini.3dm"
@@ -385,8 +385,8 @@ captures.3.patterns = [{include = "#Rvalue"}]
 
 [repository.Lword]
 patterns = [
-    {name = "meta.keyword.lword keyword.other.ini.3dm.multi-section", match = '(?i)\b(separation|convergence|hash|filter_index|match_priority|run|condition|format|(?:width|height)(?:_multiply)?|type)\b'},
-    {name = "meta.keyword.lword keyword.other.ini.3dm.command-list.general", match = '(?i)\b(checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.multi-section", match = '(?i)\b(separation|convergence|hash|filter_index|match_priority|condition|format|(?:width|height)(?:_multiply)?|type)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.command-list.general", match = '(?i)\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b'},
     {name = "meta.keyword.lword keyword.other.ini.3dm.command-list.draw-instruction", match = '(?i)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b'}, # there is also drawauto but it is not an lword, it's a standalone like the flow control keywords
     {name = "meta.keyword.lword keyword.other.ini.3dm.key-section", match = '(?i)\b(key|back|(?:release_)?delay|wrap|smart|(?:release_)?transition(?:_type)?)\b'},
     {name = "meta.keyword.lword keyword.other.ini.3dm.resource", match = '(?i)\b(filename|data|max_copies_per_frame|mode|(?:bind|misc)_flags|depth|mips|array|msaa(?:_quality)?|byte_width|stride)\b'},
@@ -420,9 +420,9 @@ captures.1.patterns = [
     {name = "keyword.control.ini.3dm", match = '(?i)(pre|post)(?= )'},
 ]
 captures.2.patterns = [
-    {include = "#functional-keyword"},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.command-list.general", match = '(?i)\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b'},
+    {name = "meta.keyword.lword keyword.other.ini.3dm.command-list.draw-instruction", match = '(?i)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b'},
     {include = "#variable"},
-    {include = "#constant"},
 ]
 
 [repository.Rvalue]
@@ -551,7 +551,7 @@ captures.6.name = "variable.other.readwrite.ini.3dm"
 [[repository.variable.patterns]]
 name = "meta.function-call variable.other.function.ini.3dm"
 #                        The prefixable section names I've seen in use              \     namespace    \      user-provided name
-match = '''\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\)([\w.@' \-\\]+)(\\))?([\w.]+)'''
+match = '''\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\)([\w.@' \-\\]+)(\\))?([\w.\-]+)'''
 captures.1.name = "entity.name.function.section-type.ini.3dm"
 captures.2.name = "punctuation.separator.namespace.ini.3dm"
 captures.3.name = "entity.name.namespace.ini.3dm"
@@ -563,7 +563,9 @@ patterns = [
     {include = "#Rword"},
     {name = "constant.language.boolean.ini.3dm", match = '\b(?i)(?:true|false)\b'},
     {name = "constant.language.numeric.ini.3dm", match = '\b(?i)(?:null|inf|NaN)\b'},
-    {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*[\\/]+)(?:(?:(?:[a-z]:|\.)[\\/])?[\w@&'\-.()]+(?:(?:\\|/)[\w@& '\-.()]+)+)'''},
+    # The following commented out line was used to support both / and \ in paths. Due to this causing conflict with arithmetic that did not have a space before /, only \ will be supported from now
+    # {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*[\\/]+)(?:(?:(?:[a-z]:|\.)[\\/])?[\w@&'\-.()]+(?:(?:\\|/)[\w@& '\-.()]+)+)'''},
+    {name = "constant.other.path.ini.3dm", match = '''(?i)(?=.*\\+)(?:(?:(?:[a-z]:|\.)\\)?[\w@&'\-.()]+(?:\\[\w@& '\-.()]+)+)'''},
     {name = "constant.other.file.ini.3dm", match = '''(?i)[\w@'\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
     {name = "constant.numeric.ini.3dm", match = '\b\d+(?:\.\d+)?\b'},
 ]
@@ -588,7 +590,7 @@ patterns = [
     {name = "meta.keyword.rword meta.keyword.resource constant.language.resource-type.ini.3dm", match = '\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D)\b'}, # TextureCube is included above
     {name = "meta.keyword.rword meta.keyword.resource constant.language.bind-flag.ini.3dm", match = '\b(?i)((?:vertex|index|constant)_buffer|shader_resource|stream_output|render_target|unordered_access|decoder|video_encoder)\b'},
     {name = "meta.keyword.rword meta.keyword.resource constant.language.misc-flag.ini.3dm", match = '\b(?i)(generate_mips|shared|drawindirect_args|buffer_(?:allow_raw_views|structured)|resource_clamp|shared_(?:keymutex|nthandle)|gdi_compatible|restricted_content|restrict_shared_resource(?:_driver)?|guarded|tile_pool|tiled|hw_protected)\b'}, # texturecube is included above
-    # Spot for "meta.keyword.rword meta.keyword.resource storage.type.dxgi-format.ini.3dm" if I decide it's worth it to put the LONG list of types in here
+    # Spot for "meta.keyword.rword meta.keyword.resource support.type.dxgi-format.ini.3dm" if I decide it's worth it to put the LONG list of types in here
     {name = "meta.keyword.rword meta.keyword.blend-state keyword.operator.blend-operator.ini.3dm", match = '\b(?i)(add|(?:rev_)?subtract|min|max|disable)\b'}, #adding `disable` here even though it's not a blend op
     {name = "meta.keyword.rword meta.keyword.blend-state constant.language.blend-factor.ini.3dm", match = '\b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\b'},
     {name = "meta.keyword.rword meta.keyword.keys constant.language.key-type.ini.3dm", match = '\b(?i)(activate|toggle|cycle)\b'}, # hold is included above

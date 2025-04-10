@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "scopeName": "source.ini.3dm",
   "name": "3dm-ini",
   "fileTypes": [
@@ -8,7 +8,7 @@
   ],
   "patterns": [
     {
-      "include": "#namespace"
+      "include": "#preamble"
     },
     {
       "include": "#comment"
@@ -18,8 +18,8 @@
     }
   ],
   "repository": {
-    "namespace": {
-      "name": "meta.head.namespace.ini.3dm",
+    "preamble": {
+      "name": "meta.head.preamble.ini.3dm",
       "begin": "(?i)^(?=namespace)",
       "end": "$|\\n",
       "patterns": [
@@ -655,11 +655,11 @@
       "patterns": [
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.multi-section",
-          "match": "(?i)\\b(separation|convergence|hash|filter_index|match_priority|run|condition|format|(?:width|height)(?:_multiply)?|type)\\b"
+          "match": "(?i)\\b(separation|convergence|hash|filter_index|match_priority|condition|format|(?:width|height)(?:_multiply)?|type)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.command-list.general",
-          "match": "(?i)\\b(checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\\b"
+          "match": "(?i)\\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\\b"
         },
         {
           "name": "meta.keyword.lword keyword.other.ini.3dm.command-list.draw-instruction",
@@ -780,13 +780,15 @@
         "2": {
           "patterns": [
             {
-              "include": "#functional-keyword"
+              "name": "meta.keyword.lword keyword.other.ini.3dm.command-list.general",
+              "match": "(?i)\\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\\b"
+            },
+            {
+              "name": "meta.keyword.lword keyword.other.ini.3dm.command-list.draw-instruction",
+              "match": "(?i)\\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\\b"
             },
             {
               "include": "#variable"
-            },
-            {
-              "include": "#constant"
             }
           ]
         }
@@ -971,7 +973,7 @@
         },
         {
           "name": "meta.function-call variable.other.function.ini.3dm",
-          "match": "\\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\\\)([\\w.@' \\-\\\\]+)(\\\\))?([\\w.]+)",
+          "match": "\\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\\\)([\\w.@' \\-\\\\]+)(\\\\))?([\\w.\\-]+)",
           "captures": {
             "1": {
               "name": "entity.name.function.section-type.ini.3dm"
@@ -1007,7 +1009,7 @@
         },
         {
           "name": "constant.other.path.ini.3dm",
-          "match": "(?i)(?=.*[\\\\/]+)(?:(?:(?:[a-z]:|\\.)[\\\\/])?[\\w@&'\\-.()]+(?:(?:\\\\|/)[\\w@& '\\-.()]+)+)"
+          "match": "(?i)(?=.*\\\\+)(?:(?:(?:[a-z]:|\\.)\\\\)?[\\w@&'\\-.()]+(?:\\\\[\\w@& '\\-.()]+)+)"
         },
         {
           "name": "constant.other.file.ini.3dm",
