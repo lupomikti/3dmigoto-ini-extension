@@ -1,0 +1,656 @@
+name = "3DM-INI"
+file_extensions = ["ini"]
+scope = "source.ini.3dm"
+version = 2
+
+[variables]
+full_section_names = '(?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float))'
+pref_section_names = '(?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+|Include.*'
+ws = '[ \t]'
+namespace_path = '[\w\-.]+(?:[\\/][\w\-.]+)*'
+namespace = '''[\w.@' \-\\]+'''
+var = '''[a-z_]\w+|[a-z]'''
+
+[contexts]
+main = [
+    {include = "comment"},
+    {include = "namespace"},
+    {include = "section-base"},
+]
+# This is only here because I don't feel like turning these into the Array of Tables format
+Lword = [
+    {pop = true, scope = "keyword.other.ini.3dm.common", match = '(?i)\b(format|filter_index|(?:height|width)(?:_multiply)?|hash|handling|special)'},
+    {pop = true, scope = "keyword.other.ini.3dm.key-section", match = '(?i)\b(condition|key|back|smart|type|wrap|delay|release_(?:delay|transition(?:_type|))|transition(?:_type|)|convergence|separation)'},
+    {pop = true, scope = "keyword.other.ini.3dm.resource", match = '(?i)\b(type|filename|stride|data|array|max_copies_per_frame|mode|bind_flags)'},
+    {pop = true, scope = "keyword.other.ini.3dm.texture-override", match = '(?i)\b(stereomode|iteration|expand_region_copy|deny_cpu_read|checktextureoverride)'},
+    {pop = true, scope = "keyword.other.ini.3dm.texture-override", match = '(?i)\b(match_(?:type|usage|bind_flags|cpu_access_flags|misc_flags|byte_width|stride|mips|depth|array|msaa|msaa_quality|first_vertex|first_index|first_instance|vertex_count|index_count|instance_count|priority))'},
+    {pop = true, scope = "keyword.other.ini.3dm.custom-shader", match = '(?i)\b(max_executions_per_frame|flags|blend(?:_factor|_state_merge|)|alpha(?:_to_coverage|)|mask|sample_mask|depth(?:_enable|_write_mask|_func|_stencil_state_merge|_clip_enable|_bias|_bias_clamp)|stencil(?:_enable|_read_mask|_write_mask|_front|stencil_back|stencil_ref)|fill|cull|front|slope_scaled_depth_bias|depth|scissor_enable|multisample_enable|antialiased_line_enable|rasterizer_state_merge|topology|sampler|src_alpha_sat|zero|one)'},
+    {pop = true, scope = "keyword.other.ini.3dm.shader-regex-command-list", match = '(?i)\b(shader_model|temps)'},
+    {pop = true, scope = "keyword.other.ini.3dm.shader-override-command-list", match = '(?i)\b(allow_duplicate_hash|depth_filter|partner|model|disable_scissor)'},
+    {pop = true, scope = "keyword.other.ini.3dm.include", match = '(?i)\b((?:in|ex)clude(?:_recursive)?)'},
+    {pop = true, scope = "keyword.other.ini.3dm.logging", match = '(?i)\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|convergence|separation|crash|show_warnings)'},
+    {pop = true, scope = "keyword.other.ini.3dm.hunting", match = '(?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking(?:_mode|_actions)|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune(?:1|2)_(?:up|down)|analyse_(?:frame|options))'},
+    {pop = true, scope = "keyword.other.ini.3dm.system", match = '(?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update))'},
+    {pop = true, scope = "keyword.other.ini.3dm.loader", match = '(?i)\b(target|module|require_admin|launch|delay|loader)'},
+    {pop = true, scope = "keyword.other.ini.3dm.device", match = '(?i)\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor)'},
+    {pop = true, scope = "keyword.other.ini.3dm.stereo", match = '(?i)\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)'},
+    {pop = true, scope = "keyword.other.ini.3dm.rendering", match = '(?i)\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl)|dump_usage|fix_(?:sv_position|ZRepair_.+|InvTransform|BackProjectionTransform\d|ObjectPosition\d(?:Multiplier)?|MatrixOperand\d(?:Multiplier)?|recompile_all_vs))'},
+    {include = "functional-keyword"},
+    {include = "variable"},
+]
+
+[[contexts.comment]]
+match = '^({{ws}}+)?(;)'
+captures.1 = "punctuation.whitespace.comment.leading.ini.3dm"
+captures.2 = "punctuation.definition.comment.ini.3dm"
+push = [
+    {meta_scope = "comment.line.semicolon.ini.3dm"},
+    {meta_content_scope = "comment.line.semicolon.content.ini.3dm"},
+    {match = '\n', pop = true},
+]
+
+[[contexts.comment]]
+match = '^\S+{{ws}}*(;)'
+captures.1 = "invalid.illegal punctuation.definition.comment.ini.3dm"
+push = [
+    {meta_scope = "invalid.illegal comment.line.semicolon.ini.3dm"},
+    {match = '\n', pop = true},
+]
+
+[[contexts.namespace]]
+match = '(?i)^{{ws}}*(namespace)\b{{ws}}*(=){{ws}}*\b'
+captures.1 = "keyword.other.namespace.definition.ini.3dm"
+captures.2 = "keyword.operator.namespace.ini.3dm"
+push = [
+    {meta_scope = "meta.head.namespace.ini.3dm"},
+    {match = '(?i){{namespace_path}}', scope = "entity.name.namespace.ini.3dm"},
+    {match = '\n', pop = true},
+]
+
+[[contexts.section-base]]
+match = '(?i)(?=^\[(?:{{full_section_names}}|{{pref_section_names}})\]{{ws}}*$)'
+set = "section"
+
+# The section body types:
+#   1. comment, declaration
+#   2. comment, conditional-expr, definition, declaration
+#   3. conditional-expr, definition, declaration, comment
+#   4. comment, definition
+#   5. comment, source.regexp
+#   6. comment, source.regexp-replace
+#
+# (2) is default/normal
+# (1) is only used in the Constants section
+# (3) is only used in the Key* sections
+# (5) is only for Regex*.Pattern, (6) for Regex*.Pattern.Replace
+# (4) is for Resource*/Logging/Hunting/System/Device/Stereo/Rendering/Profile/ConvergenceMap/Loader sections
+
+[[contexts.section]]
+meta_scope = "meta.structure.section.ini.3dm"
+
+# I am making the choice to split the sections up individually just as in the textmate grammar
+# even though there isn't a need to. This is to preserve the application of inidividual meta scopes
+
+[[contexts.section]]
+match = '(?i)^(\[)(Constants)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.constants"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.constants.ini.3dm"},
+    {include = "comment"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Present)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.present"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.present.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Key.+)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.key"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.key.ini.3dm"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+    {include = "comment"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(TextureOverride.+)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.texture-override"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.texture-override.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(ShaderOverride.+)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.shader-override"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.shader-override.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)((?:BuiltIn)?CustomShader.+)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.custom-shader"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.custom-shader.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)((?:BuiltIn)?CommandList.+)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.command-list"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.command-list.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Resource.+)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.resource"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.resource.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(ShaderRegex.+\.Pattern)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.shader-regex-pattern"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.shader-regex-pattern.ini.3dm"},
+    {include = "comment"},
+    {include = "scope:source.regexp"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(ShaderRegex.+\.Pattern\.Replace)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.shader-regex-replace"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.shader-regex-replace.ini.3dm"},
+    {include = "comment"},
+    {include = "scope:source.regexp-replace"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(ShaderRegex(?!\.Pattern.*).+)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.shader-regex"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.shader-regex.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Include.*)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.include"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.include.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Preset.+)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.preset"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.preset.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Logging)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.logging"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.logging.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Hunting)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.hunting"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.hunting.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(System)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.system"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.system.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Device)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.device"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.device.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Stereo)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.stereo"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.stereo.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Rendering)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.rendering"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.rendering.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Profile)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.profile"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.profile.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(ConvergenceMap)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.convergence-map"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.convergence-map.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(Loader)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.loader"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.loader.ini.3dm"},
+    {include = "comment"},
+    {include = "definition"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(ClearRenderTargetView)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.clear-render-target-view"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.clear-render-target-view.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(ClearDepthStencilView)(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.clear-depth-stencil-view"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.clear-depth-stencil-view.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)^(\[)(ClearUnorderedAccessView(?:Uint|Float))(\]){{ws}}*$'
+captures.1 = "punctuation.definition.entity.ini.3dm"
+captures.2 = "entity.name.section.group-title.ini.3dm.clear-unordered-access-view"
+captures.3 = "punctuation.definition.entity.ini.3dm"
+push = [
+    {meta_content_scope = "meta.structure.section.clear-unordered-access-view.ini.3dm"},
+    {include = "comment"},
+    {include = "conditional-expr"},
+    {include = "definition"},
+    {include = "declaration"},
+]
+
+[[contexts.section]]
+match = '(?i)(?=^\[(?:{{full_section_names}}|{{pref_section_names}})\]{{ws}}*$)'
+pop = true
+
+[[contexts.conditional-expr]]
+match = '\n'
+pop = true
+
+[[contexts.conditional-expr]]
+match = '(?i)^{{ws}}*(?:(if|elif|else if)(?= )|(else|endif){{ws}}*$)'
+captures.1 = "keyword.control.flow.ini.3dm"
+captures.2 = "keyword.control.flow.ini.3dm"
+push = [
+    {meta_scope = "meta.expression.conditional.ini.3dm"},
+    {meta_content_scope = "meta.expression.operational.ini.3dm"},
+    {include = "operational-expr"},
+]
+
+[[contexts.definition]]
+match = '(?=\w)'
+push = [
+    {meta_scope = "meta.structure.definition.ini.3dm"},
+    {meta_content_scope = "meta.keyword.lword"},
+    {match = '(?={{ws}}*=)', set = ["Rvalue", "separator"]},
+    {include = "Lword"},
+    {match = '$|(?={{ws}}+;)', pop = true},
+]
+
+[[contexts.separator]]
+match = '='
+scope = "punctuation.separator.key-value.ini.3dm"
+pop = true
+
+[[contexts.declaration]]
+match = '(?=[\w$])'
+push = [
+    {meta_scope = "meta.structure.declaration.ini.3dm"},
+    {meta_content_scope = "meta.structure.left-expression.ini.3dm"},
+    {match = '(?={{ws}}*=)', set = ["Rvalue", "declaration-operator"]},
+    {include = "Lexpression"},
+    {match = '$|(?={{ws}}+;)', pop = true},
+]
+
+[[contexts.Lexpression]]
+match = '(?i)\b(global|local|persist)(?= )'
+captures.1 = "storage.modifier.ini.3dm"
+pop = true
+
+[[contexts.Lexpression]]
+match = '(?i)\b(pre|post)(?= )'
+captures.1 = "keyword.control.ini.3dm"
+pop = true
+
+[[contexts.Lexpression]]
+include = "functional-keyword"
+
+[[contexts.Lexpression]]
+include = "variable"
+
+[[contexts.Lexpression]]
+include = "constant"
+
+[[contexts.declaration-operator]]
+match = '='
+scope = "keyword.operator.declaration.ini.3dm"
+pop = true
+
+[[contexts.Rvalue]]
+include = "operation"
+
+[[contexts.Rvalue]]
+include = "string"
+
+[[contexts.operation]]
+include = "functional-expr"
+
+[[contexts.operation]]
+include = "literal-list"
+
+[[contexts.operation]]
+include = "operational-expr"
+
+[[contexts.functional-expr]]
+match = '''(?xi)\b
+(zero | one | add | (?:inv_)?(?:src1?|dest)(?:_color|_alpha) | (?:inv_)?blend_factor |
+ ref(?:erence)? | copy(?:_desc)? | stereo2mono | set_viewport
+)'''
+captures.1 = "keyword.other.functional.ini.3dm"
+push = [
+    {meta_scope = "meta.expression.functional.ini.3dm"},
+    {match = '\n', pop = 3},
+    {include = "functional-keyword"},
+    {include = "variable"},
+    {include = "constant"},
+]
+
+[[contexts.functional-keyword]]
+match = '(?i)\b(?:one|zero|raw|draw(?:indexed)?|ref(?:erence)?|copy(?:_desc)?|clear|dispatch|run|store|set_viewport|no_view_cache|stereo2mono|add|(?:inv_|)(?:src(1?)|dest)(?:_color|_alpha)|(?:inv_)?blend_factor(?:\[(\d+)\])?)\b'
+captures.0 = "keyword.other.functional.ini.3dm"
+captures.1 = "constant.numeric.ini.3dm"
+
+[[contexts.literal-list]]
+meta_scope = "meta.expression.literal-list.ini.3dm"
+
+[[contexts.literal-list]]
+match = '\n'
+pop = 3
+
+[[contexts.literal-list]]
+include = "constant"
+
+[[contexts.operational-expr]]
+meta_scope = "meta.expression.operational.ini.3dm"
+
+[[contexts.operational-expr]]
+match = '\n'
+pop = 3
+
+[[contexts.operational-expr]]
+include = "illegal-operator"
+
+[[contexts.operational-expr]]
+include = "operator"
+
+[[contexts.operational-expr]]
+include = "variable"
+
+[[contexts.operational-expr]]
+include = "constant"
+
+[[contexts.operational-expr]]
+include = "round-braces"
+
+[[contexts.illegal-operator]]
+scope = "invalid.illegal.operator.ini.3dm"
+match = '(?xi) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [!><]{2,} | &{3,} | \|{3,} | \^+ '
+pop = true
+
+[[contexts.operator]]
+match = '''(?xi)
+(?:
+  ( \*\* | \* | \+ | - | % | // | / ) |       # arithmetic operators
+  ( !== | != | === | == | >= | <= | > | < ) | # comparison operators
+  ( ! | && | \|\| )                           # logical operators
+)'''
+captures.1 = "keyword.operator.math.ini.3dm"
+captures.2 = "keyword.operator.comparison.ini.3dm"
+captures.3 = "keyword.operator.logical.ini.3dm"
+pop = true
+
+[[contexts.round-braces]]
+match = '\('
+captures.0 = "punctuation.parenthesis.begin.ini.3dm"
+push = [
+    {meta_content_scope = "meta.expression.operational.nested.ini.3dm"},
+    {include = "operational-expr"},
+    {match = '\)', captures.0 = "punctuation.parenthesis.end.ini.3dm", pop = 2},
+]
+
+[[contexts.variable]]
+scope = "variable.language.buffer.ini.3dm"
+match = '\b(?i)(?<!\.)((([vhdgpc]s?-)cb|vb)\d{1,3}|[ib]b)\b'
+pop = true
+
+[[contexts.variable]]
+scope = "variable.language.shader.ini.3dm"
+match = '\b(?i)([vhdgpc]s(?:-[tu]\d{1,3})?|[pc]-u)\b'
+pop = true
+
+[[contexts.variable]]
+scope = "variable.parameter.ini.3dm"
+match = '\b(?i)(?:(?<!$)[xyzwo]\d{0,3})\b'
+pop = true
+
+[[contexts.variable]]
+scope = "variable.language.ini.3dm"
+match = '\b(?i)this\b'
+pop = true
+
+[[contexts.variable]]
+scope = "meta.variable.ini.3dm"
+match = '''(?xi) (\$) (?: ({{var}})  |  (\\)({{namespace}})(\\) ({{var}}) )'''
+# captures for a normal variable
+captures.1 = "punctuation.definition.variable.ini.3dm"
+captures.2 = "variable.other.readwrite.ini.3dm"
+# captures for a namespaced variable
+captures.3 = "punctuation.separator.namespace.ini.3dm"
+captures.4 = "entity.name.namespace.ini.3dm"
+captures.5 = "punctuation.separator.namespace.ini.3dm"
+captures.6 = "variable.other.readwrite.ini.3dm"
+pop = true
+
+[[contexts.variable]]
+scope = "meta.function-call variable.function.ini.3dm"
+#                        The prefixable section names I've seen in use              \     namespace    \      user-provided name
+match = '''\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\)({{namespace}})(\\))?([\w.]+)'''
+captures.1 = "entity.name.section-type.ini.3dm"
+captures.2 = "punctuation.separator.namespace.ini.3dm"
+captures.3 = "entity.name.namespace.ini.3dm"
+captures.4 = "punctuation.separator.namespace.ini.3dm"
+captures.5 = "entity.name.function.ini.3dm"
+pop = true
+
+[[contexts.constant]]
+include = "Rword"
+
+[[contexts.constant]]
+scope = "constant.language.boolean.ini.3dm"
+match = '\b(?i)(?:true|false)\b'
+
+[[contexts.constant]]
+scope = "constant.language.numeric.ini.3dm"
+match = '\b(?i)(?:null|inf|NaN)\b'
+
+[[contexts.constant]]
+scope = "constant.language.ini.3dm"
+match = '\b(?i)(?:time|none|skip|disable|hunting)\b'
+# none, skip, disable are Rwords, but I need to nail down what section(s)/Lword(s) they go with; hunting and time should be language variables?
+
+[[contexts.constant]]
+scope = "constant.other.path.ini.3dm"
+match = '''(?i)(?=.*[\\/]+)(?:(?:(?:[a-z]:|\.)[\\/])?[\w@'\-.()]+(?:(?:\\|/)[\w@ '\-.()]+)+)'''
+
+[[contexts.constant]]
+scope = "constant.other.file.ini.3dm"
+match = '''(?i)[\w@'\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
+
+[[contexts.constant]]
+scope = "constant.numeric.ini.3dm"
+match = '\b\d+(?:\.\d+)?\b'
+
+[[contexts.Rword]]
+meta_scope = "meta.keyword.rword"
+
+[[contexts.Rword]]
+scope = "keyword.control.ini.3dm"
+match = '\b(?i)(unless_null)'
+
+[[contexts.Rword]]
+scope = "keyword.other.key.ini.3dm"
+match = '\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)'
+
+[[contexts.Rword]]
+scope = "constant.language.window.ini.3dm"
+match = '\b(?i)(?:rt_width|rt_height|res_width|res_height|window_width|window_height|cursor_(?:screen_|window_|hotspot_)?[xy]|cursor_showing)\b'
+
+[[contexts.Rword]]
+scope = "constant.language.draw.ini.3dm"
+match = '\b(?i)(?:auto|vertex_count|index_count|instance_count|first_vertex|first_index|first_instance|thread_group_count_x|thread_group_count_y|thread_group_count_z|indirect_offset|draw_type)'
+
+[[contexts.Rword]]
+scope = "constant.language.system.ini.3dm"
+match = '\b(?i)(?:stereo_active|sli)'
+
+[[contexts.Rword]]
+scope = "constant.language.dump.ini.3dm"
+match = '\b(?i)(?<!\.)(?:dump_(?:rt|tex|[cvi]b)|buf|txt)\b'
+
+[[contexts.string]]
+match = '"'
+push = [
+    {meta_scope = "string.quoted.double.ini.3dm"},
+    {match = '"', pop = true},
+]

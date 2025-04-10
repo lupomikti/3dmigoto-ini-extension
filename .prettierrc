@@ -1,0 +1,15 @@
+{
+    "printWidth": 80,
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "semi": false,
+    "overrides": [
+        {
+            "files": "*.sublime-syntax",
+            "options": {
+                "parser": "yaml",
+                "tabWidth": 2
+            }
+        }
+    ]
+}
