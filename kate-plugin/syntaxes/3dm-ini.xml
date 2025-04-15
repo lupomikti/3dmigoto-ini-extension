@@ -1,0 +1,1223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language>
+<language name="3DM INI Files" alternativenames="3DM-INI" version="1" kateversion="5.94"
+          section="Scripts" extensions="*.ini" casesensitive="0" license="GPL-3.0" priority="2">
+  <highlighting>
+    <list name="boolean-values">
+      <item>true</item>
+      <item>false</item>
+    </list>
+    <list name="modifiers">
+      <item>global</item>
+      <item>local</item>
+      <item>persist</item>
+      <item>pre</item>
+      <item>post</item>
+    </list>
+    <list name="language-constants">
+      <item>true</item>
+      <item>false</item>
+      <item>null</item>
+      <item>inf</item>
+      <item>nan</item>
+    </list>
+    <!-- Command List instructions, both general and drawcall specific -->
+    <list name="instructions">
+      <item>run</item>
+      <item>checktextureoverride</item>
+      <item>preset</item>
+      <item>exclude_preset</item>
+      <item>handling</item>
+      <item>reset_per_frame_limits</item>
+      <item>clear</item>
+      <item>direct_mode_eye</item>
+      <item>dump</item>
+      <item>special</item>
+      <item>store</item>
+      <!-- Draw Call instructions -->
+      <item>draw</item>
+      <item>drawindexed</item>
+      <item>drawinstanced</item>
+      <item>drawindexedinstanced</item>
+      <item>drawinstancedindirect</item>
+      <item>drawindexedinstancedindirect</item>
+      <item>dispatch</item>
+      <item>dispatchindirect</item>
+    </list>
+    <!-- Resource Identifiers -->
+    <list name="resource-identifiers">
+      <item>this</item>
+      <item>iniparams</item>
+      <item>stereoparams</item>
+      <item>cursor_mask</item>
+      <item>cursor_color</item>
+    </list>
+    <!-- Override Parameters -->
+    <list name="override-parameters">
+      <item>rt_width</item>
+      <item>rt_height</item>
+      <item>res_width</item>
+      <item>res_height</item>
+      <item>window_width</item>
+      <item>window_height</item>
+      <item>vertex_count</item>
+      <item>index_count</item>
+      <item>instance_count</item>
+      <item>first_vertex</item>
+      <item>first_index</item>
+      <item>first_instance</item>
+      <item>thread_group_count_x</item>
+      <item>thread_group_count_y</item>
+      <item>thread_group_count_z</item>
+      <item>indirect_offset</item>
+      <item>draw_type</item>
+      <item>cursor_showing</item>
+      <item>cursor_screen_x</item>
+      <item>cursor_screen_y</item>
+      <item>cursor_window_x</item>
+      <item>cursor_window_y</item>
+      <item>cursor_x</item>
+      <item>cursor_y</item>
+      <item>cursor_hotspot_x</item>
+      <item>cursor_hotspot_y</item>
+      <item>time</item>
+      <item>scissor_left</item>
+      <item>scissor_top</item>
+      <item>scissor_right</item>
+      <item>scissor_bottom</item>
+      <item>separation</item>
+      <item>raw_separation</item>
+      <item>eye_separation</item>
+      <item>convergence</item>
+      <item>stereo_active</item>
+      <item>stereo_available</item>
+      <item>sli</item>
+      <item>hunting</item>
+      <item>frame_analysis</item>
+      <item>effective_dp</item>
+    </list>
+    <!-- Lwords -->
+    <list name="multi-section-keywords">
+      <item>separation</item>
+      <item>convergence</item>
+      <item>hash</item>
+      <item>filter_index</item>
+      <item>match_priority</item>
+      <item>condition</item>
+      <item>format</item>
+      <item>width</item>
+      <item>width_multiply</item>
+      <item>height</item>
+      <item>height_multiply</item>
+      <item>analyse_options</item>
+      <item>type</item>
+    </list>
+    <list name="key-section-keywords">
+      <item>key</item>
+      <item>back</item>
+      <item>delay</item>
+      <item>release_delay</item>
+      <item>wrap</item>
+      <item>smart</item>
+      <item>transition</item>
+      <item>transition_type</item>
+      <item>release_transition</item>
+      <item>release_transition_type</item>
+    </list>
+    <list name="resource-section-keywords">
+      <item>filename</item>
+      <item>data</item>
+      <item>max_copies_per_frame</item>
+      <item>mode</item>
+      <item>bind_flags</item>
+      <item>misc_flags</item>
+      <item>depth</item>
+      <item>mips</item>
+      <item>array</item>
+      <item>msaa</item>
+      <item>msaa_quality</item>
+      <item>byte_width</item>
+      <item>stride</item>
+    </list>
+    <list name="texture-override-keywords">
+      <!-- Resource Match -->
+      <item>stereomode</item>
+      <item>expand_region_copy</item>
+      <item>deny_cpu_read</item>
+      <item>iteration</item>
+      <!-- Vertex Limit -->
+      <item>override_byte_stride</item>
+      <item>override_vertex_count</item>
+      <!-- Draw Match -->
+      <item>match_first_vertex</item>
+      <item>match_first_index</item>
+      <item>match_first_instance</item>
+      <item>match_vertex_count</item>
+      <item>match_index_count</item>
+      <item>match_instance_count</item>
+      <!-- Fuzzy Match -->
+      <item>match_type</item>
+      <item>match_usage</item>
+      <item>match_bind_flags</item>
+      <item>match_cpu_access_flags</item>
+      <item>match_misc_flags</item>
+      <item>match_width</item>
+      <item>match_byte_width</item>
+      <item>match_height</item>
+      <item>match_stride</item>
+      <item>match_mips</item>
+      <item>match_format</item>
+      <item>match_depth</item>
+      <item>match_array</item>
+      <item>match_msaa</item>
+      <item>match_msaa_quality</item>
+    </list>
+    <list name="custom-shader-keywords">
+      <item>flags</item>
+      <item>max_executions_per_frame</item>
+      <item>topology</item>
+      <item>sampler</item>
+      <!-- Blend State -->
+      <item>alpha_to_coverage</item>
+      <item>sample_mask</item>
+      <item>blend_state_merge</item>
+      <!-- Depth Stencil State -->
+      <item>depth_enable</item>
+      <item>depth_write_mask</item>
+      <item>depth_func</item>
+      <item>depth_stencil_state_merge</item>
+      <item>stencil_enable</item>
+      <item>stencil_read_mask</item>
+      <item>stencil_write_mask</item>
+      <item>stencil_front</item>
+      <item>stencil_back</item>
+      <item>stencil_ref</item>
+      <!-- RS State -->
+      <item>fill</item>
+      <item>cull</item>
+      <item>front</item>
+      <item>depth_bias</item>
+      <item>depth_bias_clamp</item>
+      <item>depth_clip_enable</item>
+      <item>slope_scaled_depth_bias</item>
+      <item>depth_clip_enable</item>
+      <item>scissor_enable</item>
+      <item>multisample_enable</item>
+      <item>antialiased_line_enable</item>
+      <item>rasterizer_state_merge</item>
+    </list>
+    <list name="custom-shader-blend-state">
+      <item>blend</item>
+      <item>alpha</item>
+      <item>mask</item>
+      <item>blend_factor</item>
+    </list>
+    <list name="shader-regex-keywords">
+      <item>shader_model</item>
+      <item>temps</item>
+    </list>
+    <list name="shader-override-keywords">
+      <item>allow_duplicate_hash</item>
+      <item>depth_filter</item>
+      <item>partner</item>
+      <item>model</item>
+      <item>disable_scissor</item>
+    </list>
+    <list name="include-section-keywords">
+      <item>include</item>
+      <item>exclude</item>
+      <item>include_recursive</item>
+      <item>exclude_recursive</item>
+      <item>user_config</item>
+    </list>
+    <list name="logging-section-keywords">
+      <item>calls</item>
+      <item>input</item>
+      <item>debug</item>
+      <item>debug_locks</item>
+      <item>unbuffered</item>
+      <item>force_cpu_affinity</item>
+      <item>wait_for_debugger</item>
+      <item>crash</item>
+      <item>dump_all_profiles</item>
+      <item>show_warnings</item>
+    </list>
+    <list name="hunting-section-keywords">
+      <item>hunting</item>
+      <item>done_hunting</item>
+      <item>toggle_hunting</item>
+      <item>marking_mode</item>
+      <item>next_marking_mode</item>
+      <item>marking_actions</item>
+      <item>mark_snapshot</item>
+      <item>previous_pixelshader</item>
+      <item>previous_vertexshader</item>
+      <item>previous_computeshader</item>
+      <item>previous_geometryshader</item>
+      <item>previous_domainshader</item>
+      <item>previous_hullshader</item>
+      <item>next_pixelshader</item>
+      <item>next_vertexshader</item>
+      <item>next_computeshader</item>
+      <item>next_geometryshader</item>
+      <item>next_domainshader</item>
+      <item>next_hullshader</item>
+      <item>mark_pixelshader</item>
+      <item>mark_vertexshader</item>
+      <item>mark_computeshader</item>
+      <item>mark_geometryshader</item>
+      <item>mark_domainshader</item>
+      <item>mark_hullshader</item>
+      <item>previous_indexbuffer</item>
+      <item>previous_vertexbuffer</item>
+      <item>next_indexbuffer</item>
+      <item>next_vertexbuffer</item>
+      <item>mark_indexbuffer</item>
+      <item>mark_vertexbuffer</item>
+      <item>previous_rendertarget</item>
+      <item>next_rendertarget</item>
+      <item>mark_rendertarget</item>
+      <item>take_screenshot</item>
+      <item>reload_fixes</item>
+      <item>wipe_user_config</item>
+      <item>reload_config</item>
+      <item>show_original</item>
+      <item>monitor_performance</item>
+      <item>monitor_performance_interval</item>
+      <item>repeat_rate</item>
+      <item>freeze_performance_monitor</item>
+      <item>verbose_overlay</item>
+      <item>tune_enable</item>
+      <item>tune_step</item>
+      <item>tune1_up</item>
+      <item>tune1_down</item>
+      <item>tune2_up</item>
+      <item>tune2_down</item>
+      <item>tune3_up</item>
+      <item>tune3_down</item>
+      <item>analyse_frame</item>
+      <item>kill_deferred</item>
+    </list>
+    <list name="system-section-keywords">
+      <item>proxy_d3d9</item>
+      <item>proxy_d3d11</item>
+      <item>load_library_redirect</item>
+      <item>check_foreground_window</item>
+      <item>hook</item>
+      <item>allow_check_interface</item>
+      <item>allow_create_device</item>
+      <item>allow_platform_update</item>
+      <item>skip_early_includes_load</item>
+      <item>config_initialization_delay</item>
+      <item>settings_auto_save_interval</item>
+    </list>
+    <list name="loader-section-keywords">
+      <item>target</item>
+      <item>module</item>
+      <item>require_admin</item>
+      <item>launch</item>
+      <item>delay</item>
+      <item>loader</item>
+      <item>check_version</item>
+      <item>entry_point</item>
+      <item>hook_proc</item>
+      <item>wait_for_target</item>
+    </list>
+    <list name="device-section-keywords">
+      <item>upscaling</item>
+      <item>upscale_mode</item>
+      <item>refresh_rate</item>
+      <item>filter_refresh_rate</item>
+      <item>full_screen</item>
+      <item>toggle_full_screen</item>
+      <item>force_full_screen_on_key</item>
+      <item>force_stereo</item>
+      <item>allow_windowcommands</item>
+      <item>get_resolution_from</item>
+      <item>hide_cursor</item>
+      <item>cursor_upscaling_bypass</item>
+    </list>
+    <list name="stereo-section-keywords">
+      <item>automatic_mode</item>
+      <item>unlock_separation</item>
+      <item>unlock_convergence</item>
+      <item>create_profile</item>
+      <item>surface_createmode</item>
+      <item>suface_square_createmode</item>
+      <item>force_no_nvapi</item>
+    </list>
+    <list name="rendering-section-keywords">
+      <item>shader_hash</item>
+      <item>texture_hash</item>
+      <item>override_directory</item>
+      <item>cache_directory</item>
+      <item>storage_directory</item>
+      <item>cache_shaders</item>
+      <item>rasterizer_disable_scissor</item>
+      <item>track_texture_updates</item>
+      <item>stereo_params</item>
+      <item>ini_params</item>
+      <item>assemble_signature_comments</item>
+      <item>disassemble_undecipherable_custom_data</item>
+      <item>patch_assembly_cb_offsets</item>
+      <item>recursive_include</item>
+      <item>export_fixed</item>
+      <item>export_shaders</item>
+      <item>export_hlsl</item>
+      <item>export_binary</item>
+      <item>dump_usage</item>
+      <item>recompile_all_vs</item>
+      <item>fix_sv_position</item>
+      <item>fix_ZRepair_DepthTexture1</item>
+      <item>fix_ZRepair_DepthTexture2</item>
+      <item>fix_ZRepair_ZPosCalc1</item>
+      <item>fix_ZRepair_ZPosCalc2</item>
+      <item>fix_ZRepair_PositionTexture</item>
+      <item>fix_ZRepair_PositionCalc</item>
+      <item>fix_ZRepair_Dependencies1</item>
+      <item>fix_ZRepair_Dependencies2</item>
+      <item>fix_ZRepair_InvTransform</item>
+      <item>fix_ZRepair_DepthTextureHash</item>
+      <item>fix_BackProjectionTransform1</item>
+      <item>fix_BackProjectionTransform2</item>
+      <item>fix_ObjectPosition1</item>
+      <item>fix_ObjectPosition2</item>
+      <item>fix_ObjectPosition1Multiplier</item>
+      <item>fix_ObjectPosition2Multiplier</item>
+      <item>fix_MatrixOperand1</item>
+      <item>fix_MatrixOperand1Multiplier</item>
+    </list>
+    <!-- Functional Keywords a.k.a. Resouce Usage Modifiers -->
+    <list name="resource-usage-modifiers">
+      <item>copy</item>
+      <item>copy_desc</item>
+      <item>copy_description</item>
+      <item>ref</item>
+      <item>reference</item>
+      <item>raw</item>
+      <item>stereo</item>
+      <item>mono</item>
+      <item>stereo2mono</item>
+      <item>set_viewport</item>
+      <item>no_view_cache</item>
+      <item>resolve_msaa</item>
+    </list>
+    <!-- Rwords -->
+    <list name="multi-section-key-values">
+      <item>none</item>
+      <item>skip</item>
+      <item>hold</item>
+      <item>mono</item>
+      <item>stereo</item>
+      <item>auto</item>
+      <item>depth_stencil</item>
+      <item>texturecube</item>
+    </list>
+    <list name="command-key-values">
+      <item>from_caller</item>
+      <item>abort</item>
+      <item>upscaling_switch_bb</item>
+      <item>draw_3dmigoto_overlay</item>
+      <item>int</item>
+      <item>depth</item>
+      <item>stencil</item>
+      <item>left</item>
+      <item>right</item>
+    </list>
+    <list name="shader-override-key-values">
+      <item>overrule</item>
+      <item>depth_active</item>
+      <item>depth_inactive</item>
+    </list>
+    <list name="custom-shader-key-values">
+      <item>front</item>
+      <item>back</item>
+      <item>wireframe</item>
+      <item>solid</item>
+      <item>undefined</item>
+      <item>point_list</item>
+      <item>line_list</item>
+      <item>triangle_list</item>
+      <item>line_strip</item>
+      <item>triangle_strip</item>
+      <item>line_list_adj</item>
+      <item>triangle_list_adj</item>
+      <item>line_strip_adj</item>
+      <item>triangle_strip_adj</item>
+      <item>1_control_point_patch_list</item>
+      <item>2_control_point_patch_list</item>
+      <item>3_control_point_patch_list</item>
+      <item>4_control_point_patch_list</item>
+      <item>5_control_point_patch_list</item>
+      <item>6_control_point_patch_list</item>
+      <item>7_control_point_patch_list</item>
+      <item>8_control_point_patch_list</item>
+      <item>9_control_point_patch_list</item>
+      <item>10_control_point_patch_list</item>
+      <item>11_control_point_patch_list</item>
+      <item>12_control_point_patch_list</item>
+      <item>13_control_point_patch_list</item>
+      <item>14_control_point_patch_list</item>
+      <item>15_control_point_patch_list</item>
+      <item>16_control_point_patch_list</item>
+      <item>17_control_point_patch_list</item>
+      <item>18_control_point_patch_list</item>
+      <item>19_control_point_patch_list</item>
+      <item>20_control_point_patch_list</item>
+      <item>21_control_point_patch_list</item>
+      <item>22_control_point_patch_list</item>
+      <item>23_control_point_patch_list</item>
+      <item>24_control_point_patch_list</item>
+      <item>25_control_point_patch_list</item>
+      <item>26_control_point_patch_list</item>
+      <item>27_control_point_patch_list</item>
+      <item>28_control_point_patch_list</item>
+      <item>29_control_point_patch_list</item>
+      <item>30_control_point_patch_list</item>
+      <item>31_control_point_patch_list</item>
+      <item>32_control_point_patch_list</item>
+      <item>33_control_point_patch_list</item>
+      <item>34_control_point_patch_list</item>
+      <item>35_control_point_patch_list</item>
+      <item>36_control_point_patch_list</item>
+      <item>37_control_point_patch_list</item>
+      <item>38_control_point_patch_list</item>
+      <item>39_control_point_patch_list</item>
+    </list>
+    <list name="custom-shader-compile-flags">
+      <item>debug</item>
+      <item>skip_validation</item>
+      <item>skip_optimization</item>
+      <item>pack_matrix_row_major</item>
+      <item>pack_matrix_column_major</item>
+      <item>partial_precision</item>
+      <item>force_vs_software_no_opt</item>
+      <item>force_ps_software_no_opt</item>
+      <item>no_preshader</item>
+      <item>avoid_flow_control</item>
+      <item>prefer_flow_control</item>
+      <item>enable_strictness</item>
+      <item>enable_backwards_compatibility</item>
+      <item>enable_unbounded_descriptor_tables</item>
+      <item>ieee_strictness</item>
+      <item>optimization_level0</item>
+      <item>optimization_level1</item>
+      <item>optimization_level2</item>
+      <item>optimization_level3</item>
+      <item>warnings_are_errors</item>
+      <item>resources_may_alias</item>
+      <item>all_resources_bound</item>
+    </list>
+    <list name="unless-null">
+      <item>unless_null</item>
+    </list>
+    <list name="resource-section-key-types">
+      <item>StructuredBuffer</item>
+      <item>AppendStructuredBuffer</item>
+      <item>ConsumeStructuredBuffer</item>
+      <item>RWAppendStructuredBuffer</item>
+      <item>RWConsumeStructuredBuffer</item>
+      <item>Buffer</item>
+      <item>ByteAddressBuffer</item>
+      <item>RWBuffer</item>
+      <item>RWByteAddressBuffer</item>
+      <item>Texture1D</item>
+      <item>Texture2D</item>
+      <item>Texture3D</item>
+      <item>RWTexture1D</item>
+      <item>RWTexture2D</item>
+      <item>RWTexture3D</item>
+    </list>
+    <list name="resource-section-key-values">
+      <!-- Bind Flags -->
+      <item>vertex_buffer</item>
+      <item>index_buffer</item>
+      <item>constant_buffer</item>
+      <item>shader_resource</item>
+      <item>stream_output</item>
+      <item>render_target</item>
+      <item>unordered_access</item>
+      <item>decoder</item>
+      <item>video_encoder</item>
+      <!-- Misc Flags -->
+      <item>generate_mips</item>
+      <item>shared</item>
+      <item>drawindirect_args</item>
+      <item>buffer_allow_raw_views</item>
+      <item>buffer_structured</item>
+      <item>resource_clamp</item>
+      <item>shared_keymutex</item>
+      <item>shared_nthandle</item>
+      <item>gdi_compatible</item>
+      <item>restricted_content</item>
+      <item>restrict_shared_resource</item>
+      <item>restrict_shared_resource_driver</item>
+      <item>guarded</item>
+      <item>tile_pool</item>
+      <item>tiled</item>
+      <item>hw_protected</item>
+    </list>
+    <list name="dxgi-formats">
+      <item>UNKNOWN</item>
+      <item>R32G32B32A32_TYPELESS</item>
+      <item>R32G32B32A32_FLOAT</item>
+      <item>R32G32B32A32_UINT</item>
+      <item>R32G32B32A32_SINT</item>
+      <item>R32G32B32_TYPELESS</item>
+      <item>R32G32B32_FLOAT</item>
+      <item>R32G32B32_UINT</item>
+      <item>R32G32B32_SINT</item>
+      <item>R16G16B16A16_TYPELESS</item>
+      <item>R16G16B16A16_FLOAT</item>
+      <item>R16G16B16A16_UNORM</item>
+      <item>R16G16B16A16_UINT</item>
+      <item>R16G16B16A16_SNORM</item>
+      <item>R16G16B16A16_SINT</item>
+      <item>R32G32_TYPELESS</item>
+      <item>R32G32_FLOAT</item>
+      <item>R32G32_UINT</item>
+      <item>R32G32_SINT</item>
+      <item>R32G8X24_TYPELESS</item>
+      <item>D32_FLOAT_S8X24_UINT</item>
+      <item>R32_FLOAT_X8X24_TYPELESS</item>
+      <item>X32_TYPELESS_G8X24_UINT</item>
+      <item>R10G10B10A2_TYPELESS</item>
+      <item>R10G10B10A2_UNORM</item>
+      <item>R10G10B10A2_UINT</item>
+      <item>R11G11B10_FLOAT</item>
+      <item>R8G8B8A8_TYPELESS</item>
+      <item>R8G8B8A8_UNORM</item>
+      <item>R8G8B8A8_UNORM_SRGB</item>
+      <item>R8G8B8A8_UINT</item>
+      <item>R8G8B8A8_SNORM</item>
+      <item>R8G8B8A8_SINT</item>
+      <item>R16G16_TYPELESS</item>
+      <item>R16G16_FLOAT</item>
+      <item>R16G16_UNORM</item>
+      <item>R16G16_UINT</item>
+      <item>R16G16_SNORM</item>
+      <item>R16G16_SINT</item>
+      <item>R32_TYPELESS</item>
+      <item>D32_FLOAT</item>
+      <item>R32_FLOAT</item>
+      <item>R32_UINT</item>
+      <item>R32_SINT</item>
+      <item>R24G8_TYPELESS</item>
+      <item>D24_UNORM_S8_UINT</item>
+      <item>R24_UNORM_X8_TYPELESS</item>
+      <item>X24_TYPELESS_G8_UINT</item>
+      <item>R8G8_TYPELESS</item>
+      <item>R8G8_UNORM</item>
+      <item>R8G8_UINT</item>
+      <item>R8G8_SNORM</item>
+      <item>R8G8_SINT</item>
+      <item>R16_TYPELESS</item>
+      <item>R16_FLOAT</item>
+      <item>D16_UNORM</item>
+      <item>R16_UNORM</item>
+      <item>R16_UINT</item>
+      <item>R16_SNORM</item>
+      <item>R16_SINT</item>
+      <item>R8_TYPELESS</item>
+      <item>R8_UNORM</item>
+      <item>R8_UINT</item>
+      <item>R8_SNORM</item>
+      <item>R8_SINT</item>
+      <item>A8_UNORM</item>
+      <item>R1_UNORM</item>
+      <item>R9G9B9E5_SHAREDEXP</item>
+      <item>R8G8_B8G8_UNORM</item>
+      <item>G8R8_G8B8_UNORM</item>
+      <item>BC1_TYPELESS</item>
+      <item>BC1_UNORM</item>
+      <item>BC1_UNORM_SRGB</item>
+      <item>BC2_TYPELESS</item>
+      <item>BC2_UNORM</item>
+      <item>BC2_UNORM_SRGB</item>
+      <item>BC3_TYPELESS</item>
+      <item>BC3_UNORM</item>
+      <item>BC3_UNORM_SRGB</item>
+      <item>BC4_TYPELESS</item>
+      <item>BC4_UNORM</item>
+      <item>BC4_SNORM</item>
+      <item>BC5_TYPELESS</item>
+      <item>BC5_UNORM</item>
+      <item>BC5_SNORM</item>
+      <item>B5G6R5_UNORM</item>
+      <item>B5G5R5A1_UNORM</item>
+      <item>B8G8R8A8_UNORM</item>
+      <item>B8G8R8X8_UNORM</item>
+      <item>R10G10B10_XR_BIAS_A2_UNORM</item>
+      <item>B8G8R8A8_TYPELESS</item>
+      <item>B8G8R8A8_UNORM_SRGB</item>
+      <item>B8G8R8X8_TYPELESS</item>
+      <item>B8G8R8X8_UNORM_SRGB</item>
+      <item>BC6H_TYPELESS</item>
+      <item>BC6H_UF16</item>
+      <item>BC6H_SF16</item>
+      <item>BC7_TYPELESS</item>
+      <item>BC7_UNORM</item>
+      <item>BC7_UNORM_SRGB</item>
+      <item>AYUV</item>
+      <item>Y410</item>
+      <item>Y416</item>
+      <item>NV12</item>
+      <item>P010</item>
+      <item>P016</item>
+      <item>420_OPAQUE</item>
+      <item>YUY2</item>
+      <item>Y210</item>
+      <item>Y216</item>
+      <item>NV11</item>
+      <item>AI44</item>
+      <item>IA44</item>
+      <item>P8</item>
+      <item>A8P8</item>
+      <item>B4G4R4A4_UNORM</item>
+      <item>DXGI_FORMAT_UNKNOWN</item>
+      <item>DXGI_FORMAT_R32G32B32A32_TYPELESS</item>
+      <item>DXGI_FORMAT_R32G32B32A32_FLOAT</item>
+      <item>DXGI_FORMAT_R32G32B32A32_UINT</item>
+      <item>DXGI_FORMAT_R32G32B32A32_SINT</item>
+      <item>DXGI_FORMAT_R32G32B32_TYPELESS</item>
+      <item>DXGI_FORMAT_R32G32B32_FLOAT</item>
+      <item>DXGI_FORMAT_R32G32B32_UINT</item>
+      <item>DXGI_FORMAT_R32G32B32_SINT</item>
+      <item>DXGI_FORMAT_R16G16B16A16_TYPELESS</item>
+      <item>DXGI_FORMAT_R16G16B16A16_FLOAT</item>
+      <item>DXGI_FORMAT_R16G16B16A16_UNORM</item>
+      <item>DXGI_FORMAT_R16G16B16A16_UINT</item>
+      <item>DXGI_FORMAT_R16G16B16A16_SNORM</item>
+      <item>DXGI_FORMAT_R16G16B16A16_SINT</item>
+      <item>DXGI_FORMAT_R32G32_TYPELESS</item>
+      <item>DXGI_FORMAT_R32G32_FLOAT</item>
+      <item>DXGI_FORMAT_R32G32_UINT</item>
+      <item>DXGI_FORMAT_R32G32_SINT</item>
+      <item>DXGI_FORMAT_R32G8X24_TYPELESS</item>
+      <item>DXGI_FORMAT_D32_FLOAT_S8X24_UINT</item>
+      <item>DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS</item>
+      <item>DXGI_FORMAT_X32_TYPELESS_G8X24_UINT</item>
+      <item>DXGI_FORMAT_R10G10B10A2_TYPELESS</item>
+      <item>DXGI_FORMAT_R10G10B10A2_UNORM</item>
+      <item>DXGI_FORMAT_R10G10B10A2_UINT</item>
+      <item>DXGI_FORMAT_R11G11B10_FLOAT</item>
+      <item>DXGI_FORMAT_R8G8B8A8_TYPELESS</item>
+      <item>DXGI_FORMAT_R8G8B8A8_UNORM</item>
+      <item>DXGI_FORMAT_R8G8B8A8_UNORM_SRGB</item>
+      <item>DXGI_FORMAT_R8G8B8A8_UINT</item>
+      <item>DXGI_FORMAT_R8G8B8A8_SNORM</item>
+      <item>DXGI_FORMAT_R8G8B8A8_SINT</item>
+      <item>DXGI_FORMAT_R16G16_TYPELESS</item>
+      <item>DXGI_FORMAT_R16G16_FLOAT</item>
+      <item>DXGI_FORMAT_R16G16_UNORM</item>
+      <item>DXGI_FORMAT_R16G16_UINT</item>
+      <item>DXGI_FORMAT_R16G16_SNORM</item>
+      <item>DXGI_FORMAT_R16G16_SINT</item>
+      <item>DXGI_FORMAT_R32_TYPELESS</item>
+      <item>DXGI_FORMAT_D32_FLOAT</item>
+      <item>DXGI_FORMAT_R32_FLOAT</item>
+      <item>DXGI_FORMAT_R32_UINT</item>
+      <item>DXGI_FORMAT_R32_SINT</item>
+      <item>DXGI_FORMAT_R24G8_TYPELESS</item>
+      <item>DXGI_FORMAT_D24_UNORM_S8_UINT</item>
+      <item>DXGI_FORMAT_R24_UNORM_X8_TYPELESS</item>
+      <item>DXGI_FORMAT_X24_TYPELESS_G8_UINT</item>
+      <item>DXGI_FORMAT_R8G8_TYPELESS</item>
+      <item>DXGI_FORMAT_R8G8_UNORM</item>
+      <item>DXGI_FORMAT_R8G8_UINT</item>
+      <item>DXGI_FORMAT_R8G8_SNORM</item>
+      <item>DXGI_FORMAT_R8G8_SINT</item>
+      <item>DXGI_FORMAT_R16_TYPELESS</item>
+      <item>DXGI_FORMAT_R16_FLOAT</item>
+      <item>DXGI_FORMAT_D16_UNORM</item>
+      <item>DXGI_FORMAT_R16_UNORM</item>
+      <item>DXGI_FORMAT_R16_UINT</item>
+      <item>DXGI_FORMAT_R16_SNORM</item>
+      <item>DXGI_FORMAT_R16_SINT</item>
+      <item>DXGI_FORMAT_R8_TYPELESS</item>
+      <item>DXGI_FORMAT_R8_UNORM</item>
+      <item>DXGI_FORMAT_R8_UINT</item>
+      <item>DXGI_FORMAT_R8_SNORM</item>
+      <item>DXGI_FORMAT_R8_SINT</item>
+      <item>DXGI_FORMAT_A8_UNORM</item>
+      <item>DXGI_FORMAT_R1_UNORM</item>
+      <item>DXGI_FORMAT_R9G9B9E5_SHAREDEXP</item>
+      <item>DXGI_FORMAT_R8G8_B8G8_UNORM</item>
+      <item>DXGI_FORMAT_G8R8_G8B8_UNORM</item>
+      <item>DXGI_FORMAT_RC1_TYPELESS</item>
+      <item>DXGI_FORMAT_RC1_UNORM</item>
+      <item>DXGI_FORMAT_RC1_UNORM_SRGB</item>
+      <item>DXGI_FORMAT_RC2_TYPELESS</item>
+      <item>DXGI_FORMAT_RC2_UNORM</item>
+      <item>DXGI_FORMAT_RC2_UNORM_SRGB</item>
+      <item>DXGI_FORMAT_RC3_TYPELESS</item>
+      <item>DXGI_FORMAT_RC3_UNORM</item>
+      <item>DXGI_FORMAT_RC3_UNORM_SRGB</item>
+      <item>DXGI_FORMAT_RC4_TYPELESS</item>
+      <item>DXGI_FORMAT_RC4_UNORM</item>
+      <item>DXGI_FORMAT_RC4_SNORM</item>
+      <item>DXGI_FORMAT_RC5_TYPELESS</item>
+      <item>DXGI_FORMAT_RC5_UNORM</item>
+      <item>DXGI_FORMAT_RC5_SNORM</item>
+      <item>DXGI_FORMAT_R5G6R5_UNORM</item>
+      <item>DXGI_FORMAT_R5G5R5A1_UNORM</item>
+      <item>DXGI_FORMAT_R8G8R8A8_UNORM</item>
+      <item>DXGI_FORMAT_R8G8R8X8_UNORM</item>
+      <item>DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM</item>
+      <item>DXGI_FORMAT_R8G8R8A8_TYPELESS</item>
+      <item>DXGI_FORMAT_R8G8R8A8_UNORM_SRGB</item>
+      <item>DXGI_FORMAT_R8G8R8X8_TYPELESS</item>
+      <item>DXGI_FORMAT_R8G8R8X8_UNORM_SRGB</item>
+      <item>DXGI_FORMAT_RC6H_TYPELESS</item>
+      <item>DXGI_FORMAT_RC6H_UF16</item>
+      <item>DXGI_FORMAT_RC6H_SF16</item>
+      <item>DXGI_FORMAT_RC7_TYPELESS</item>
+      <item>DXGI_FORMAT_RC7_UNORM</item>
+      <item>DXGI_FORMAT_RC7_UNORM_SRGB</item>
+      <item>DXGI_FORMAT_AYUV</item>
+      <item>DXGI_FORMAT_Y410</item>
+      <item>DXGI_FORMAT_Y416</item>
+      <item>DXGI_FORMAT_NV12</item>
+      <item>DXGI_FORMAT_P010</item>
+      <item>DXGI_FORMAT_P016</item>
+      <item>DXGI_FORMAT_420_OPAQUE</item>
+      <item>DXGI_FORMAT_YUY2</item>
+      <item>DXGI_FORMAT_Y210</item>
+      <item>DXGI_FORMAT_Y216</item>
+      <item>DXGI_FORMAT_NV11</item>
+      <item>DXGI_FORMAT_AI44</item>
+      <item>DXGI_FORMAT_IA44</item>
+      <item>DXGI_FORMAT_P8</item>
+      <item>DXGI_FORMAT_A8P8</item>
+      <item>DXGI_FORMAT_R4G4R4A4_UNORM</item>
+    </list>
+    <list name="blend-operators">
+      <item>add</item>
+      <item>subtract</item>
+      <item>rev_subtract</item>
+      <item>min</item>
+      <item>max</item>
+      <item>disable</item>
+    </list>
+    <list name="blend-factors">
+      <item>zero</item>
+      <item>one</item>
+      <item>src_color</item>
+      <item>src_alpha</item>
+      <item>src1_color</item>
+      <item>src1_alpha</item>
+      <item>dest_color</item>
+      <item>dest_alpha</item>
+      <item>inv_src_color</item>
+      <item>inv_src_alpha</item>
+      <item>inv_src1_color</item>
+      <item>inv_src1_alpha</item>
+      <item>inv_dest_color</item>
+      <item>inv_dest_alpha</item>
+      <item>src_alpha_sat</item>
+      <item>blend_factor</item>
+      <item>inv_blend_factor</item>
+    </list>
+    <list name="key-section-key-values">
+      <item>activate</item>
+      <item>toggle</item>
+      <item>cycle</item>
+      <item>linear</item>
+      <item>cosine</item>
+    </list>
+    <list name="key-section-key-modifiers">
+      <item>ctrl</item>
+      <item>alt</item>
+      <item>shift</item>
+      <item>windows</item>
+      <item>no_modifiers</item>
+      <item>no_ctrl</item>
+      <item>no_alt</item>
+      <item>no_shift</item>
+      <item>no_windows</item>
+    </list>
+    <list name="system-section-key-values">
+      <item>deferred_contexts</item>
+      <item>context</item>
+      <item>immediate_context</item>
+      <item>device</item>
+      <item>all</item>
+      <item>recommended</item>
+      <item>except_set_shader_resources</item>
+      <item>except_set_sampler</item>
+      <item>except_set_rasterizer_state</item>
+      <item>skip_dxgi_factory</item>
+      <item>skip_dxgi_device</item>
+    </list>
+    <list name="device-rendering-key-values">
+      <item>swap_chain</item>
+      <item>3dmigoto</item>
+      <item>embedded</item>
+      <item>bytecode</item>
+    </list>
+    <list name="marking-key-values">
+      <item>original</item>
+      <item>pink</item>
+      <item>hlsl</item>
+      <item>asm</item>
+      <item>assembly</item>
+      <item>regex</item>
+      <item>ShaderRegex</item>
+      <item>clipboard</item>
+      <item>mono_snapshot</item>
+      <item>stereo_snapshot</item>
+      <item>snapshot_if_pink</item>
+    </list>
+    <list name="analysis-key-values">
+      <item>dump_rt</item>
+      <item>dump_depth</item>
+      <item>dump_tex</item>
+      <item>dump_cb</item>
+      <item>dump_vb</item>
+      <item>dump_ib</item>
+      <item>jps</item>
+      <item>jpg</item>
+      <item>jpeg</item>
+      <item>dds</item>
+      <item>jps_dds</item>
+      <item>jpg_dds</item>
+      <item>jpeg_dds</item>
+      <item>buf</item>
+      <item>txt</item>
+      <item>desc</item>
+      <item>clear_rt</item>
+      <item>persist</item>
+      <item>filename_reg</item>
+      <item>filename_handle</item>
+      <item>log</item>
+      <item>dump_on_unmap</item>
+      <item>dump_on_update</item>
+      <item>deferred_ctx_immediate</item>
+      <item>deferred_ctx_accurate</item>
+      <item>share_dupes</item>
+      <item>symlink</item>
+      <item>dump_rt_jps</item>
+      <item>dump_rt_dds</item>
+      <item>dump_depth_jps</item>
+      <item>dump_depth_dds</item>
+      <item>dump_tex_jps</item>
+      <item>dump_tex_dds</item>
+      <item>dump_cb_txt</item>
+      <item>dump_vb_txt</item>
+      <item>dump_ib_txt</item>
+    </list>
+    <!-- Contexts -->
+    <contexts>
+      <context attribute="Normal Text" lineEndContext="#stay" name="INI">
+        <DetectSpaces/>
+        <WordDetect attribute="Keyword" context="NamespaceDeclaration" String="namespace" insensitive="true" lookAhead="true"/>
+        <DetectChar attribute="Header" context="SectionTitle" char="[" endRegion="Section"/>
+        <Detect2Chars attribute="Comment" context="Comment" char=";" char1="&lt;" firstNonSpace="true" beginRegion="CommentFold"/>
+        <RegExpr attribute="Comment" context="Comment" insensitive="true" String=";.*&gt;" firstNonSpace="true" endRegion="CommentFold"/>
+        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+      </context>
+      <!-- Namespaces -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="NamespaceDeclaration">
+        <WordDetect attribute="Keyword" context="#stay" String="namespace" insensitive="true"/>
+        <DetectChar attribute="Assignment" context="NamespaceValue" char="="/>
+        <DetectSpaces/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="NamespaceValue">
+        <RegExpr attribute="Namespace" context="#pop" insensitive="true" String="[\w\-.]+(?:\\[\w\-.]+)*"/>
+      </context>
+      <!-- Section headers -->
+      <context attribute="Header" lineEndContext="#pop" fallthroughContext="#pop" name="SectionTitle">
+        <DetectChar attribute="Header" context="#pop" char="]" beginRegion="Section"/>
+        <IncludeRules context="FindSpecialBodyHeaders"/>
+        <RegExpr attribute="Header" context="KVPHeader" insensitive="true" String="(?:(?:Resource|Preset).+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)"/>
+        <RegExpr attribute="Header" context="FullCommandHeader" insensitive="true" String="(?:(?:(?:Shader|Texture)Override|ShaderRegex|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
+      </context>
+
+      <context attribute="Header" lineEndContext="#pop" name="KVPHeader">
+        <DetectChar attribute="Header" context="#pop#pop!KVPBody" char="]" beginRegion="Section"/>
+      </context>
+
+      <context attribute="Header" lineEndContext="#pop" name="FullCommandHeader">
+        <DetectChar attribute="Header" context="#pop#pop!FullCommandBody" char="]" beginRegion="Section"/>
+      </context>
+      <!-- Special Headers -->
+      <context attribute="Header" lineEndContext="#pop" name="FindSpecialBodyHeaders">
+        <StringDetect attribute="Header" context="ConstantsHeader" insensitive="true" String="Constants"/>
+        <RegExpr attribute="Header" context="KeyHeader" insensitive="true" String="Key.+(?=\])"/>
+        <RegExpr attribute="Header" context="RegexPatternHeader" insensitive="true" String="ShaderRegex.+\.Pattern(?=\])"/>
+        <RegExpr attribute="Header" context="RegexReplaceHeader" insensitive="true" String="ShaderRegex.+\.Pattern\.Replace(?=\])"/>
+        <RegExpr attribute="Header" context="RegexDeclarationsHeader" insensitive="true" String="ShaderRegex.+\.InsertDeclarations(?=\])"/>
+      </context>
+
+      <context attribute="Header" lineEndContext="#pop" name="ConstantsHeader">
+        <DetectChar attribute="Header" context="#pop#pop!ConstantsBody" char="]" beginRegion="Section"/>
+      </context>
+
+      <context attribute="Header" lineEndContext="#pop" name="KeyHeader">
+        <DetectChar attribute="Header" context="#pop#pop!KeyBody" char="]" beginRegion="Section"/>
+      </context>
+
+      <context attribute="Header" lineEndContext="#pop" name="RegexPatternHeader">
+        <DetectChar attribute="Header" context="#pop#pop!RegexPatternBody" char="]" beginRegion="Section"/>
+      </context>
+
+      <context attribute="Header" lineEndContext="#pop" name="RegexReplaceHeader">
+        <DetectChar attribute="Header" context="#pop#pop!RegexReplaceBody" char="]" beginRegion="Section"/>
+      </context>
+
+      <context attribute="Header" lineEndContext="#pop" name="RegexDeclarationsHeader">
+        <DetectChar attribute="Header" context="#pop#pop!RegexDeclarationsBody" char="]" beginRegion="Section"/>
+      </context>
+      <!-- Special Bodies -->
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="ConstantsBody">
+        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <IncludeRules context="LeftExpression"/>
+        <DetectChar attribute="Assignment" context="Value" char="="/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="KeyBody">
+        <WordDetect attribute="Keyword" context="ConditionDeclaration" String="condition" insensitive="true" lookAhead="true"/>
+        <keyword attribute="Instruction" String="instructions"/>
+        <IncludeRules context="FindVariable"/>
+        <IncludeRules context="KVPBody"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="ConditionDeclaration">
+        <WordDetect attribute="Keyword" context="#stay" String="condition" insensitive="true"/>
+        <DetectChar attribute="Assignment" context="OperationalExpression" char="="/>
+        <DetectSpaces/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="(escape embedded language)">
+        <StringDetect attribute="Header" context="#pop!ConstantsHeader" insensitive="true" lookAhead="true" String="[Constants]"/>
+        <RegExpr attribute="Header" context="#pop!KeyHeader" insensitive="true" lookAhead="true" String="\[Key.+(?=\])"/>
+        <RegExpr attribute="Header" context="#pop!RegexPatternHeader" insensitive="true" lookAhead="true" String="\[ShaderRegex.+\.Pattern(?=\])"/>
+        <RegExpr attribute="Header" context="#pop!RegexReplaceHeader" insensitive="true" lookAhead="true" String="\[ShaderRegex.+\.Pattern\.Replace(?=\])"/>
+        <RegExpr attribute="Header" context="#pop!RegexDeclarationsHeader" insensitive="true" lookAhead="true" String="\[ShaderRegex.+\.InsertDeclarations(?=\])"/>
+        <RegExpr attribute="Header" context="#pop!KVPHeader" insensitive="true" lookAhead="true" String="\[(?:(?:Resource|Preset).+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)"/>
+        <RegExpr attribute="Header" context="#pop!FullCommandHeader" insensitive="true" lookAhead="true" String="\[(?:(?:(?:Shader|Texture)Override|ShaderRegex|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="RegexPatternBody">
+        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <!-- Need to detect the possible headers to avoid being stuck with the PCRE2 rules always matching -->
+        <IncludeRules context="(escape embedded language)"/>
+        <IncludeRules context="Patterns##PCRE2" includeAttrib="false"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="RegexReplaceBody">
+        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <!-- Need to detect the possible headers to avoid being stuck with the PCRE2 rules always matching -->
+        <IncludeRules context="(escape embedded language)"/>
+        <IncludeRules context="Replacement##PCRE2" includeAttrib="false"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="RegexDeclarationsBody">
+        <!-- There is no highlighting for DXBC, probably because it's much older and DXIL is the intermediate language used now. DXBC is around for debugging purposes -->
+        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <AnyChar String=".,':{}|?!@#%^&amp;*/+=`~"/>
+        <DetectIdentifier/>
+        <DetectSpaces/>
+      </context>
+      <!-- Common Bodies -->
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="KVPBody">
+        <DetectSpaces/>
+        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <IncludeRules context="Keys"/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <IncludeRules context="KeyValue"/>
+        <IncludeRules context="Value"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="FullCommandBody">
+        <DetectSpaces/>
+        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <!-- Conditional Expressions -->
+        <RegExpr attribute="ControlFlow" context="OperationalExpression" insensitive="true" String="(?:(if|elif|else if)(?= )|(else[ \t]*$|endif[ \t]*$))"/>
+        <!-- Definitions (Left Words) -->
+        <IncludeRules context="Keys"/>
+        <!-- Declarations (Left Expressions) -->
+        <IncludeRules context="LeftExpression"/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Definitions (Right Words and Values) -->
+        <IncludeRules context="KeyValue"/>
+        <!-- Declarations (Right Words and Values) -->
+        <IncludeRules context="OperationalExpression"/>
+      </context>
+      <!-- Body Contents -->
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="OperationalExpression">
+        <DetectSpaces/>
+        <!-- Illegal Operators -->
+        <RegExpr attribute="Error" context="#stay" insensitive="true" String="(?x) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [&gt;&lt;]={2,} | ! ={3,} | ={4,} | [&gt;&lt;]{2,} | &amp;{3,} | \|{3,} | \^+ "/>
+        <!-- Legal Operators -->
+        <RegExpr attribute="Operator" context="#stay" insensitive="true" String="(?x) (?: (?: \*\* | \* | \+ | - | % | // | / ) | (?: !== | != | === | == | &gt;= | &lt;= | &gt; | &lt; ) | (?: ! | &amp;&amp; | \|\| ) ) "/>
+        <!-- Variables -->
+        <keyword attribute="LanguageVariable" String="override-parameters"/>
+        <IncludeRules context="FindVariable"/>
+        <!-- Constants -->
+        <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
+        <RegExpr attribute="Integer" context="#stay" String="\b\d+\b"/>
+          <!-- 3dm hash value -->
+        <RegExpr attribute="Normal Text" context="#stay" insensitive="true" String="\b[a-z0-9]+\b"/>
+          <!-- Because CustomShader sections can have shader variables take values of Paths/Files -->
+        <RegExpr attribute="Path" context="#stay" insensitive="true" String="(?=.*\\)(?:(?:(?:[a-z]:|\.)\\)?[\w@&amp;'\-.()]+(?:\\[\w@&amp; '\-.()]+)+)"/>
+        <RegExpr attribute="File" context="#stay" insensitive="true" String="[\w@'\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"/>
+          <!-- For lists of numbers in draw calls -->
+        <DetectChar char=","/>
+        <!-- Round Brackets -->
+        <DetectChar attribute="Symbol" context="NestedOperationalExpression" char="("/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="NestedOperationalExpression">
+        <DetectChar attribute="Symbol" context="#pop" char=")"/>
+        <IncludeRules context="OperationalExpression"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="LeftExpression">
+        <keyword attribute="Modifier" String="modifiers"/>
+        <keyword attribute="Instruction" String="instructions"/>
+        <IncludeRules context="FindVariable"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="FindVariable">
+        <RegExpr attribute="LanguageVariable" insensitive="true" String="\b(?&lt;!\.)(?:[vhdgpc]s-cb\d{1,2}|vb\d|ib|(?:[rf]_)?bb)\b"/>
+        <RegExpr attribute="LanguageVariable" insensitive="true" String="\b([pc]s-u\d|s?o\d|od|[vhdgpc]s(?:-t\d{1,3})?)\b"/>
+        <RegExpr attribute="ShaderParameter" insensitive="true" String="\b(?:(?&lt;!$)[xyzw]\d{0,3})\b"/>
+        <keyword attribute="LanguageVariable" String="resource-identifiers"/>
+        <RegExpr attribute="Function" context="NamespacedCallableSection" insensitive="true" lookAhead="true" String="(CommandList|CustomShader|Resource|ShaderRegex)(?=\\)"/>
+        <RegExpr attribute="Function" context="SectionIdentifier" insensitive="true" String="(?:(?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?=.+\b)"/>
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
+        <DetectSpaces/>
+      </context>
+
+      <context attribute="Keyword" lineEndContext="#stay" name="Keys">
+        <keyword attribute="LanguageVariable" String="resource-identifiers"/>
+        <keyword attribute="Keyword" String="multi-section-keywords"/>
+        <keyword attribute="Keyword" String="key-section-keywords"/>
+        <keyword attribute="Keyword" String="resource-section-keywords"/>
+        <keyword attribute="Keyword" String="texture-override-keywords"/>
+        <keyword attribute="Keyword" String="custom-shader-keywords"/>
+        <keyword attribute="Keyword" String="custom-shader-blend-state"/>
+        <keyword attribute="Keyword" String="shader-regex-keywords"/>
+        <keyword attribute="Keyword" String="shader-override-keywords"/>
+        <keyword attribute="Keyword" String="include-section-keywords"/>
+        <keyword attribute="Keyword" String="logging-section-keywords"/>
+        <keyword attribute="Keyword" String="hunting-section-keywords"/>
+        <keyword attribute="Keyword" String="system-section-keywords"/>
+        <keyword attribute="Keyword" String="loader-section-keywords"/>
+        <keyword attribute="Keyword" String="device-section-keywords"/>
+        <keyword attribute="Keyword" String="stereo-section-keywords"/>
+        <keyword attribute="Keyword" String="rendering-section-keywords"/>
+      </context>
+        <!-- Namespaced Sections and Variables -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="MaybeNamespacedVariable" fallthroughContext="#pop!Identifier">
+        <DetectChar attribute="Symbol" context="VariableNamespaceValue" char="\"/>
+      </context>
+
+      <context attribute="Variable" lineEndContext="#pop" name="Identifier" fallthroughContext="#pop">
+        <DetectChar attribute="Symbol" context="#stay" char="\"/>
+        <DetectIdentifier attribute="Variable" context="#pop"/>
+      </context>
+
+      <context attribute="Variable" lineEndContext="#pop" name="SectionIdentifier">
+        <DetectChar attribute="Symbol" context="#stay" char="\"/>
+        <RegExpr attribute="Variable" context="#pop" insensitive="true" String="[\w.\-]+"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="SectionNamespaceValue">
+        <RegExpr attribute="Namespace" context="#pop!SectionIdentifier" insensitive="true" String="[\w@' \-.]+(?:\\[\w@' \-.]+)*(?=\\)"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="VariableNamespaceValue">
+        <RegExpr attribute="Namespace" context="#pop!Identifier" insensitive="true" String="[\w@' \-.]+(?:\\[\w@' \-.]+)*(?=\\)"/>
+      </context>
+
+      <context attribute="Function" lineEndContext="#stay" name="NamespacedCallableSection" fallthroughContext="#pop">
+        <StringDetect insensitive="true" dynamic="true" String="%1"/>
+        <DetectChar attribute="Symbol" context="SectionNamespaceValue" char="\"/>
+      </context>
+      <!-- Values -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="Value">
+        <keyword attribute="BooleanValue" String="boolean-values"/>
+        <DetectChar attribute="Operator" context="#stay" char="-"/>
+        <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
+        <Int attribute="Integer" context="#stay"/>
+        <DetectChar attribute="String" context="String" char="&quot;"/>
+        <RegExpr attribute="Path" context="#stay" insensitive="true" String="(?=.*\\)(?:(?:(?:[a-z]:|\.)\\)?[\w@&amp;'\-.()]+(?:\\[\w@&amp; '\-.()]+)+)"/>
+        <RegExpr attribute="File" context="#stay" insensitive="true" String="[\w@'\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"/>
+        <DetectIdentifier/>
+        <AnyChar String=".,':{}|?!@#%^&amp;*/+=`~;"/>
+        <DetectSpaces/>
+      </context>
+
+      <context attribute="String" lineEndContext="#pop" name="String">
+        <DetectChar attribute="String" context="#pop" char="&quot;"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="KeyValue">
+        <keyword attribute="Instruction" String="resource-usage-modifiers"/>
+        <keyword attribute="RValue" String="multi-section-key-values"/>
+        <keyword attribute="RValue" String="command-key-values"/>
+        <keyword attribute="RValue" String="shader-override-key-values"/>
+        <keyword attribute="RValue" String="custom-shader-key-values"/>
+        <keyword attribute="RValue" String="custom-shader-compile-flags"/>
+        <keyword attribute="ControlFlow" String="unless-null"/>
+        <keyword attribute="Type" String="resource-section-key-types"/>
+        <keyword attribute="RValue" String="resource-section-key-values"/>
+        <keyword attribute="Type" String="dxgi-formats"/>
+        <keyword attribute="Operator" String="blend-operators"/>
+        <keyword attribute="RValue" String="blend-factors"/>
+        <keyword attribute="RValue" String="key-section-key-values"/>
+        <keyword attribute="Keyword" String="key-section-key-modifiers"/>
+        <keyword attribute="RValue" String="system-section-key-values"/>
+        <keyword attribute="RValue" String="device-rendering-key-values"/>
+        <keyword attribute="RValue" String="marking-key-values"/>
+        <keyword attribute="RValue" String="analysis-key-values"/>
+      </context>
+
+      <context attribute="Comment" lineEndContext="#pop" name="Comment">
+        <DetectSpaces/>
+        <IncludeRules context="##Comments"/>
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Error" defStyleNum="dsError"/>
+      <itemData name="Normal Text" defStyleNum="dsNormal" spellchecking="false"/>
+      <itemData name="Header" defStyleNum="dsFunction" italic="true" spellchecking="false"/>
+      <itemData name="Comment" defStyleNum="dsComment"/>
+      <itemData name="ControlFlow" defStyleNum="dsControlFlow" bold="true" spellchecking="false"/>
+      <itemData name="BooleanValue" defStyleNum="dsConstant" spellchecking="false"/>
+      <itemData name="Keyword" defStyleNum="dsKeyword" spellchecking="false"/>
+      <itemData name="Modifier" defStyleNum="dsKeyword" bold="true" spellchecking="false"/>
+      <itemData name="Assignment" defStyleNum="dsOperator"/>
+      <itemData name="Operator" defStyleNum="dsOperator"/>
+      <itemData name="Integer" defStyleNum="dsDecVal"/>
+      <itemData name="Float" defStyleNum="dsFloat"/>
+      <itemData name="Namespace" defStyleNum="dsImport" spellchecking="false"/>
+      <itemData name="Instruction" defStyleNum="dsBuiltIn" bold="true" spellchecking="false"/>
+      <itemData name="Function" defStyleNum="dsFunction" spellchecking="false"/>
+      <itemData name="Variable" defStyleNum="dsVariable" spellchecking="false"/>
+      <itemData name="LanguageVariable" defStyleNum="dsBuiltIn" spellchecking="false"/>
+      <itemData name="ShaderParameter" defStyleNum="dsBuiltIn" spellchecking="false"/>
+      <itemData name="RValue" defStyleNum="dsConstant" spellchecking="false"/>
+      <itemData name="Type" defStyleNum="dsDataType" spellchecking="false"/>
+      <itemData name="Path" defStyleNum="dsNormal" underline="true" spellchecking="false"/>
+      <itemData name="File" defStyleNum="dsNormal" underline="true" spellchecking="false"/>
+      <itemData name="String" defStyleNum="dsString"/>
+      <itemData name="Symbol" defStyleNum="dsNormal"/>
+    </itemDatas>
+  </highlighting>
+  <general>
+    <comments>
+      <comment name="singleline" start=";" position="afterwhitespace"/>
+    </comments>
+    <keywords casesensitive="false"/>
+    <folding indentationsensitive="true"/>
+    <emptyLines>
+      <emptyLine regexpr="\s+"/>
+      <emptyLine regexpr="\s*;.*"/>
+    </emptyLines>
+  </general>
+</language>
