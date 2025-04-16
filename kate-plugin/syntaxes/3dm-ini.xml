@@ -15,8 +15,6 @@
       <item>post</item>
     </list>
     <list name="language-constants">
-      <item>true</item>
-      <item>false</item>
       <item>null</item>
       <item>inf</item>
       <item>nan</item>
@@ -1057,6 +1055,7 @@
         <keyword attribute="LanguageVariable" String="override-parameters"/>
         <IncludeRules context="FindVariable"/>
         <!-- Constants -->
+        <keyword attribute="LanguageVariable" String="language-constants"/>
         <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
         <RegExpr attribute="Integer" context="#stay" String="\b\d+\b"/>
           <!-- 3dm hash value -->
