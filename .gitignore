@@ -3,3 +3,4 @@ vsc-extension-quickstart.md
 vsix
 *.vsix
 *.bak
+*.sublime-package

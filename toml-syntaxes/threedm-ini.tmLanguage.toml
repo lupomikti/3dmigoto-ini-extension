@@ -497,9 +497,6 @@ name = "invalid.illegal.operator.ini.3dm"
 match = '(?xi) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [><]{2,} | &{3,} | \|{3,} | \^+ '
 
 [repository.operator]
-# prevents / and = from being highlighted when specified as a key in a Key section;
-# - too, but this character cannot be used already, 3dmigoto doesn't like it, you have to use the vk name or hex
-# TODO: add the Lwords in the Hunting section, use a variable to do so
 match = '''(?xi)
 (?:
   ( \*\* | \* | \+ | - | % | // | / ) |       # arithmetic operators
