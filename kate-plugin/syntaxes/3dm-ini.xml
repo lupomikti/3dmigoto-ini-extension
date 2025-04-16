@@ -1093,7 +1093,6 @@
       </context>
 
       <context attribute="Keyword" lineEndContext="#stay" name="Keys">
-        <keyword attribute="LanguageVariable" String="resource-identifiers"/>
         <keyword attribute="Keyword" String="multi-section-keywords"/>
         <keyword attribute="Keyword" String="key-section-keywords"/>
         <keyword attribute="Keyword" String="resource-section-keywords"/>
