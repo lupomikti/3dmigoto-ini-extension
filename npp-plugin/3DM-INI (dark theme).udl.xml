@@ -35,26 +35,26 @@
             <Keywords name="Delimiters">00&quot; 01 02&quot; 03.\ 04 05((EOL)) 06[ 07 08] 09${ 10 11} 12 13 14 15 16 17 18 19 20 21 22 23</Keywords>
         </KeywordLists>
         <Styles>
-            <WordsStyle name="DEFAULT" fgColor="4C4F69" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
+            <WordsStyle name="DEFAULT" fgColor="CDD6F4" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
             <WordsStyle name="COMMENTS" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="LINE COMMENTS" fgColor="7C7F93" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
-            <WordsStyle name="NUMBERS" fgColor="FE640B" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS1" fgColor="8839EF" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS2" fgColor="D20F39" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS3" fgColor="7287FD" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
-            <WordsStyle name="KEYWORDS4" fgColor="1E66F5" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
-            <WordsStyle name="KEYWORDS5" fgColor="E64553" bgColor="FFFFFF" colorStyle="1" fontStyle="1" nesting="0" />
-            <WordsStyle name="KEYWORDS6" fgColor="179299" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS7" fgColor="FE640B" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
-            <WordsStyle name="KEYWORDS8" fgColor="04A5E5" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
-            <WordsStyle name="OPERATORS" fgColor="179299" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
+            <WordsStyle name="LINE COMMENTS" fgColor="9399B2" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
+            <WordsStyle name="NUMBERS" fgColor="FAB387" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS1" fgColor="CBA6F7" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS2" fgColor="F38BA8" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS3" fgColor="B4BEFE" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
+            <WordsStyle name="KEYWORDS4" fgColor="89B4FA" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
+            <WordsStyle name="KEYWORDS5" fgColor="EBA0AC" bgColor="FFFFFF" colorStyle="1" fontStyle="1" nesting="0" />
+            <WordsStyle name="KEYWORDS6" fgColor="94E2D5" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS7" fgColor="FAB387" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
+            <WordsStyle name="KEYWORDS8" fgColor="89DCEB" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
+            <WordsStyle name="OPERATORS" fgColor="94E2D5" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
             <WordsStyle name="FOLDER IN CODE1" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="FOLDER IN CODE2" fgColor="8839EF" bgColor="FFFFFF" colorStyle="1" fontStyle="1" nesting="0" />
+            <WordsStyle name="FOLDER IN CODE2" fgColor="CBA6F7" bgColor="FFFFFF" colorStyle="1" fontStyle="1" nesting="0" />
             <WordsStyle name="FOLDER IN COMMENT" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="DELIMITERS1" fgColor="40A02B" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
-            <WordsStyle name="DELIMITERS2" fgColor="4C4F69" bgColor="FFFFFF" colorStyle="1" fontStyle="4" nesting="0" />
-            <WordsStyle name="DELIMITERS3" fgColor="DF8E1D" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
-            <WordsStyle name="DELIMITERS4" fgColor="04A5E5" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
+            <WordsStyle name="DELIMITERS1" fgColor="A6E3A1" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
+            <WordsStyle name="DELIMITERS2" fgColor="CDD6F4" bgColor="FFFFFF" colorStyle="1" fontStyle="4" nesting="0" />
+            <WordsStyle name="DELIMITERS3" fgColor="F9E2AF" bgColor="FFFFFF" colorStyle="1" fontStyle="2" nesting="0" />
+            <WordsStyle name="DELIMITERS4" fgColor="89DCEB" bgColor="FFFFFF" colorStyle="1" fontStyle="0" nesting="0" />
             <WordsStyle name="DELIMITERS5" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
             <WordsStyle name="DELIMITERS6" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
             <WordsStyle name="DELIMITERS7" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />

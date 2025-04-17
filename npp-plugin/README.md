@@ -27,3 +27,7 @@ Of course this project would not be possible without the original contributors:
 - @lewis252310
 - @sinsofseven
 - @leotorrez
+
+### Catppuccin Colors
+
+The colors used for these Notepad++ highlights are the colors from the [Catppuccin](https://github.com/catppuccin/catppuccin) palette. All of the Catppuccin implementations are licensed under MIT.
