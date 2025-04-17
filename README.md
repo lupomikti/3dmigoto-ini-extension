@@ -12,14 +12,14 @@ For more information about the highlighting of the VSCode extension and how to c
 
 #### Sublime Text
 
-A `.sumblime-package` file is provided on the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) which can be downloaded and added to your installation. It currently only has highlighting but should have more features in the near future. [See the README](sublime-text-pkg/README.md) for it for more specific details including customization of colors.
+A `.sumblime-package` file is provided on the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) which can be downloaded and added to your installation. The location to add the file to will depend on how and where you installed SublimeText. Generally, user-installed zipped packages should go in `<data_path>/Installed Packages/` where `<data_path>` may look like `C:\Program Files\Sublime Text 3\Data` on a Windows system. This package currently only has highlighting but should have more features in the near future. [See the README](sublime-text-pkg/README.md) for it for more specific details about customization of colors.
 
 #### Notepad++
 
 To use this highlighting, you download the `3DM-INI.udl.xml` file either from the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) or directly from the `npp-plugin` folder, go to `Language > User Defined Languages > Define your language...` from the top menu, then choose the `Import` button and select the file you downloaded. Please [see the README](npp-plugin/README.md) for this editor for more information including color customization.
 
 #### Kate
-There is a .zip of the XML files in the [Releases that](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) you can download or you can grab them from the repo directly. Adding user-defined highlighting to Kate is as simple as adding the XML files to the correct folder on your system. Here is a copy of instructions from KDE Documentation about [working with syntax highlighting](https://docs.kde.org/stable5/en/kate/katepart/highlight.html):
+There is a .zip of the XML files in the [Releases](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) that you can download or you can grab them from the repo directly. Adding user-defined highlighting to Kate is as simple as adding the XML files to the correct folder on your system. Here is a copy of instructions from KDE Documentation about [working with syntax highlighting](https://docs.kde.org/stable5/en/kate/katepart/highlight.html):
 
 > Custom `.xml` highlight definition files are located in `org.kde.syntax-highlighting/syntax/` in your user folder found with **`qtpaths --paths GenericDataLocation`** which usually are `$HOME/.local/share/` and `/usr/share/`.
 > 
