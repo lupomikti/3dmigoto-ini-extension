@@ -1,8 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "0.4.2",
-  "scopeName": "source.ini.3dm",
-  "name": "3dm-ini",
+  "version": "0.4.4",
+  "scopeName": "source.migoto",
+  "name": "migoto",
   "fileTypes": [
     "ini"
   ],
@@ -19,7 +19,7 @@
   ],
   "repository": {
     "preamble": {
-      "name": "meta.head.preamble.ini.3dm",
+      "name": "meta.head.preamble.migoto",
       "begin": "(?i)^(?=namespace)",
       "end": "$|\\n",
       "patterns": [
@@ -28,15 +28,15 @@
           "end": "$|\\n",
           "beginCaptures": {
             "1": {
-              "name": "keyword.other.namespace.definition.ini.3dm"
+              "name": "keyword.other.namespace.definition.migoto"
             },
             "2": {
-              "name": "keyword.operator.namespace.ini.3dm"
+              "name": "keyword.operator.namespace.migoto"
             }
           },
           "patterns": [
             {
-              "name": "entity.name.namespace.ini.3dm",
+              "name": "entity.name.namespace.migoto",
               "match": "(?i)[\\w\\-.]+(?:[\\\\/][\\w\\-.]+)*"
             }
           ]
@@ -48,17 +48,17 @@
       "end": "$|\\n",
       "patterns": [
         {
-          "name": "comment.line.semicolon.ini.3dm",
+          "name": "comment.line.semicolon.migoto",
           "match": "(?i)^([ \\t]+)?(;)(.*)$",
           "captures": {
             "1": {
-              "name": "punctuation.whitespace.comment.leading.ini.3dm"
+              "name": "punctuation.whitespace.comment.leading.migoto"
             },
             "2": {
-              "name": "punctuation.definition.comment.ini.3dm"
+              "name": "punctuation.definition.comment.migoto"
             },
             "3": {
-              "name": "comment.line.semicolon.content.ini.3dm"
+              "name": "comment.line.semicolon.content.migoto"
             }
           }
         },
@@ -67,127 +67,127 @@
           "match": "(?i)^(.+)(;)([\\S ]+)$",
           "captures": {
             "2": {
-              "name": "punctuation.definition.comment.ini.3dm"
+              "name": "punctuation.definition.comment.migoto"
             },
             "3": {
-              "name": "comment.line.semicolon.content.ini.3dm"
+              "name": "comment.line.semicolon.content.migoto"
             }
           }
         }
       ]
     },
     "section": {
-      "name": "meta.structure.section.ini.3dm",
+      "name": "meta.structure.section.migoto",
       "begin": "(?xi)\n(?:^[ \\t]*(\\[) # capture group 1\n    ((?:\n        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\n        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\n        Include.*\n     )\n    )    # capture group 2\n    (\\]) # capture group 3\n[ \\t]*$)\n(?<=^[ \\t]*\\[\\2\\][ \\t]*$)",
       "end": "(?xi)\n(?=^[ \\t]*\\[\n(?:\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\n  Include.*\n)\n\\][ \\t]*$|\\z)",
       "beginCaptures": {
         "1": {
-          "name": "punctuation.definition.entity.ini.3dm"
+          "name": "punctuation.definition.entity.migoto"
         },
         "2": {
-          "name": "entity.name.section.group-title.ini.3dm",
+          "name": "entity.name.section.group-title.migoto",
           "patterns": [
             {
               "match": "(?i)Constants",
-              "name": "entity.name.section.group-title.ini.3dm.constants"
+              "name": "entity.name.section.group-title.migoto.constants"
             },
             {
               "match": "(?i)Present",
-              "name": "entity.name.section.group-title.ini.3dm.present"
+              "name": "entity.name.section.group-title.migoto.present"
             },
             {
               "match": "(?i)Key.+",
-              "name": "entity.name.section.group-title.ini.3dm.key"
+              "name": "entity.name.section.group-title.migoto.key"
             },
             {
               "match": "(?i)TextureOverride.+",
-              "name": "entity.name.section.group-title.ini.3dm.texture-override"
+              "name": "entity.name.section.group-title.migoto.texture-override"
             },
             {
               "match": "(?i)ShaderOverride.+",
-              "name": "entity.name.section.group-title.ini.3dm.shader-override"
+              "name": "entity.name.section.group-title.migoto.shader-override"
             },
             {
               "match": "(?i)(?:BuiltIn)?CustomShader.+",
-              "name": "entity.name.section.group-title.ini.3dm.custom-shader"
+              "name": "entity.name.section.group-title.migoto.custom-shader"
             },
             {
               "match": "(?i)(?:BuiltIn)?CommandList.+",
-              "name": "entity.name.section.group-title.ini.3dm.command-list"
+              "name": "entity.name.section.group-title.migoto.command-list"
             },
             {
               "match": "(?i)Resource.+",
-              "name": "entity.name.section.group-title.ini.3dm.resource"
+              "name": "entity.name.section.group-title.migoto.resource"
             },
             {
               "match": "(?i)ShaderRegex.+",
-              "name": "entity.name.section.group-title.ini.3dm.shader-regex"
+              "name": "entity.name.section.group-title.migoto.shader-regex"
             },
             {
               "match": "(?i)Include.*",
-              "name": "entity.name.section.group-title.ini.3dm.include"
+              "name": "entity.name.section.group-title.migoto.include"
             },
             {
               "match": "(?i)Logging",
-              "name": "entity.name.section.group-title.ini.3dm.logging"
+              "name": "entity.name.section.group-title.migoto.logging"
             },
             {
               "match": "(?i)Hunting",
-              "name": "entity.name.section.group-title.ini.3dm.hunting"
+              "name": "entity.name.section.group-title.migoto.hunting"
             },
             {
               "match": "(?i)System",
-              "name": "entity.name.section.group-title.ini.3dm.system"
+              "name": "entity.name.section.group-title.migoto.system"
             },
             {
               "match": "(?i)Device",
-              "name": "entity.name.section.group-title.ini.3dm.device"
+              "name": "entity.name.section.group-title.migoto.device"
             },
             {
               "match": "(?i)Profile",
-              "name": "entity.name.section.group-title.ini.3dm.profile"
+              "name": "entity.name.section.group-title.migoto.profile"
             },
             {
               "match": "(?i)Stereo",
-              "name": "entity.name.section.group-title.ini.3dm.stereo"
+              "name": "entity.name.section.group-title.migoto.stereo"
             },
             {
               "match": "(?i)Rendering",
-              "name": "entity.name.section.group-title.ini.3dm.rendering"
+              "name": "entity.name.section.group-title.migoto.rendering"
             },
             {
               "match": "(?i)ConvergenceMap",
-              "name": "entity.name.section.group-title.ini.3dm.convergence-map"
+              "name": "entity.name.section.group-title.migoto.convergence-map"
             },
             {
               "match": "(?i)Preset.+",
-              "name": "entity.name.section.group-title.ini.3dm.preset"
+              "name": "entity.name.section.group-title.migoto.preset"
             },
             {
               "match": "(?i)Loader",
-              "name": "entity.name.section.group-title.ini.3dm.loader"
+              "name": "entity.name.section.group-title.migoto.loader"
             },
             {
               "match": "(?i)ClearRenderTargetView",
-              "name": "entity.name.section.group-title.ini.3dm.clear-render-target-view"
+              "name": "entity.name.section.group-title.migoto.clear-render-target-view"
             },
             {
               "match": "(?i)ClearDepthStencilView",
-              "name": "entity.name.section.group-title.ini.3dm.clear-depth-stencil-view"
+              "name": "entity.name.section.group-title.migoto.clear-depth-stencil-view"
             },
             {
               "match": "(?i)ClearUnorderedAccessView(?:Uint|Float)",
-              "name": "entity.name.section.group-title.ini.3dm.clear-unordered-access-view"
+              "name": "entity.name.section.group-title.migoto.clear-unordered-access-view"
             }
           ]
         },
         "3": {
-          "name": "punctuation.definition.entity.ini.3dm"
+          "name": "punctuation.definition.entity.migoto"
         }
       },
       "patterns": [
         {
-          "name": "meta.structure.section.constants.ini.3dm",
+          "name": "meta.structure.section.constants.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Constants\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -200,7 +200,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.present.ini.3dm",
+          "name": "meta.structure.section.present.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Present\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -216,7 +216,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.key.ini.3dm",
+          "name": "meta.structure.section.key.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Key.+\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -235,7 +235,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.texture-override.ini.3dm",
+          "name": "meta.structure.section.texture-override.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[TextureOverride.+\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -254,7 +254,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.shader-override.ini.3dm",
+          "name": "meta.structure.section.shader-override.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[ShaderOverride.+\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -273,7 +273,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.custom-shader.ini.3dm",
+          "name": "meta.structure.section.custom-shader.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[(?:BuiltIn)?CustomShader.+\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -292,7 +292,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.command-list.ini.3dm",
+          "name": "meta.structure.section.command-list.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[(?:BuiltIn)?CommandList.+\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -311,7 +311,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.resource.ini.3dm",
+          "name": "meta.structure.section.resource.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Resource.+\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -324,7 +324,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.shader-regex-pattern.ini.3dm",
+          "name": "meta.structure.section.shader-regex-pattern.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[ShaderRegex.+\\.Pattern\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "contentName": "meta.embedded.block.regexp",
@@ -338,7 +338,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.shader-regex-replace.ini.3dm",
+          "name": "meta.structure.section.shader-regex-replace.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[ShaderRegex.+\\.Pattern\\.Replace\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -351,7 +351,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.shader-regex.ini.3dm",
+          "name": "meta.structure.section.shader-regex.migoto",
           "begin": "(?i)(?<!^[ \\t]*\\[ShaderRegex.+\\.Pattern.*\\][ \\t]*$)(?<=[ \\t]*^\\[ShaderRegex.+\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -370,7 +370,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.include.ini.3dm",
+          "name": "meta.structure.section.include.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Include.*\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -383,7 +383,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.preset.ini.3dm",
+          "name": "meta.structure.section.preset.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Preset.+\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -396,7 +396,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.logging.ini.3dm",
+          "name": "meta.structure.section.logging.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Logging\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -409,7 +409,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.hunting.ini.3dm",
+          "name": "meta.structure.section.hunting.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Hunting\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -422,7 +422,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.system.ini.3dm",
+          "name": "meta.structure.section.system.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[System\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -435,7 +435,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.device.ini.3dm",
+          "name": "meta.structure.section.device.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Device\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -448,7 +448,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.stereo.ini.3dm",
+          "name": "meta.structure.section.stereo.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Stereo\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -461,7 +461,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.rendering.ini.3dm",
+          "name": "meta.structure.section.rendering.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Rendering\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -474,7 +474,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.profile.ini.3dm",
+          "name": "meta.structure.section.profile.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Profile\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -487,7 +487,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.convergence-map.ini.3dm",
+          "name": "meta.structure.section.convergence-map.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[ConvergenceMap\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -500,7 +500,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.loader.ini.3dm",
+          "name": "meta.structure.section.loader.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[Loader\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -513,7 +513,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.clear-render-target-view.ini.3dm",
+          "name": "meta.structure.section.clear-render-target-view.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[ClearRenderTargetView\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -532,7 +532,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.clear-depth-stencil-view.ini.3dm",
+          "name": "meta.structure.section.clear-depth-stencil-view.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[ClearDepthStencilView\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -551,7 +551,7 @@
           ]
         },
         {
-          "name": "meta.structure.section.clear-unordered-access-view.ini.3dm",
+          "name": "meta.structure.section.clear-unordered-access-view.migoto",
           "begin": "(?i)(?<=^[ \\t]*\\[ClearUnorderedAccessView(?:Uint|Float)\\][ \\t]*$)",
           "end": "(?i)(?=^\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
@@ -572,18 +572,18 @@
       ]
     },
     "conditional-expression": {
-      "name": "meta.expression.conditional.ini.3dm",
+      "name": "meta.expression.conditional.migoto",
       "begin": "(?i)^[ \\t]*(?:(if|elif|else if)(?= )|(else[ \\t]*$|endif[ \\t]*$))",
       "beginCaptures": {
         "1": {
-          "name": "keyword.control.flow.ini.3dm"
+          "name": "keyword.control.flow.migoto"
         },
         "2": {
-          "name": "keyword.control.flow.ini.3dm"
+          "name": "keyword.control.flow.migoto"
         }
       },
       "end": "$|\\n",
-      "contentName": "meta.expression.operational.ini.3dm",
+      "contentName": "meta.expression.operational.migoto",
       "patterns": [
         {
           "include": "#operational-expression"
@@ -591,7 +591,7 @@
       ]
     },
     "definition": {
-      "name": "meta.structure.definition.ini.3dm",
+      "name": "meta.structure.definition.migoto",
       "match": "(?xi)\n^[ \\t]*\n(?!run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|store|condition|\n  draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|\n  vb\\d|ib|(?:[rf]_)?bb|s?o\\d|od|[vhdgpc]s|\n  (?<!$)[xyzw]\\d{0,3}|\n  this|(?:ini|stereo)params|cursor_(?:mask|color)|\n  (?:(?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex).+\n) # keywords and variables that are not keys and should only be matched by declaration\n\\b(\\w+) # optional whitespace followed by a word-like that is not in the preceding list\n\\s* (=) \\s* # kvp separator surrounded by optional whitespace\n([@\\w\\$.\\-,+/* \\t%=\\\\!><\"\\[\\]';:|&()]+) # partial Rvalue\n(?:$|\\n)",
       "captures": {
         "1": {
@@ -602,7 +602,7 @@
           ]
         },
         "2": {
-          "name": "punctuation.separator.key-value.ini.3dm"
+          "name": "punctuation.separator.key-value.migoto"
         },
         "3": {
           "patterns": [
@@ -623,7 +623,7 @@
       }
     },
     "declaration": {
-      "name": "meta.structure.declaration.ini.3dm",
+      "name": "meta.structure.declaration.migoto",
       "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(\n  (?:(?:\\w+)\\ +){0,2}     # between 0 and 2 keywords inclusive\n  (?:[$\\w\\-.\\\\/@& '\\[\\]]+) # another keyword or a variable\n)\n\\s*\n(?:\n  (=) \\s* # assignment/declaration operator, surrounded by optional whitespace\n  ([=$!@\\w.\\-,+/* \\t%\\\\()\"|&><]+) # Rvalue\n)? # Operator and Rvalue are optional, e.g. `global $variable` on a line by itself\n(?:$|\\n)",
       "captures": {
         "1": {
@@ -634,7 +634,7 @@
           ]
         },
         "2": {
-          "name": "keyword.operator.declaration.ini.3dm"
+          "name": "keyword.operator.declaration.migoto"
         },
         "3": {
           "patterns": [
@@ -648,111 +648,111 @@
     "Lword": {
       "patterns": [
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.multi-section",
+          "name": "meta.keyword.lword keyword.other.migoto.multi-section",
           "match": "(?i)\\b(separation|convergence|hash|filter_index|match_priority|format|(?:width|height)(?:_multiply)?|analyse_options|type)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.key-section",
+          "name": "meta.keyword.lword keyword.other.migoto.key-section",
           "match": "(?i)\\b(key|back|(?:release_)?delay|wrap|smart|(?:release_)?transition(?:_type)?)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.resource",
+          "name": "meta.keyword.lword keyword.other.migoto.resource",
           "match": "(?i)\\b(filename|data|max_copies_per_frame|mode|(?:bind|misc)_flags|depth|mips|array|msaa(?:_quality)?|byte_width|stride)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override.resource-match",
+          "name": "meta.keyword.lword keyword.other.migoto.texture-override.resource-match",
           "match": "(?i)\\b(stereomode|expand_region_copy|deny_cpu_read|iteration)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override.vertex-limit",
+          "name": "meta.keyword.lword keyword.other.migoto.texture-override.vertex-limit",
           "match": "(?i)\\b(override_(?:byte_stride|vertex_count))\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override.draw-match",
+          "name": "meta.keyword.lword keyword.other.migoto.texture-override.draw-match",
           "match": "(?i)\\b(match_(?:(?:first_)?(?:vertex|index|instance)(?:_count)?))\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.texture-override.fuzzy-match",
+          "name": "meta.keyword.lword keyword.other.migoto.texture-override.fuzzy-match",
           "match": "(?i)\\b(match_(?:type|usage|(?:bind|cpu_access|misc)_flags|(?:byte_)?width|height|stride|mips|format|depth|array|msaa(?:_quality)?))\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.custom-shader",
+          "name": "meta.keyword.lword keyword.other.migoto.custom-shader",
           "match": "(?i)\\b(flags|max_executions_per_frame|topology|sampler)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.custom-shader.blend-state",
+          "name": "meta.keyword.lword keyword.other.migoto.custom-shader.blend-state",
           "match": "(?i)\\b((?:blend|alpha|mask)(?:\\[([0-7])\\])?|blend_factor\\[([0-3])\\]|alpha_to_coverage|sample_mask|blend_state_merge)\\b",
           "captures": {
             "2": {
-              "name": "constant.numeric.ini.3dm"
+              "name": "constant.numeric.migoto"
             },
             "3": {
-              "name": "constant.numeric.ini.3dm"
+              "name": "constant.numeric.migoto"
             }
           }
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.custom-shader.depth-stencil-state",
+          "name": "meta.keyword.lword keyword.other.migoto.custom-shader.depth-stencil-state",
           "match": "(?i)\\b(depth_(?:enable|write_mask|func|stencil_state_merge)|stencil_(?:enable|(?:read|write)_mask|front|back|ref))\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.custom-shader.rs-state",
+          "name": "meta.keyword.lword keyword.other.migoto.custom-shader.rs-state",
           "match": "(?i)\\b(fill|cull|front|depth_(?:bias(?:_clamp)?|clip_enable)|slope_scaled_depth_bias|(?:depth_clip|scissor|multisample|antialiased_line)_enable|rasterizer_state_merge)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.shader-regex",
+          "name": "meta.keyword.lword keyword.other.migoto.shader-regex",
           "match": "(?i)\\b(shader_model|temps)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.shader-override",
+          "name": "meta.keyword.lword keyword.other.migoto.shader-override",
           "match": "(?i)\\b(allow_duplicate_hash|depth_filter|partner|model|disable_scissor)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.include",
+          "name": "meta.keyword.lword keyword.other.migoto.include",
           "match": "(?i)\\b((?:in|ex)clude(?:_recursive)?|user_config)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.logging",
+          "name": "meta.keyword.lword keyword.other.migoto.logging",
           "match": "(?i)\\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|wait_for_debugger|crash|dump_all_profiles|show_warnings)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.hunting",
+          "name": "meta.keyword.lword keyword.other.migoto.hunting",
           "match": "(?i)\\b((?:done_|toggle_)?hunting|(?:next_)?marking_mode|marking_actions|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune[123]_(?:up|down)|analyse_frame|kill_deferred)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.system",
+          "name": "meta.keyword.lword keyword.other.migoto.system",
           "match": "(?i)\\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.loader",
+          "name": "meta.keyword.lword keyword.other.migoto.loader",
           "match": "(?i)\\b(target|module|require_admin|launch|delay|loader|check_version|entry_point|hook_proc|wait_for_target)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.device",
+          "name": "meta.keyword.lword keyword.other.migoto.device",
           "match": "(?i)\\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor|cursor_upscaling_bypass)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.stereo",
+          "name": "meta.keyword.lword keyword.other.migoto.stereo",
           "match": "(?i)\\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)\\b"
         },
         {
-          "name": "meta.keyword.lword keyword.other.ini.3dm.rendering",
+          "name": "meta.keyword.lword keyword.other.migoto.rendering",
           "match": "(?i)\\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl|binary)|dump_usage|fix_(?:sv_position|ZRepair_.+|BackProjectionTransform\\d|ObjectPosition\\d(?:Multiplier)?|MatrixOperand\\d(?:Multiplier)?)|recompile_all_vs)\\b"
         }
       ]
     },
     "Lexpression": {
-      "name": "meta.structure.left-expression.ini.3dm",
+      "name": "meta.structure.left-expression.migoto",
       "match": "(?i)((?:[\\w ]+) +){0,2}([$\\w\\-.\\\\/@& '\\[\\]]+)",
       "captures": {
         "1": {
           "patterns": [
             {
-              "name": "storage.modifier.ini.3dm",
+              "name": "storage.modifier.migoto",
               "match": "(?i)(global|local|persist)(?= )"
             },
             {
-              "name": "keyword.control.ini.3dm",
+              "name": "keyword.control.migoto",
               "match": "(?i)(pre|post)(?= )"
             }
           ]
@@ -760,15 +760,15 @@
         "2": {
           "patterns": [
             {
-              "name": "meta.keyword.lword keyword.other.ini.3dm.condition",
+              "name": "meta.keyword.lword keyword.other.migoto.condition",
               "match": "(?i)\\b(condition)\\b"
             },
             {
-              "name": "meta.keyword.lword keyword.other.ini.3dm.command-list.general",
+              "name": "meta.keyword.lword keyword.other.migoto.command-list.general",
               "match": "(?i)\\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\\b"
             },
             {
-              "name": "meta.keyword.lword keyword.other.ini.3dm.command-list.draw-instruction",
+              "name": "meta.keyword.lword keyword.other.migoto.command-list.draw-instruction",
               "match": "(?i)\\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\\b"
             },
             {
@@ -802,8 +802,8 @@
       ]
     },
     "functional-expression": {
-      "match": "(?xi)\\b\n( copy(?:_desc(?:ription)?)? | ref(?:erence)? |\n  raw | stereo | mono | stereo2mono | set_viewport |no_view_cache | resolve_msaa\n)\n\\s+\n([\\w$][\\w.\\-\\\\@' \\t/()]+)",
-      "name": "meta.expression.functional.ini.3dm",
+      "match": "(?xi)\\b\n( copy(?:_desc(?:ription)?)? | ref(?:erence)? |\n  raw | stereo | mono | stereo2mono | set_viewport | no_view_cache | resolve_msaa\n)\n\\s+\n([\\w$][\\w.\\-\\\\@' \\t/()]+)",
+      "name": "meta.expression.functional.migoto",
       "captures": {
         "1": {
           "patterns": [
@@ -825,8 +825,8 @@
       }
     },
     "literal-list": {
-      "match": "(?i)\\b(?!.+\\..+)(?:(\\w+) +(\\w+)(?: +(\\w+))?$|(\\w+) +(\\w+))",
-      "name": "meta.expression.literal-list.ini.3dm",
+      "match": "(?i)\\b(?!(?:.+\\..+|.*unless_null.*))(?:(\\w+) +(\\w+)(?: +(\\w+))?$|(\\w+) +(\\w+))",
+      "name": "meta.expression.literal-list.migoto",
       "captures": {
         "1": {
           "patterns": [
@@ -866,7 +866,7 @@
       }
     },
     "functional-keyword": {
-      "name": "meta.keyword.resource-usage-modifier keyword.other.functional.ini.3dm",
+      "name": "meta.keyword.resource-usage-modifier keyword.other.functional.migoto",
       "match": "(?i)\\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa)\\b"
     },
     "operational-expression": {
@@ -891,7 +891,7 @@
     "illegal-operator": {
       "patterns": [
         {
-          "name": "invalid.illegal.operator.ini.3dm",
+          "name": "invalid.illegal.operator.migoto",
           "match": "(?xi) -{2,} | \\+{2,} | \\*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [><]{2,} | &{3,} | \\|{3,} | \\^+ "
         }
       ]
@@ -900,13 +900,13 @@
       "match": "(?xi)\n(?:\n  ( \\*\\* | \\* | \\+ | - | % | // | / ) |       # arithmetic operators\n  ( !== | != | === | == | >= | <= | > | < ) | # comparison operators\n  ( ! | && | \\|\\| )                           # logical operators\n)",
       "captures": {
         "1": {
-          "name": "keyword.operator.math.ini.3dm"
+          "name": "keyword.operator.math.migoto"
         },
         "2": {
-          "name": "keyword.operator.comparison.ini.3dm"
+          "name": "keyword.operator.comparison.migoto"
         },
         "3": {
-          "name": "keyword.operator.logical.ini.3dm"
+          "name": "keyword.operator.logical.migoto"
         }
       }
     },
@@ -914,16 +914,16 @@
       "begin": "\\(",
       "beginCaptures": {
         "0": {
-          "name": "punctuation.parenthesis.begin.ini.3dm"
+          "name": "punctuation.parenthesis.begin.migoto"
         }
       },
       "end": "\\)",
       "endCaptures": {
         "0": {
-          "name": "punctuation.parenthesis.end.ini.3dm"
+          "name": "punctuation.parenthesis.end.migoto"
         }
       },
-      "contentName": "meta.expression.operational.nested.ini.3dm",
+      "contentName": "meta.expression.operational.nested.migoto",
       "patterns": [
         {
           "include": "#operational-expression"
@@ -933,67 +933,67 @@
     "variable": {
       "patterns": [
         {
-          "name": "variable.language.buffer.ini.3dm",
+          "name": "variable.language.buffer.migoto",
           "match": "\\b(?i)(?<!\\.)(?:[vhdgpc]s-cb\\d{1,2}|vb\\d|ib|(?:[rf]_)?bb)\\b"
         },
         {
-          "name": "variable.language.shader.ini.3dm",
+          "name": "variable.language.shader.migoto",
           "match": "\\b(?i)([pc]s-u\\d|s?o\\d|od|[vhdgpc]s(?:-t\\d{1,3})?)\\b"
         },
         {
-          "name": "variable.parameter.ini.3dm",
+          "name": "variable.parameter.migoto",
           "match": "(?i)\\b(?:(?<!$)[xyzw]\\d{0,3})\\b"
         },
         {
-          "name": "variable.language.resource-identifiers.ini.3dm",
+          "name": "variable.language.resource-identifiers.migoto",
           "match": "\\b(?i)(this|(?:ini|stereo)params|cursor_(?:mask|color))\\b"
         },
         {
-          "name": "constant.language.override-parameters.ini.3dm",
+          "name": "constant.language.override-parameters.migoto",
           "match": "(?xi)\n\\b(\n  (?:rt|res|window)_(?:width|height) | (?:vertex|index|instance)_count | first_(?:vertex|index|instance) |\n  thread_group_count_[xyz] | indirect_offset | draw_type | cursor_(?: showing | (?:screen_|window_|hotspot_)?[xy] ) |\n  time | hunting | sli | frame_analysis | effective_dpi | (?:raw_|eye_)?separation | convergence |\n  stereo_(?:active|available) | scissor_(?:left|top|right|bottom)\n)\\b"
         },
         {
-          "name": "meta.variable.ini.3dm",
+          "name": "meta.variable.migoto",
           "match": "(?xi) (\\$) (?: ([a-z_]\\w+|[a-z])  |  (\\\\)([\\w.@' \\-\\\\]+)(\\\\) ([a-z_]\\w+|[a-z]) )",
           "captures": {
             "1": {
-              "name": "punctuation.definition.variable.ini.3dm"
+              "name": "punctuation.definition.variable.migoto"
             },
             "2": {
-              "name": "variable.other.readwrite.ini.3dm"
+              "name": "variable.other.readwrite.migoto"
             },
             "3": {
-              "name": "punctuation.separator.namespace.ini.3dm"
+              "name": "punctuation.separator.namespace.migoto"
             },
             "4": {
-              "name": "entity.name.namespace.ini.3dm"
+              "name": "entity.name.namespace.migoto"
             },
             "5": {
-              "name": "punctuation.separator.namespace.ini.3dm"
+              "name": "punctuation.separator.namespace.migoto"
             },
             "6": {
-              "name": "variable.other.readwrite.ini.3dm"
+              "name": "variable.other.readwrite.migoto"
             }
           }
         },
         {
-          "name": "meta.function-call variable.other.function.ini.3dm",
+          "name": "meta.function-call variable.other.function.migoto",
           "match": "\\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\\\)([\\w.@' \\-\\\\]+)(\\\\))?([\\w.\\-]+)\\b(?!\\\\)",
           "captures": {
             "1": {
-              "name": "entity.name.function.section-type.ini.3dm"
+              "name": "entity.name.function.section-type.migoto"
             },
             "2": {
-              "name": "punctuation.separator.namespace.ini.3dm"
+              "name": "punctuation.separator.namespace.migoto"
             },
             "3": {
-              "name": "entity.name.namespace.ini.3dm"
+              "name": "entity.name.namespace.migoto"
             },
             "4": {
-              "name": "punctuation.separator.namespace.ini.3dm"
+              "name": "punctuation.separator.namespace.migoto"
             },
             "5": {
-              "name": "entity.name.function.ini.3dm"
+              "name": "entity.name.function.migoto"
             }
           }
         }
@@ -1005,23 +1005,23 @@
           "include": "#Rword"
         },
         {
-          "name": "constant.language.boolean.ini.3dm",
+          "name": "constant.language.boolean.migoto",
           "match": "\\b(?i)(?:true|false)\\b"
         },
         {
-          "name": "constant.language.numeric.ini.3dm",
+          "name": "constant.language.numeric.migoto",
           "match": "\\b(?i)(?:null|inf|NaN)\\b"
         },
         {
-          "name": "constant.other.path.ini.3dm",
+          "name": "constant.other.path.migoto",
           "match": "(?i)(?=.*\\\\)(?:(?:(?:[a-z]:|\\.)\\\\)?[\\w@&'\\-.()]+(?:\\\\[\\w@& '\\-.()]+)+)"
         },
         {
-          "name": "constant.other.file.ini.3dm",
+          "name": "constant.other.file.migoto",
           "match": "(?i)[\\w@& '\\-.()]+\\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"
         },
         {
-          "name": "constant.numeric.ini.3dm",
+          "name": "constant.numeric.migoto",
           "match": "-?\\b\\d+(?:\\.\\d+)?\\b"
         }
       ]
@@ -1029,117 +1029,121 @@
     "Rword": {
       "patterns": [
         {
-          "name": "meta.keyword.rword meta.keyword.multi-section constant.language.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.multi-section constant.language.migoto",
           "match": "\\b(?i)(none|skip|hold|mono|stereo|auto|depth_stencil|texturecube)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.commands constant.language.draw.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.commands constant.language.draw.migoto",
           "match": "\\b(?i)(from_caller)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.commands constant.language.handling.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.commands constant.language.handling.migoto",
           "match": "\\b(?i)(abort)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.commands constant.language.special.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.commands constant.language.special.migoto",
           "match": "\\b(?i)(upscaling_switch_bb|draw_3dmigoto_overlay)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.commands keyword.other.clear.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.commands keyword.other.clear.migoto",
           "match": "\\b(?i)(int|depth|stencil)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.commands constant.language.direct-mode-eye.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.commands constant.language.direct-mode-eye.migoto",
           "match": "\\b(?i)(left|right)\\b"
         },
         {
-          "name": "meta.keyword.rword constant.language.shader-override.ini.3dm",
+          "name": "meta.keyword.rword constant.language.shader-override.migoto",
           "match": "\\b(?i)(overrule|depth_(?:(?:in)?active))\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.cull.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.cull.migoto",
           "match": "\\b(?i)(front|back)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.fill.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.fill.migoto",
           "match": "\\b(?i)(wireframe|solid)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.topology.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.topology.migoto",
           "match": "\\b(?i)(undefined|(point|line|triangle)_list|(line|triangle)_strip|(line|triangle)_(list|strip)_adj|[123]?\\d_control_point_patch_list)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.compile-flag.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.custom-shader constant.language.compile-flag.migoto",
           "match": "\\b(?i)(debug|skip_(validation|optimization)|pack_matrix_(row_major|column_major)|partial_precision|force_[vp]s_software_no_opt|no_preshader|(avoid|prefer)_flow_control|enable_(strictness|backwards_compatibility|unbounded_descriptor_tables)|ieee_strictness|optimization_level[0123]|warnings_are_errors|resources_may_alias|all_resources_bound)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.resource-usage-modifier keyword.other.functional.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.resource-usage-modifier keyword.other.functional.migoto",
           "match": "\\b(?i)(unless_null)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.resource constant.language.resource-type.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.fuzzy-match constant.language.match-usage.migoto",
+          "match": "\\b(?i)(default|immutable|dynamic|staging)\\b"
+        },
+        {
+          "name": "meta.keyword.rword meta.keyword.resource constant.language.resource-type.migoto",
           "match": "\\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.resource constant.language.bind-flag.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.resource constant.language.bind-flag.migoto",
           "match": "\\b(?i)((?:vertex|index|constant)_buffer|shader_resource|stream_output|render_target|unordered_access|decoder|video_encoder)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.resource constant.language.misc-flag.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.resource constant.language.misc-flag.migoto",
           "match": "\\b(?i)(generate_mips|shared|drawindirect_args|buffer_(?:allow_raw_views|structured)|resource_clamp|shared_(?:keymutex|nthandle)|gdi_compatible|restricted_content|restrict_shared_resource(?:_driver)?|guarded|tile_pool|tiled|hw_protected)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.resource support.type.dxgi-format.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.resource support.type.dxgi-format.migoto",
           "match": "\\b(?xi)(?:DXGI_FORMAT_)?(UNKNOWN|R32G32B32A32_TYPELESS|R32G32B32A32_FLOAT|R32G32B32A32_UINT|R32G32B32A32_SINT|R32G32B32_TYPELESS|R32G32B32_FLOAT|R32G32B32_UINT|R32G32B32_SINT|R16G16B16A16_TYPELESS|R16G16B16A16_FLOAT|R16G16B16A16_UNORM|R16G16B16A16_UINT|R16G16B16A16_SNORM|R16G16B16A16_SINT\n|R32G32_TYPELESS|R32G32_FLOAT|R32G32_UINT|R32G32_SINT|R32G8X24_TYPELESS|D32_FLOAT_S8X24_UINT|R32_FLOAT_X8X24_TYPELESS|X32_TYPELESS_G8X24_UINT|R10G10B10A2_TYPELESS|R10G10B10A2_UNORM|R10G10B10A2_UINT|R11G11B10_FLOAT|R8G8B8A8_TYPELESS|R8G8B8A8_UNORM|R8G8B8A8_UNORM_SRGB\n|R8G8B8A8_UINT|R8G8B8A8_SNORM|R8G8B8A8_SINT|R16G16_TYPELESS|R16G16_FLOAT|R16G16_UNORM|R16G16_UINT|R16G16_SNORM|R16G16_SINT|R32_TYPELESS|D32_FLOAT|R32_FLOAT|R32_UINT|R32_SINT|R24G8_TYPELESS|D24_UNORM_S8_UINT|R24_UNORM_X8_TYPELESS|X24_TYPELESS_G8_UINT|R8G8_TYPELESS\n|R8G8_UNORM|R8G8_UINT|R8G8_SNORM|R8G8_SINT|R16_TYPELESS|R16_FLOAT|D16_UNORM|R16_UNORM|R16_UINT|R16_SNORM|R16_SINT|R8_TYPELESS|R8_UNORM|R8_UINT|R8_SNORM|R8_SINT|A8_UNORM|R1_UNORM|R9G9B9E5_SHAREDEXP|R8G8_B8G8_UNORM|G8R8_G8B8_UNORM|BC1_TYPELESS|BC1_UNORM|BC1_UNORM_SRGB\n|BC2_TYPELESS|BC2_UNORM|BC2_UNORM_SRGB|BC3_TYPELESS|BC3_UNORM|BC3_UNORM_SRGB|BC4_TYPELESS|BC4_UNORM|BC4_SNORM|BC5_TYPELESS|BC5_UNORM|BC5_SNORM|B5G6R5_UNORM|B5G5R5A1_UNORM|B8G8R8A8_UNORM|B8G8R8X8_UNORM|R10G10B10_XR_BIAS_A2_UNORM|B8G8R8A8_TYPELESS|B8G8R8A8_UNORM_SRGB\n|B8G8R8X8_TYPELESS|B8G8R8X8_UNORM_SRGB|BC6H_TYPELESS|BC6H_UF16|BC6H_SF16|BC7_TYPELESS|BC7_UNORM|BC7_UNORM_SRGB|AYUV|Y410|Y416|NV12|P010|P016|420_OPAQUE|YUY2|Y210|Y216|NV11|AI44|IA44|P8|A8P8|B4G4R4A4_UNORM)"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.blend-state keyword.operator.blend-operator.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.blend-state keyword.operator.blend-operator.migoto",
           "match": "\\b(?i)(add|(?:rev_)?subtract|min|max|disable)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.blend-state constant.language.blend-factor.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.blend-state constant.language.blend-factor.migoto",
           "match": "\\b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.keys constant.language.key-type.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.keys constant.language.key-type.migoto",
           "match": "\\b(?i)(activate|toggle|cycle)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.keys constant.language.transition-type.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.keys constant.language.transition-type.migoto",
           "match": "\\b(?i)(linear|cosine)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.keys keyword.other.modifier-key.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.keys keyword.other.modifier-key.migoto",
           "match": "\\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.system constant.language.hook-option.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.system constant.language.hook-option.migoto",
           "match": "\\b(?i)(deferred_contexts|(?:immediate_)?context|device|all|recommended|except_set_(?:shader_resources|sampler|rasterizer_state)|skip_dxgi_(?:factory|device))\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.device constant.language.resolution-source.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.device constant.language.resolution-source.migoto",
           "match": "\\b(?i)(swap_chain)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.rendering constant.language.shader-hash-type.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.rendering constant.language.shader-hash-type.migoto",
           "match": "\\b(?i)(3dmigoto|embedded|bytecode)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.marking constant.language.marking-mode.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.marking constant.language.marking-mode.migoto",
           "match": "\\b(?i)(original|pink)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.marking constant.language.marking-action.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.marking constant.language.marking-action.migoto",
           "match": "\\b(?i)(hlsl|asm|assembly|regex|ShaderRegex|clipboard|mono_snapshot|stereo_snapshot|snapshot_if_pink)\\b"
         },
         {
-          "name": "meta.keyword.rword meta.keyword.analysis constant.language.analysis-option.ini.3dm",
+          "name": "meta.keyword.rword meta.keyword.analysis constant.language.analysis-option.migoto",
           "match": "\\b(?i)(dump_(?:rt|depth|tex|[cvi]b)|jp(?:s|e?g)|(?:jp(?:s|e?g)_)?dds|buf|txt|desc|clear_rt|persist|filename_(?:reg|handle)|log|dump_on_(?:unmap|update)|deferred_ctx_(?:immediate|accurate)|share_dupes|symlink|dump_(?:rt|depth|tex)_(?:jps|dds)|dump_[cvi]b_txt)\\b"
         }
       ]
     },
     "string": {
-      "name": "string.quoted.double.ini.3dm",
+      "name": "string.quoted.double.migoto",
       "begin": "\"",
       "end": "\""
     }

@@ -3,7 +3,7 @@ import YAML from 'yaml'
 import * as prettier from 'prettier'
 import { readFileSync, writeFileSync } from 'fs'
 
-const inputFiles = ["Threedm-INI.sublime-syntax.toml"]
+const inputFiles = ["Migoto.sublime-syntax.toml"]
 
 for (let inputFile of inputFiles) {
     let inputFilePath = `toml-syntaxes/${inputFile}`

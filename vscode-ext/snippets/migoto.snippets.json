@@ -3,18 +3,18 @@
 		"prefix": "if",
 		"description": "A basic if statement.",
 		"body": ["if $1","\t$0","endif"],
-		"scope": "3dm-ini"
+		"scope": "migoto"
 	},
     "If Else": {
         "prefix": "if-else",
         "body": ["if $1", "\t$2", "else", "\t$3", "endif"],
         "description": "A simple if-else block.",
-        "scope": "3dm-ini"
+        "scope": "migoto"
     },
     "If Block": {
         "prefix": ["elif"],
         "body": ["if $1", "\t$3", "elif $2", "\t$4", "else", "\t$0", "endif"],
         "description": "A full if-elif-else block.",
-        "scope": "3dm-ini"
+        "scope": "migoto"
     }
 }

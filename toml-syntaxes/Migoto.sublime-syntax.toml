@@ -1,0 +1,525 @@
+name = "Migoto"
+file_extensions = ["ini"]
+scope = "source.migoto"
+version = 2
+
+[variables]
+cl_section_names = '(?:(?:(?:Shader|Texture)Override|ShaderRegex|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))'
+kvp_section_names = '(?:(?:Resource|Preset).+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)'
+special_section_names = '(?:Constants|Key.+(?=\]))'
+instructions = '(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)'
+ws = '[ \t]'
+namespace_path = '[\w\-.]+(?:[\\/][\w\-.]+)*'
+namespace = '''[\w.@' \-\\]+'''
+var = '''[a-z_]\w+|[a-z]'''
+
+[contexts]
+main = [
+    {include = "comment"},
+    {include = "preamble"},
+    {include = "section-base"},
+]
+# These two are only here because I don't feel like turning these into the Array of Tables format
+Lword = [
+    {meta_scope = "meta.keyword.lword"},
+    {scope = "keyword.other.migoto.multi-section", match = '(?i)\b(separation|convergence|hash|filter_index|match_priority|format|(?:width|height)(?:_multiply)?|analyse_options|type)\b'},
+    {scope = "keyword.other.migoto.key-section", match = '(?i)\b(key|back|(?:release_)?delay|wrap|smart|(?:release_)?transition(?:_type)?)\b'},
+    {scope = "keyword.other.migoto.resource", match = '(?i)\b(filename|data|max_copies_per_frame|mode|(?:bind|misc)_flags|depth|mips|array|msaa(?:_quality)?|byte_width|stride)\b'},
+    {scope = "keyword.other.migoto.texture-override.resource-match", match = '(?i)\b(stereomode|expand_region_copy|deny_cpu_read|iteration)\b'},
+    {scope = "keyword.other.migoto.texture-override.vertex-limit", match = '(?i)\b(override_(?:byte_stride|vertex_count))\b'},
+    {scope = "keyword.other.migoto.texture-override.draw-match", match = '(?i)\b(match_(?:(?:first_)?(?:vertex|index|instance)(?:_count)?))\b'}, # TODO: Make it required to have first or count
+    {scope = "keyword.other.migoto.texture-override.fuzzy-match", match = '(?i)\b(match_(?:type|usage|(?:bind|cpu_access|misc)_flags|(?:byte_)?width|height|stride|mips|format|depth|array|msaa(?:_quality)?))\b'},
+    {scope = "keyword.other.migoto.custom-shader", match = '(?i)\b(flags|max_executions_per_frame|topology|sampler)\b'},
+    {scope = "keyword.other.migoto.custom-shader.blend-state", match = '(?i)\b((?:blend|alpha|mask)(?:\[([0-7])\])?|blend_factor\[([0-3])\]|alpha_to_coverage|sample_mask|blend_state_merge)\b', captures.2 = "constant.numeric.migoto", captures.3 = "constant.numeric.migoto"},
+    {scope = "keyword.other.migoto.custom-shader.depth-stencil-state", match = '(?i)\b(depth_(?:enable|write_mask|func|stencil_state_merge)|stencil_(?:enable|(?:read|write)_mask|front|back|ref))\b'},
+    {scope = "keyword.other.migoto.custom-shader.rs-state", match = '(?i)\b(fill|cull|front|depth_(?:bias(?:_clamp)?|clip_enable)|slope_scaled_depth_bias|(?:depth_clip|scissor|multisample|antialiased_line)_enable|rasterizer_state_merge)\b'},
+    {scope = "keyword.other.migoto.shader-regex", match = '(?i)\b(shader_model|temps)\b'},
+    {scope = "keyword.other.migoto.shader-override", match = '(?i)\b(allow_duplicate_hash|depth_filter|partner|model|disable_scissor)\b'},
+    {scope = "keyword.other.migoto.include", match = '(?i)\b((?:in|ex)clude(?:_recursive)?|user_config)\b'},
+    {scope = "keyword.other.migoto.logging", match = '(?i)\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|wait_for_debugger|crash|dump_all_profiles|show_warnings)\b'},
+    {scope = "keyword.other.migoto.hunting", match = '(?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking_mode|marking_actions|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune[123]_(?:up|down)|analyse_frame|kill_deferred)\b'},
+    {scope = "keyword.other.migoto.system", match = '(?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval)\b'},
+    {scope = "keyword.other.migoto.loader", match = '(?i)\b(target|module|require_admin|launch|delay|loader|check_version|entry_point|hook_proc|wait_for_target)\b'},
+    {scope = "keyword.other.migoto.device", match = '(?i)\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor|cursor_upscaling_bypass)\b'},
+    {scope = "keyword.other.migoto.stereo", match = '(?i)\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)\b'},
+    {scope = "keyword.other.migoto.rendering", match = '(?i)\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl|binary)|dump_usage|fix_(?:sv_position|ZRepair_.+|BackProjectionTransform\d|ObjectPosition\d(?:Multiplier)?|MatrixOperand\d(?:Multiplier)?)|recompile_all_vs)\b'},
+]
+Rword = [
+    # constant scope if they only ever appear by themselves or with other rwords
+    # keyword scope if they mix with non-rword things
+    {meta_scope = "meta.keyword.rword"},
+    {scope = "meta.keyword.multi-section constant.language.migoto", match = '\b(?i)(none|skip|hold|mono|stereo|auto|depth_stencil|texturecube)\b'},
+    {scope = "meta.keyword.commands constant.language.migoto.draw", match = '\b(?i)(from_caller)\b'}, # auto is included above
+    {scope = "meta.keyword.commands constant.language.migoto.handling", match = '\b(?i)(abort)\b'}, # skip is included above
+    {scope = "meta.keyword.commands constant.language.migoto.special", match = '\b(?i)(upscaling_switch_bb|draw_3dmigoto_overlay)\b'},
+    {scope = "meta.keyword.commands keyword.other.migoto.clear", match = '\b(?i)(int|depth|stencil)\b'},
+    {scope = "meta.keyword.commands constant.language.migoto.direct-mode-eye", match = '\b(?i)(left|right)\b'}, # mono is included above
+    {scope = "constant.language.migoto.shader-override", match = '\b(?i)(overrule|depth_(?:(?:in)?active))\b'}, # none is included above | true,false are additional language constants handled elsewhere
+    {scope = "meta.keyword.custom-shader constant.language.migoto.cull", match = '\b(?i)(front|back)\b'},
+    {scope = "meta.keyword.custom-shader constant.language.migoto.fill", match = '\b(?i)(wireframe|solid)\b'},
+    {scope = "meta.keyword.custom-shader constant.language.migoto.topology", match = '\b(?i)(undefined|(point|line|triangle)_list|(line|triangle)_strip|(line|triangle)_(list|strip)_adj|[123]?\d_control_point_patch_list)\b'},
+    {scope = "meta.keyword.custom-shader constant.language.migoto.compile-flag", match = '\b(?i)(debug|skip_(validation|optimization)|pack_matrix_(row_major|column_major)|partial_precision|force_[vp]s_software_no_opt|no_preshader|(avoid|prefer)_flow_control|enable_(strictness|backwards_compatibility|unbounded_descriptor_tables)|ieee_strictness|optimization_level[0123]|warnings_are_errors|resources_may_alias|all_resources_bound)\b'},
+    {scope = "meta.keyword.resource-usage-modifier keyword.other.migoto.functional", match = '\b(?i)(unless_null)\b'},
+    {scope = "meta.keyword.rword meta.keyword.fuzzy-match constant.language.match-usage.migoto", match = '\b(?i)(default|immutable|dynamic|staging)\b'},
+    # This is where "meta.keyword.resource constant.language.resource-mode.migoto" would go if all of its values weren't already in other sections: auto | mono | stereo
+    {scope = "meta.keyword.resource constant.language.migoto.resource-type", match = '\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D)\b'}, # TextureCube is included above
+    {scope = "meta.keyword.resource constant.language.migoto.bind-flag", match = '\b(?i)((?:vertex|index|constant)_buffer|shader_resource|stream_output|render_target|unordered_access|decoder|video_encoder)\b'},
+    {scope = "meta.keyword.resource constant.language.migoto.misc-flag", match = '\b(?i)(generate_mips|shared|drawindirect_args|buffer_(?:allow_raw_views|structured)|resource_clamp|shared_(?:keymutex|nthandle)|gdi_compatible|restricted_content|restrict_shared_resource(?:_driver)?|guarded|tile_pool|tiled|hw_protected)\b'}, # texturecube is included above
+    # I know this is an absurdly long line, but it is genuinely not worth the headache to figure out how to condense this regex
+    {scope = "meta.keyword.resource support.type.dxgi-format.migoto", match = '''\b(?xi)(?:DXGI_FORMAT_)?(UNKNOWN|R32G32B32A32_TYPELESS|R32G32B32A32_FLOAT|R32G32B32A32_UINT|R32G32B32A32_SINT|R32G32B32_TYPELESS|R32G32B32_FLOAT|R32G32B32_UINT|R32G32B32_SINT|R16G16B16A16_TYPELESS|R16G16B16A16_FLOAT|R16G16B16A16_UNORM|R16G16B16A16_UINT|R16G16B16A16_SNORM|R16G16B16A16_SINT
+|R32G32_TYPELESS|R32G32_FLOAT|R32G32_UINT|R32G32_SINT|R32G8X24_TYPELESS|D32_FLOAT_S8X24_UINT|R32_FLOAT_X8X24_TYPELESS|X32_TYPELESS_G8X24_UINT|R10G10B10A2_TYPELESS|R10G10B10A2_UNORM|R10G10B10A2_UINT|R11G11B10_FLOAT|R8G8B8A8_TYPELESS|R8G8B8A8_UNORM|R8G8B8A8_UNORM_SRGB
+|R8G8B8A8_UINT|R8G8B8A8_SNORM|R8G8B8A8_SINT|R16G16_TYPELESS|R16G16_FLOAT|R16G16_UNORM|R16G16_UINT|R16G16_SNORM|R16G16_SINT|R32_TYPELESS|D32_FLOAT|R32_FLOAT|R32_UINT|R32_SINT|R24G8_TYPELESS|D24_UNORM_S8_UINT|R24_UNORM_X8_TYPELESS|X24_TYPELESS_G8_UINT|R8G8_TYPELESS
+|R8G8_UNORM|R8G8_UINT|R8G8_SNORM|R8G8_SINT|R16_TYPELESS|R16_FLOAT|D16_UNORM|R16_UNORM|R16_UINT|R16_SNORM|R16_SINT|R8_TYPELESS|R8_UNORM|R8_UINT|R8_SNORM|R8_SINT|A8_UNORM|R1_UNORM|R9G9B9E5_SHAREDEXP|R8G8_B8G8_UNORM|G8R8_G8B8_UNORM|BC1_TYPELESS|BC1_UNORM|BC1_UNORM_SRGB
+|BC2_TYPELESS|BC2_UNORM|BC2_UNORM_SRGB|BC3_TYPELESS|BC3_UNORM|BC3_UNORM_SRGB|BC4_TYPELESS|BC4_UNORM|BC4_SNORM|BC5_TYPELESS|BC5_UNORM|BC5_SNORM|B5G6R5_UNORM|B5G5R5A1_UNORM|B8G8R8A8_UNORM|B8G8R8X8_UNORM|R10G10B10_XR_BIAS_A2_UNORM|B8G8R8A8_TYPELESS|B8G8R8A8_UNORM_SRGB
+|B8G8R8X8_TYPELESS|B8G8R8X8_UNORM_SRGB|BC6H_TYPELESS|BC6H_UF16|BC6H_SF16|BC7_TYPELESS|BC7_UNORM|BC7_UNORM_SRGB|AYUV|Y410|Y416|NV12|P010|P016|420_OPAQUE|YUY2|Y210|Y216|NV11|AI44|IA44|P8|A8P8|B4G4R4A4_UNORM)'''},
+    {scope = "meta.keyword.blend-state keyword.operator.migoto.blend-operator", match = '\b(?i)(add|(?:rev_)?subtract|min|max|disable)\b'}, #adding `disable` here even though it's not a blend op
+    {scope = "meta.keyword.blend-state constant.language.migoto.blend-factor", match = '\b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\b'},
+    {scope = "meta.keyword.keys constant.language.migoto.key-type", match = '\b(?i)(activate|toggle|cycle)\b'}, # hold is included above
+    {scope = "meta.keyword.keys constant.language.migoto.transition-type", match = '\b(?i)(linear|cosine)\b'},
+    {scope = "meta.keyword.keys keyword.other.modifier-key.migoto", match = '\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)\b'},
+    {scope = "meta.keyword.system constant.language.migoto.hook-option", match = '\b(?i)(deferred_contexts|(?:immediate_)?context|device|all|recommended|except_set_(?:shader_resources|sampler|rasterizer_state)|skip_dxgi_(?:factory|device))\b'},
+    {scope = "meta.keyword.device constant.language.migoto.resolution-source", match = '\b(?i)(swap_chain)\b'}, # depth_stencil is included above
+    {scope = "meta.keyword.rendering constant.language.migoto.shader-hash-type", match = '\b(?i)(3dmigoto|embedded|bytecode)\b'},
+    {scope = "meta.keyword.marking constant.language.migoto.marking-mode", match = '\b(?i)(original|pink)\b'}, # skip,mono are included above
+    {scope = "meta.keyword.marking constant.language.migoto.marking-action", match = '\b(?i)(hlsl|asm|assembly|regex|ShaderRegex|clipboard|mono_snapshot|stereo_snapshot|snapshot_if_pink)\b'},
+    {scope = "meta.keyword.analysis constant.language.migoto.analysis-option", match = '\b(?i)(dump_(?:rt|depth|tex|[cvi]b)|jp(?:s|e?g)|(?:jp(?:s|e?g)_)?dds|buf|txt|desc|clear_rt|persist|filename_(?:reg|handle)|log|dump_on_(?:unmap|update)|deferred_ctx_(?:immediate|accurate)|share_dupes|symlink|dump_(?:rt|depth|tex)_(?:jps|dds)|dump_[cvi]b_txt)\b'}, # hold,stereo,mono are included above
+]
+
+[[contexts.fallthrough]]
+match = '(?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\])'
+pop = 2
+
+[[contexts.comment]]
+match = '^({{ws}}+)?(;)'
+captures.1 = "punctuation.whitespace.comment.leading.migoto"
+captures.2 = "punctuation.definition.comment.migoto"
+push = [
+    {meta_scope = "comment.line.semicolon.migoto"},
+    {meta_content_scope = "comment.line.semicolon.content.migoto"},
+    {match = '\n', pop = true},
+]
+
+[[contexts.comment]]
+match = '^\S+{{ws}}*(;)'
+captures.1 = "invalid.illegal punctuation.definition.comment.migoto"
+push = [
+    {meta_scope = "invalid.illegal comment.line.semicolon.migoto"},
+    {match = '\n', pop = true},
+]
+
+[[contexts.preamble]]
+match = '(?i)^{{ws}}*(namespace)\b{{ws}}*(=){{ws}}*\b'
+captures.1 = "keyword.other.namespace.definition.migoto"
+captures.2 = "keyword.operator.namespace.migoto"
+push = [
+    {meta_scope = "meta.head.namespace.migoto"},
+    {match = '(?i){{namespace_path}}', scope = "entity.name.namespace.migoto", pop = true},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
+[[contexts.section-base]]
+match = '\['
+scope = "punctuation.definition.entity.migoto"
+push = "section-title"
+
+[[contexts.section-title]]
+meta_scope = "meta.tag.section-header.migoto entity.name.section.group-title.migoto"
+
+# Special Headers
+
+[[contexts.section-title]]
+match = '(?i)Constants'
+scope = "entity.name.section.group-title.migoto.constants"
+push = [
+    # pop anonymous context and pop section-title, then push body
+    {match = '\]', scope = "punctuation.definition.entity.migoto", pop = 2, set = "constants-body"},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
+[[contexts.section-title]]
+match = '(?i)Key.+(?=\])'
+scope = "entity.name.section.group-title.migoto.key"
+push = [
+    # pop anonymous context and pop section-title, then push body
+    {match = '\]', scope = "punctuation.definition.entity.migoto", pop = 2, set = "key-body"},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
+[[contexts.section-title]]
+match = '(?i)ShaderRegex.+\.Pattern(?=\])'
+scope = "entity.name.section.group-title.migoto.shader-regex-pattern"
+push = [
+    {meta_content_scope = "meta.tag.section-header.migoto entity.name.section.group-title.migoto"},
+    {match = '\]', scope = "punctuation.definition.entity.migoto", pop = 2, push = [
+        {meta_content_scope = "meta.embedded.block.regexp"},
+        {include = "comment"},
+        {match = '(?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\])', pop = true},
+        {include = "scope:source.regexp.pcre2"},
+    ]},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
+[[contexts.section-title]]
+match = '(?i)ShaderRegex.+\.Pattern\.Replace(?=\])'
+scope = "entity.name.section.group-title.migoto.shader-regex-replace"
+push = [
+    {meta_content_scope = "meta.tag.section-header.migoto entity.name.section.group-title.migoto"},
+    {match = '\]', scope = "punctuation.definition.entity.migoto", pop = 2, push = [
+        {meta_content_scope = "meta.embedded.block.regexp-replace"},
+        {include = "comment"},
+        {match = '(?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\])', pop = true},
+        {include = "scope:source.regexp-replace.pcre2"},
+    ]},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
+[[contexts.section-title]]
+match = '(?i)ShaderRegex.+\.InsertDeclarations(?=\])'
+scope = "entity.name.section.group-title.migoto.shader-regex-declarations"
+push = [
+    # pop anonymous context and pop section-title, then push body
+    {match = '\]', scope = "punctuation.definition.entity.migoto", pop = 2, set = "regex-declarations-body"},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
+# Normal Headers
+
+[[contexts.section-title]]
+match = '{{kvp_section_names}}'
+scope = "entity.name.section.group-title.migoto.kvp-section"
+push = [
+    # pop anonymous context and pop section-title, then push body
+    {match = '\]', scope = "punctuation.definition.entity.migoto", pop = 2, set = "kvp-body"},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
+[[contexts.section-title]]
+match = '{{cl_section_names}}'
+scope = "entity.name.section.group-title.migoto.cl-section"
+push = [
+    # pop anonymous context and pop section-title, then push body
+    {match = '\]', scope = "punctuation.definition.entity.migoto", pop = 2, set = "cl-body"},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
+# Special Bodies
+
+[[contexts.constants-body]]
+include = "comment"
+
+[[contexts.constants-body]]
+include = "Lexpression"
+
+[[contexts.constants-body]]
+match = '='
+scope = "keyword.operator.declaration.migoto"
+push = "operation"
+
+[[contexts.constants-body]]
+include = "fallthrough"
+
+[[contexts.key-body]]
+match = '(?i)\bcondition\b'
+scope = "meta.keyword.lword keyword.other.migoto.condition"
+push = [
+    {match = '=', scope = "keyword.operator.declaration.migoto", push = [
+        {include = "operational-expr"},
+        {match = '\n', pop = 2},
+    ]},
+    {match = '(?:\n|(?<=\n))', pop = true}, # lineEndContext, fallthroughContext pop
+]
+
+[[contexts.key-body]]
+match = '(?i)\b{{instructions}}\b'
+scope = "meta.keyword.lword keyword.other.migoto.instruction"
+
+[[contexts.key-body]]
+include = "variable"
+
+[[contexts.key-body]]
+include = "Lword"
+
+[[contexts.key-body]]
+match = '='
+scope = "punctuation.separator.key-value.migoto"
+
+[[contexts.key-body]]
+include = "constant"
+
+[[contexts.key-body]]
+include = "comment"
+
+[[contexts.key-body]]
+include = "fallthrough"
+
+[[contexts.regex-declarations-body]]
+include = "comment"
+
+[[contexts.regex-declarations-body]]
+include = "fallthrough"
+
+# Normal Bodies
+
+[[contexts.kvp-body]]
+include = "comment"
+
+[[contexts.kvp-body]]
+include = "Lword"
+
+[[contexts.kvp-body]]
+match = '='
+scope = "punctuation.separator.key-value.migoto"
+
+[[contexts.kvp-body]]
+include = "constant"
+
+[[contexts.kvp-body]]
+include = "string"
+
+[[contexts.kvp-body]]
+include = "fallthrough"
+
+[[contexts.cl-body]]
+include = "comment"
+
+[[contexts.cl-body]]
+include = "conditional-expr"
+
+[[contexts.cl-body]]
+include = "definition"
+
+[[contexts.cl-body]]
+include = "declaration"
+
+[[contexts.cl-body]]
+include = "fallthrough"
+
+# Body Contents
+
+[[contexts.conditional-expr]]
+match = '(?i)^{{ws}}*(?:(if|elif|else if)(?= )|(else|endif){{ws}}*$)'
+captures.1 = "keyword.control.flow.migoto"
+captures.2 = "keyword.control.flow.migoto"
+push = [
+    {meta_scope = "meta.expression.conditional.migoto"},
+    {meta_content_scope = "meta.expression.operational.migoto"},
+    {include = "operational-expr"},
+    {match = '(?:\n|(?<=\n))', pop = true},
+]
+
+[[contexts.definition]]
+match = '''(?xi)
+(?!run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|store|condition|
+  draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|
+  vb\d|ib|(?:[rf]_)?bb|s?o\d|od|[vhdgpc]s|
+  (?<!$)[xyzw]\d{0,3}|
+  this|(?:ini|stereo)params|cursor_(?:mask|color)|
+  (?:(?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex).+
+) # keywords and variables that are not keys and should only be matched by declaration
+\b
+(?= \w+ # optional whitespace followed by a word-like that is not in the preceding list
+    \s* = \s* # kvp separator surrounded by optional whitespace
+    [@\w\$.\-,+/* \t%=\\!><"\[\]';:|&()]+ # partial Rvalue
+)
+'''
+push = [
+    {meta_scope = "meta.structure.definition.migoto"},
+    {include = "Lword"}, # If an Lword is found, match and continue searching in this context
+    # once the separator is found, only allow certain values on the right
+    {match = '=', scope = "punctuation.separator.key-value.migoto", push = [
+        {include = "functional-expr"},
+        {include = "literal-list"},
+        {include = "constant"},
+        {include = "string"},
+        {match = '(?:\n|(?<=\n))', pop = true},
+    ]},
+    {match = '(?:\n|(?<=\n))', pop = true}, # leave this anon context at line end + fallthroughContext pop
+]
+
+[[contexts.declaration]]
+match = '''(?xi)
+(?=
+  (?:(?:\w+)\ +){0,2}     # between 0 and 2 keywords inclusive
+  (?:[$\w\-.\\/@& ']+) # another keyword or a variable
+\s*
+  (?:
+    = \s* # assignment operator, surrounded by optional whitespace
+    [=$!@\w.\-,+/* \t%\\()"|&><]+ # Rvalue
+  )? # Operator and Rvalue are optional, e.g. `global $variable` on a line by itself
+)'''
+push = [
+    {meta_scope = "meta.structure.declaration.migoto"},
+    {include = "Lexpression"}, # When the Left expression is match, stay in the context
+    {match = '=', scope = "keyword.operator.declaration.migoto", push = "operation"},
+    {match = '(?:\n|(?<=\n))', pop = true}, # leave this anon context at line end + fallthroughContext pop
+]
+
+[[contexts.Lexpression]]
+match = '(?i)\b(global|local|persist)(?= )'
+captures.1 = "storage.modifier.migoto"
+
+[[contexts.Lexpression]]
+match = '(?i)\b(pre|post)(?= )'
+captures.1 = "keyword.control.migoto"
+
+[[contexts.Lexpression]]
+match = '(?i)\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b'
+scope = "meta.keyword.lword keyword.other.migoto.command-list.general"
+
+[[contexts.Lexpression]]
+match = '(?i)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b'
+scope = "meta.keyword.lword keyword.other.migoto.command-list.draw-instruction"
+
+[[contexts.Lexpression]]
+include = "variable"
+
+[[contexts.operation]]
+include = "functional-expr"
+
+[[contexts.operation]]
+include = "literal-list"
+
+[[contexts.operation]]
+include = "operational-expr"
+
+[[contexts.operation]]
+match = '(?:\n|(?<=\n))'
+pop = true
+
+[[contexts.functional-expr]]
+match = '(?i)\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa)\b'
+scope = "keyword.other.functional.migoto"
+push = [
+    {meta_scope = "meta.expression.functional.migoto"},
+    {include = "variable"},
+    {include = "constant"},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
+[[contexts.literal-list]]
+match = '(?i)\b(?!(?:.+\..+|.*unless_null.*))(?=(\w+) +(\w+)(?: +(\w+))?$|(\w+) +(\w+))'
+push = [
+    {meta_scope = "meta.expression.literal-list.migoto"},
+    {include = "constant"},
+    {match = '\n', pop = true},
+]
+
+[[contexts.operational-expr]]
+meta_scope = "meta.expression.operational.migoto"
+
+[[contexts.operational-expr]]
+include = "illegal-operator"
+
+[[contexts.operational-expr]]
+include = "operator"
+
+[[contexts.operational-expr]]
+include = "variable"
+
+[[contexts.operational-expr]]
+include = "constant"
+
+[[contexts.operational-expr]]
+include = "round-braces"
+
+[[contexts.illegal-operator]]
+scope = "invalid.illegal.operator.migoto"
+match = '(?xi) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [!><]{2,} | &{3,} | \|{3,} | \^+ '
+
+[[contexts.operator]]
+match = '''(?xi)
+(?:
+  ( \*\* | \* | \+ | - | % | // | / ) |       # arithmetic operators
+  ( !== | != | === | == | >= | <= | > | < ) | # comparison operators
+  ( ! | && | \|\| )                           # logical operators
+)'''
+captures.1 = "keyword.operator.math.migoto"
+captures.2 = "keyword.operator.comparison.migoto"
+captures.3 = "keyword.operator.logical.migoto"
+
+[[contexts.round-braces]]
+match = '\('
+captures.0 = "punctuation.parenthesis.begin.migoto"
+push = [
+    {meta_content_scope = "meta.expression.operational.nested.migoto"},
+    {include = "operational-expr"},
+    {match = '\)', captures.0 = "punctuation.parenthesis.end.migoto", pop = true},
+]
+
+[[contexts.variable]]
+scope = "variable.language.buffer.migoto"
+match = '\b(?i)(?<!\.)(?:[vhdgpc]s-cb\d{1,2}|vb\d|ib|(?:[rf]_)?bb)\b'
+
+[[contexts.variable]]
+scope = "variable.language.shader.migoto"
+match = '\b(?i)([pc]s-u\d|s?o\d|od|[vhdgpc]s(?:-t\d{1,3})?)\b'
+
+[[contexts.variable]]
+scope = "variable.parameter.migoto"
+match = '(?i)\b(?:(?<!$)[xyzw]\d{0,3})\b'
+
+[[contexts.variable]]
+scope = "variable.language.migoto.resource-identifiers"
+match = '\b(?i)(this|(?:ini|stereo)params|cursor_(?:mask|color))\b'
+
+[[contexts.variable]]
+scope = "constant.language.migoto.override-parameters"
+match = '''(?xi)
+\b(
+  (?:rt|res|window)_(?:width|height) | (?:vertex|index|instance)_count | first_(?:vertex|index|instance) |
+  thread_group_count_[xyz] | indirect_offset | draw_type | cursor_(?: showing | (?:screen_|window_|hotspot_)?[xy] ) |
+  time | hunting | sli | frame_analysis | effective_dpi | (?:raw_|eye_)?separation | convergence |
+  stereo_(?:active|available) | scissor_(?:left|top|right|bottom)
+)\b'''
+
+[[contexts.variable]]
+scope = "meta.variable.migoto"
+match = '''(?xi) (\$) (?: ({{var}})  |  (\\)({{namespace}})(\\) ({{var}}) )'''
+# captures for a normal variable
+captures.1 = "punctuation.definition.variable.migoto"
+captures.2 = "variable.other.readwrite.migoto"
+# captures for a namespaced variable
+captures.3 = "punctuation.separator.namespace.migoto"
+captures.4 = "entity.name.namespace.migoto"
+captures.5 = "punctuation.separator.namespace.migoto"
+captures.6 = "variable.other.readwrite.migoto"
+
+[[contexts.variable]]
+scope = "meta.function-call.migoto"
+#                        The prefixable section names I've seen in use              \     namespace    \      user-provided name
+match = '''\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\)({{namespace}})(\\))?([\w.\-]+)\b(?!\\)'''
+captures.1 = "entity.name.function.section-type.migoto"
+captures.2 = "punctuation.separator.namespace.migoto"
+captures.3 = "entity.name.namespace.migoto"
+captures.4 = "punctuation.separator.namespace.migoto"
+captures.5 = "entity.name.function.migoto"
+
+[[contexts.constant]]
+include = "Rword"
+
+[[contexts.constant]]
+scope = "constant.language.boolean.migoto"
+match = '\b(?i)(?:true|false)\b'
+
+[[contexts.constant]]
+scope = "constant.language.numeric.migoto"
+match = '\b(?i)(?:null|inf|NaN)\b'
+
+[[contexts.constant]]
+scope = "constant.other.path.migoto"
+match = '''\b(?i)(?=.*\\)(?:(?:(?:[a-z]:|\.)\\)?[\w@&'\-.()]+(?:\\[\w@& '\-.()]+)+)'''
+
+[[contexts.constant]]
+scope = "constant.other.file.migoto"
+match = '''\b(?i)[\w@& '\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
+
+[[contexts.constant]]
+scope = "constant.numeric.migoto"
+match = '[+-]?\b\d+(?:\.\d+)?\b'
+
+[[contexts.string]]
+match = '"'
+push = [
+    {meta_scope = "string.quoted.double.migoto"},
+    {match = '"', pop = true},
+]

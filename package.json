@@ -23,7 +23,7 @@
     "type": "git",
     "url": "https://github.com/lupomikti/3dmigoto-ini-extension.git"
   },
-  "version": "0.6.0",
+  "version": "0.6.1",
   "pricing": "Free",
   "engines": {
     "vscode": "^1.93.0"
@@ -34,23 +34,23 @@
   "contributes": {
     "languages": [
       {
-        "id": "3dm-ini",
+        "id": "migoto",
         "aliases": [
+          "Migoto",
           "3dm-ini",
-          "3dm.ini",
           "3dmigoto"
         ],
         "extensions": [
           ".ini"
         ],
-        "configuration": "./threedm-ini.language-configuration.json"
+        "configuration": "./migoto.language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "3dm-ini",
-        "scopeName": "source.ini.3dm",
-        "path": "./syntaxes/threedm-ini.tmLanguage.json"
+        "language": "migoto",
+        "scopeName": "source.migoto",
+        "path": "./syntaxes/migoto.tmLanguage.json"
       },
       {
         "path": "./syntaxes/regexp.tmLanguage.json",
@@ -63,8 +63,8 @@
     ],
     "snippets": [
       {
-        "language": "3dm-ini",
-        "path": "./snippets/threedm-ini.snippets.json"
+        "language": "migoto",
+        "path": "./snippets/migoto.snippets.json"
       }
     ]
   },
@@ -76,6 +76,13 @@
     "smol-toml": "^1.3.1",
     "typescript": "^5.6.2",
     "yaml": "^2.7.0"
+  },
+  "scripts": {
+    "build-vsce": "vsce package --follow-symlinks --ignoreFile \"..\\.vscodeignore\" --no-git-tag-version",
+    "build-sublime": "7z a -tzip Migoto-$npm_package_version.sublime-package ./sublime-text-pkg/*  && mv *.sublime-package ./dist/SublimePackage/",
+    "build-npp": "7z a Migoto-$npm_package_version.udl.zip ./npp-plugin/* && mv Migoto-$npm_package_version.udl.zip ./dist/Notepad++/",
+    "build-kate": "7z a migoto-$npm_package_version.kate.zip ./kate-plugin/* && mv migoto-$npm_package_version.kate.zip ./dist/Kate",
+    "build": "npm run build-sublime && npm run build-npp && npm run build-kate"
   },
   "bin": {
     "toml-to-json": "bin/runTomlToJson.mjs",

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
-<language name="3DM INI Files" alternativenames="3DM-INI" version="1" kateversion="5.94"
+<language name="Migoto" alternativenames="3DM-INI" version="2" kateversion="5.94"
           section="Scripts" extensions="*.ini" casesensitive="0" license="GPL-3.0" priority="2">
   <highlighting>
     <list name="boolean-values">
@@ -508,6 +508,12 @@
     </list>
     <list name="unless-null">
       <item>unless_null</item>
+    </list>
+    <list name="fuzzy-match-key-values">
+      <item>default</item>
+      <item>immutable</item>
+      <item>dynamic</item>
+      <item>staging</item>
     </list>
     <list name="resource-section-key-types">
       <item>StructuredBuffer</item>
@@ -1054,6 +1060,8 @@
         <!-- Variables -->
         <keyword attribute="LanguageVariable" String="override-parameters"/>
         <IncludeRules context="FindVariable"/>
+        <!-- unless_null -->
+        <keyword attribute="ControlFlow" String="unless-null"/>
         <!-- Constants -->
         <keyword attribute="LanguageVariable" String="language-constants"/>
         <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
@@ -1162,6 +1170,7 @@
         <keyword attribute="RValue" String="custom-shader-key-values"/>
         <keyword attribute="RValue" String="custom-shader-compile-flags"/>
         <keyword attribute="ControlFlow" String="unless-null"/>
+        <keyword attribute="RValue" String="fuzzy-match-key-values"/>
         <keyword attribute="Type" String="resource-section-key-types"/>
         <keyword attribute="RValue" String="resource-section-key-values"/>
         <keyword attribute="Type" String="dxgi-formats"/>
