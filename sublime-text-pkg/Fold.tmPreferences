@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist>
+<plist version="1.0">
+<dict>
+    <key>scope</key>
+    <string>source.migoto</string>
+    <key>settings</key>
+    <dict>
+        <key>foldScopes</key>
+        <array>
+            <dict>
+                <key>begin</key>
+                <string>punctuation.definition.entity.end</string>
+                <key>end</key>
+                <string>punctuation.definition.entity.begin</string>
+            </dict>
+            <dict>
+                <key>begin</key>
+                <string>punctuation.definition.comment-fold.begin</string>
+                <key>end</key>
+                <string>punctuation.definition.comment-fold.end</string>
+            </dict>
+        </array>
+    </dict>
+</dict>
+</plist>

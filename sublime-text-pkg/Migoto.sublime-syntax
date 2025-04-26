@@ -135,6 +135,23 @@ contexts:
     - match: (?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\])
       pop: 2
   comment:
+    - match: ^({{ws}}+)?((;)<([^\n]*)\n)
+      captures:
+        "0": comment.line.semicolon.migoto
+        "1": punctuation.whitespace.comment.leading.migoto
+        "2": punctuation.definition.comment-fold.begin.migoto
+        "3": punctuation.definition.comment.migoto
+        "4": comment.line.semicolon.content.migoto
+    - match: ^({{ws}}+)?(;).*(>)(?=\n)
+      captures:
+        "1": punctuation.whitespace.comment.leading.migoto
+        "2": punctuation.definition.comment.migoto
+        "3": punctuation.definition.comment-fold.end.migoto
+      push:
+        - meta_scope: comment.line.semicolon.migoto
+        - meta_content_scope: comment.line.semicolon.content.migoto
+        - match: \n
+          pop: true
     - match: ^({{ws}}+)?(;)
       captures:
         "1": punctuation.whitespace.comment.leading.migoto
@@ -165,7 +182,7 @@ contexts:
           pop: true
   section-base:
     - match: \[
-      scope: punctuation.definition.entity.migoto
+      scope: punctuation.definition.entity.begin.migoto
       push: section-title
   section-title:
     - meta_scope: meta.tag.section-header.migoto entity.name.section.group-title.migoto
@@ -173,7 +190,7 @@ contexts:
       scope: entity.name.section.group-title.migoto.constants
       push:
         - match: \]
-          scope: punctuation.definition.entity.migoto
+          scope: punctuation.definition.entity.end.migoto
           pop: 2
           set: constants-body
         - match: \n
@@ -182,7 +199,7 @@ contexts:
       scope: entity.name.section.group-title.migoto.key
       push:
         - match: \]
-          scope: punctuation.definition.entity.migoto
+          scope: punctuation.definition.entity.end.migoto
           pop: 2
           set: key-body
         - match: \n
@@ -192,7 +209,7 @@ contexts:
       push:
         - meta_content_scope: meta.tag.section-header.migoto entity.name.section.group-title.migoto
         - match: \]
-          scope: punctuation.definition.entity.migoto
+          scope: punctuation.definition.entity.end.migoto
           pop: 2
           push:
             - meta_content_scope: meta.embedded.block.regexp
@@ -207,7 +224,7 @@ contexts:
       push:
         - meta_content_scope: meta.tag.section-header.migoto entity.name.section.group-title.migoto
         - match: \]
-          scope: punctuation.definition.entity.migoto
+          scope: punctuation.definition.entity.end.migoto
           pop: 2
           push:
             - meta_content_scope: meta.embedded.block.regexp-replace
@@ -221,7 +238,7 @@ contexts:
       scope: entity.name.section.group-title.migoto.shader-regex-declarations
       push:
         - match: \]
-          scope: punctuation.definition.entity.migoto
+          scope: punctuation.definition.entity.end.migoto
           pop: 2
           set: regex-declarations-body
         - match: \n
@@ -230,7 +247,7 @@ contexts:
       scope: entity.name.section.group-title.migoto.kvp-section
       push:
         - match: \]
-          scope: punctuation.definition.entity.migoto
+          scope: punctuation.definition.entity.end.migoto
           pop: 2
           set: kvp-body
         - match: \n
@@ -239,7 +256,7 @@ contexts:
       scope: entity.name.section.group-title.migoto.cl-section
       push:
         - match: \]
-          scope: punctuation.definition.entity.migoto
+          scope: punctuation.definition.entity.end.migoto
           pop: 2
           set: cl-body
         - match: \n
