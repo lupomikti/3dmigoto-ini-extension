@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[if ${1:true}
+	${0}
+endif]]></content>
+	<tabTrigger>if</tabTrigger>
+	<scope>source.migoto</scope>
+	<description>if</description>
+</snippet>

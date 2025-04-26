@@ -1,0 +1,16 @@
+{
+	"word_separators": "./\\()\"'-:,.<>~!@#%^&*|+=[]{}`~?",
+
+	"default_line_ending": "unix",
+
+	"auto_complete_commit_on_tab": true,
+
+	"auto_complete_cycle": true,
+
+	"syntax_detection_size_limit": 209715200,
+
+	"auto_complete_triggers": [
+		{"selector": "punctuation.definition.variable.migoto", "characters": "$"},
+		{"selector": "entity.name.function.section-type.migoto", "rhs_empty": true}
+	]
+}

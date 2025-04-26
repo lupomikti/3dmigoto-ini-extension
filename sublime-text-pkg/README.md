@@ -3,14 +3,21 @@ Inspired by the work done in the [GIMI_ini_extension](https://github.com/lewis25
 
 ## Current Features
 
-Currently this package only provides syntax highlighting. Programmatic language features will be available in the future once an LSP language server is in place.
+* Provides syntax highlighting for the Migoto INI file language including the PCRE2 Regular Expressions used in ShaderRegex sections
+* Allows for comment toggling
+* Adds folding for whole sections by their header
+* Adds a pseudo-multiline comment construct `;< ... ;>`
+* Defines variables and callable sections as symbols for easier symbol navigation
+* Adds automatic indentation for conditional blocks
+
+Programmatic language features are planned to come soon once an LSP language server is made.
 
 #### Customization
 
 You can customize the colors of the highlighting by going to `Preferences > Customize Color Scheme`; this will open a window with the current theme's color scheme file open on the left and a copy of that on the right where you will enter your customizations in. There is a comment at the top of the right-side editor with a link to color scheme documentation. The gist is that you will mimic what the official theme file is doing and your customizations will take precedence. For example, I have a custom Catppuccin theme installed and have made some modifications to it as follows:
 
 <details>
-<summary>JSON edit of Catppuccin Mocha theme for 3DM INI highlighting</summary>
+<summary>JSON edit of Catppuccin Mocha theme for Migoto highlighting</summary>
 
 ```jsonc
 {
@@ -32,16 +39,16 @@ You can customize the colors of the highlighting by going to `Preferences > Cust
 			"font_style": "italic"
 		},
 		{
-			"scope": "constant.language.ini.3dm",
+			"scope": "constant.language.migoto",
 			"foreground": "var(red)",
 			"font_style": ""
 		},
 		{
-			"scope": "entity.name.function.ini.3dm",
+			"scope": "entity.name.function.migoto",
 			"foreground": "var(pink)"
 		},
 		{
-			"scope": "keyword.control.flow.ini.3dm",
+			"scope": "keyword.control.flow.migoto",
 			"font_style": "bold"
 		},
 		{
@@ -49,15 +56,15 @@ You can customize the colors of the highlighting by going to `Preferences > Cust
 			"font_style": ""
 		},
 		{
-			"scope": "entity.name.namespace.ini.3dm",
+			"scope": "entity.name.namespace.migoto",
 			"foreground": "var(green)"
 		},
 		{
-			"scope": "entity.name.function.section-type.ini.3dm, support.type.dxgi-format",
+			"scope": "entity.name.function.section-type.migoto, support.type.dxgi-format",
 			"foreground": "var(lavender)",
 		},
 		{
-			"scope": "keyword.other.ini.3dm.command-list",
+			"scope": "keyword.other.migoto.command-list",
 			"foreground": "var(maroon)",
 			"font_style": "bold"
 		},

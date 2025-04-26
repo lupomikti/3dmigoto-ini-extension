@@ -1,0 +1,43 @@
+[
+    // Add indented line in comment folding markers
+    { "keys": ["enter"], "command": "run_macro_file", "args": {"file": "res://Packages/Migoto/Add Double Semi In Comment Fold.sublime-macro"}, "context":
+        [
+            { "key": "selection_empty", "match_all": true },
+            { "key": "selector", "operand": "comment.line.semicolon.migoto", "match_all": true },
+            { "key": "preceding_text", "operator": "regex_contains", "operand": ";<.*$", "match_all": true },
+            { "key": "following_text", "operator": "regex_contains", "operand": "^.*;>", "match_all": true }
+        ]
+    },
+    { "keys": ["keypad_enter"], "command": "run_macro_file", "args": {"file": "res://Packages/Migoto/Add Double Semi In Comment Fold.sublime-macro"}, "context":
+        [
+            { "key": "selection_empty", "match_all": true },
+            { "key": "selector", "operand": "comment.line.semicolon.migoto", "match_all": true },
+            { "key": "preceding_text", "operator": "regex_contains", "operand": ";<.*$", "match_all": true },
+            { "key": "following_text", "operator": "regex_contains", "operand": "^.*;>", "match_all": true }
+        ]
+    },
+    // Add double-semicolon if current line is a comment starting with double-semicolon
+    { "keys": ["enter"], "command": "run_macro_file", "args": {"file": "res://Packages/Migoto/Add Double Semi Comment.sublime-macro"}, "context":
+        [
+            { "key": "selection_empty", "match_all": true },
+            { "key": "selector", "operand": "comment.line.semicolon.migoto", "match_all": true },
+            { "key": "preceding_text", "operator": "regex_contains", "operand": ";;.*$", "match_all": true }
+        ]
+    },
+    { "keys": ["keypad_enter"], "command": "run_macro_file", "args": {"file": "res://Packages/Migoto/Add Double Semi Comment.sublime-macro"}, "context":
+        [
+            { "key": "selection_empty", "match_all": true },
+            { "key": "selector", "operand": "comment.line.semicolon.migoto", "match_all": true },
+            { "key": "preceding_text", "operator": "regex_contains", "operand": ";;.*$", "match_all": true }
+        ]
+    },
+    // Auto-close ;< >; comment folding pair
+    { "keys": ["<"], "command": "insert_snippet", "args": {"contents": "<$0;>"}, "context":
+        [
+            { "key": "setting.auto_match_enabled" },
+            { "key": "selection_empty", "match_all": true },
+            { "key": "selector", "operand": "comment.line.semicolon.migoto", "match_all": true },
+            { "key": "preceding_text", "operator": "regex_contains", "operand": ";$", "match_all": true }
+        ]
+    }
+]

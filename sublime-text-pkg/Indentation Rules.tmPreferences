@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist>
+<plist version="1.0">
+<dict>
+	<key>scope</key>
+	<string>
+		source.migoto
+	</string>
+	<key>settings</key>
+	<dict>
+		<key>decreaseIndentPattern</key>
+		<string><![CDATA[(?xi)
+			# line beginning with whitespace
+			^ \s*
+			(?:
+			# dedent else if, elif
+			  (?:else\ |el)if
+			# dedent else and endif
+			| else
+			| endif
+			)
+			.*?\s* $
+		]]></string>
+
+		<key>increaseIndentPattern</key>
+		<string><![CDATA[(?xi)
+			# line beginning with whitespace
+			^ \s*
+			(?:
+			# indent if, else if, elif
+			  (?:else\ |el)?if
+			# indent else
+			| else
+			)
+			.*?\s* $
+		]]></string>
+
+		<key>unIndentedLinePattern</key>
+		<string><![CDATA[(?x)
+			^ \s* ; .* $
+		]]></string>
+
+	</dict>
+</dict>
+</plist>
