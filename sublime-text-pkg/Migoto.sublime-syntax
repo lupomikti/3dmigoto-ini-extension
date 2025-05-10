@@ -11,8 +11,8 @@ variables:
   special_section_names: (?:Constants|Key.+(?=\]))
   instructions: (run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)
   ws: "[ \\t]"
-  namespace_path: "[\\w\\-.]+(?:[\\\\/][\\w\\-.]+)*"
-  namespace: "[\\w.@' \\-\\\\]+"
+  namespace_path: "[^>\\\\|/<?:*\\r\\n]+(?:[\\\\/][^>\\\\|/<?:*\\r\\n]+)*"
+  namespace: "[^>\\\\|/<?:*\\r\\n]+"
   var: "[a-z_]\\w+|[a-z]"
 contexts:
   main:
@@ -270,7 +270,7 @@ contexts:
     - include: fallthrough
   key-body:
     - match: (?i)\bcondition\b
-      scope: meta.keyword.lword keyword.other.migoto.condition
+      scope: meta.keyword.lword keyword.other.condition.migoto
       push:
         - match: =
           scope: keyword.operator.declaration.migoto
@@ -281,7 +281,7 @@ contexts:
         - match: (?:\n|(?<=\n))
           pop: true
     - match: (?i)\b{{instructions}}\b
-      scope: meta.keyword.lword keyword.other.migoto.instruction
+      scope: meta.keyword.lword keyword.other.instruction.migoto
     - include: variable
     - include: Lword
     - match: =
@@ -395,7 +395,7 @@ contexts:
         - match: \n
           pop: true
   literal-list:
-    - match: "(?i)\\b(?!(?:.+\\..+|.*unless_null.*))(?=(\\w+) +(\\w+)(?:
+    - match: "(?i)\\b(?!(?:.+[\\\\./].+|.*unless_null.*))(?=(\\w+) +(\\w+)(?:
         +(\\w+))?$|(\\w+) +(\\w+))"
       push:
         - meta_scope: meta.expression.literal-list.migoto
@@ -444,9 +444,9 @@ contexts:
       match: \b(?i)([pc]s-u\d|s?o\d|od|[vhdgpc]s(?:-t\d{1,3})?)\b
     - scope: variable.parameter.migoto
       match: (?i)\b(?:(?<!$)[xyzw]\d{0,3})\b
-    - scope: variable.language.migoto.resource-identifiers
+    - scope: variable.language.resource-identifiers.migoto
       match: \b(?i)(this|(?:ini|stereo)params|cursor_(?:mask|color))\b
-    - scope: constant.language.migoto.override-parameters
+    - scope: constant.language.override-parameters.migoto
       match: >-
         (?xi)
 
@@ -480,9 +480,9 @@ contexts:
     - scope: constant.language.numeric.migoto
       match: \b(?i)(?:null|inf|NaN)\b
     - scope: constant.other.path.migoto
-      match: \b(?i)(?=.*\\)(?:(?:(?:[a-z]:|\.)\\)?[\w@&'\-.()]+(?:\\[\w@& '\-.()]+)+)
+      match: \b(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?[^>\\|/<?:*]+(?:(?:\\|/)[^>\\|/<?:*\r\n]+)+)
     - scope: constant.other.file.migoto
-      match: \b(?i)[\w@& '\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+
+      match: \b(?i)[^>\\|/<?:*]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+
     - scope: constant.numeric.migoto
       match: "[+-]?\\b\\d+(?:\\.\\d+)?\\b"
   string:

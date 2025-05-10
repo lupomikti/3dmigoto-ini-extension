@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "scopeName": "source.migoto",
   "name": "migoto",
   "fileTypes": [
@@ -37,7 +37,7 @@
           "patterns": [
             {
               "name": "entity.name.namespace.migoto",
-              "match": "(?i)[\\w\\-.]+(?:[\\\\/][\\w\\-.]+)*"
+              "match": "(?i)[^>\\\\|/<?:*\\r\\n]+(?:[\\\\/][^>\\\\|/<?:*\\r\\n]+)*"
             }
           ]
         }
@@ -760,7 +760,7 @@
         "2": {
           "patterns": [
             {
-              "name": "meta.keyword.lword keyword.other.migoto.condition",
+              "name": "meta.keyword.lword keyword.other.condition.migoto",
               "match": "(?i)\\b(condition)\\b"
             },
             {
@@ -825,7 +825,7 @@
       }
     },
     "literal-list": {
-      "match": "(?i)\\b(?!(?:.+\\..+|.*unless_null.*))(?:(\\w+) +(\\w+)(?: +(\\w+))?$|(\\w+) +(\\w+))",
+      "match": "(?i)\\b(?!(?:.+[\\\\./].+|.*unless_null.*))(?:(\\w+) +(\\w+)(?: +(\\w+))?$|(\\w+) +(\\w+))",
       "name": "meta.expression.literal-list.migoto",
       "captures": {
         "1": {
@@ -954,7 +954,7 @@
         },
         {
           "name": "meta.variable.migoto",
-          "match": "(?xi) (\\$) (?: ([a-z_]\\w+|[a-z])  |  (\\\\)([\\w.@' \\-\\\\]+)(\\\\) ([a-z_]\\w+|[a-z]) )",
+          "match": "(?xi) (\\$) (?: ([a-z_]\\w+|[a-z])  |  (\\\\)([^>\\\\|/<?:*\\r\\n]+)(\\\\) ([a-z_]\\w+|[a-z]) )",
           "captures": {
             "1": {
               "name": "punctuation.definition.variable.migoto"
@@ -978,7 +978,7 @@
         },
         {
           "name": "meta.function-call variable.other.function.migoto",
-          "match": "\\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\\\)([\\w.@' \\-\\\\]+)(\\\\))?([\\w.\\-]+)\\b(?!\\\\)",
+          "match": "\\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\\\)([^>\\\\|/<?:*\\r\\n]+)(\\\\))?([\\w.\\-]+)\\b(?!\\\\)",
           "captures": {
             "1": {
               "name": "entity.name.function.section-type.migoto"
@@ -1014,15 +1014,15 @@
         },
         {
           "name": "constant.other.path.migoto",
-          "match": "(?i)(?=.*\\\\)(?:(?:(?:[a-z]:|\\.)\\\\)?[\\w@&'\\-.()]+(?:\\\\[\\w@& '\\-.()]+)+)"
+          "match": "(?i)(?=.*[\\\\/])(?:(?:(?:[a-z]:|\\.)[\\\\/])?[^>\\\\|/<?:*]+(?:(?:\\\\|/)[^>\\\\|/<?:*\\r\\n]+)+)"
         },
         {
           "name": "constant.other.file.migoto",
-          "match": "(?i)[\\w@& '\\-.()]+\\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"
+          "match": "(?i)[^>\\\\|/<?:*]+(?!\\s+)\\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"
         },
         {
           "name": "constant.numeric.migoto",
-          "match": "-?\\b\\d+(?:\\.\\d+)?\\b"
+          "match": "[+-]?\\b\\d+(?:\\.\\d+)?\\b"
         }
       ]
     },

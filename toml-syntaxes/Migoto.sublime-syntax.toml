@@ -9,8 +9,8 @@ kvp_section_names = '(?:(?:Resource|Preset).+(?=\])|Include.*(?=\])|Logging|Syst
 special_section_names = '(?:Constants|Key.+(?=\]))'
 instructions = '(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)'
 ws = '[ \t]'
-namespace_path = '[\w\-.]+(?:[\\/][\w\-.]+)*'
-namespace = '''[\w.@' \-\\]+'''
+namespace_path = '[^>\\|/<?:*\r\n]+(?:[\\/][^>\\|/<?:*\r\n]+)*'
+namespace = '''[^>\\|/<?:*\r\n]+'''
 var = '''[a-z_]\w+|[a-z]'''
 
 [contexts]
@@ -239,7 +239,7 @@ include = "fallthrough"
 
 [[contexts.key-body]]
 match = '(?i)\bcondition\b'
-scope = "meta.keyword.lword keyword.other.migoto.condition"
+scope = "meta.keyword.lword keyword.other.condition.migoto"
 push = [
     {match = '=', scope = "keyword.operator.declaration.migoto", push = [
         {include = "operational-expr"},
@@ -250,7 +250,7 @@ push = [
 
 [[contexts.key-body]]
 match = '(?i)\b{{instructions}}\b'
-scope = "meta.keyword.lword keyword.other.migoto.instruction"
+scope = "meta.keyword.lword keyword.other.instruction.migoto"
 
 [[contexts.key-body]]
 include = "variable"
@@ -416,7 +416,7 @@ push = [
 ]
 
 [[contexts.literal-list]]
-match = '(?i)\b(?!(?:.+\..+|.*unless_null.*))(?=(\w+) +(\w+)(?: +(\w+))?$|(\w+) +(\w+))'
+match = '(?i)\b(?!(?:.+[\\./].+|.*unless_null.*))(?=(\w+) +(\w+)(?: +(\w+))?$|(\w+) +(\w+))'
 push = [
     {meta_scope = "meta.expression.literal-list.migoto"},
     {include = "constant"},
@@ -478,11 +478,11 @@ scope = "variable.parameter.migoto"
 match = '(?i)\b(?:(?<!$)[xyzw]\d{0,3})\b'
 
 [[contexts.variable]]
-scope = "variable.language.migoto.resource-identifiers"
+scope = "variable.language.resource-identifiers.migoto"
 match = '\b(?i)(this|(?:ini|stereo)params|cursor_(?:mask|color))\b'
 
 [[contexts.variable]]
-scope = "constant.language.migoto.override-parameters"
+scope = "constant.language.override-parameters.migoto"
 match = '''(?xi)
 \b(
   (?:rt|res|window)_(?:width|height) | (?:vertex|index|instance)_count | first_(?:vertex|index|instance) |
@@ -526,11 +526,11 @@ match = '\b(?i)(?:null|inf|NaN)\b'
 
 [[contexts.constant]]
 scope = "constant.other.path.migoto"
-match = '''\b(?i)(?=.*\\)(?:(?:(?:[a-z]:|\.)\\)?[\w@&'\-.()]+(?:\\[\w@& '\-.()]+)+)'''
+match = '''\b(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?[^>\\|/<?:*]+(?:(?:\\|/)[^>\\|/<?:*\r\n]+)+)'''
 
 [[contexts.constant]]
 scope = "constant.other.file.migoto"
-match = '''\b(?i)[\w@& '\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
+match = '''\b(?i)[^>\\|/<?:*]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
 
 [[contexts.constant]]
 scope = "constant.numeric.migoto"
