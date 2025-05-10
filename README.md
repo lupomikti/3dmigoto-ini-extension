@@ -46,19 +46,19 @@ There is also a counterpart for converting TOML to YAML for sublime-syntax suppo
 
 #### VS Code Extension
 
-To build the VS Code Extension VSIX package while in its directory (vscode-ext), do the following:
+To build the VS Code Extension VSIX package while in its directory (vscode-ext), do one of the following:
 
-`vsce package --follow-symlinks --ignoreFile "..\.vscodeignore" --no-git-tag-version`
+1. `npm run build-vsce <version>`
 
-If you want to have the version increment or be set to a specific one:
+2. `vsce package <version> [--pre-release] --follow-symlinks --ignoreFile "..\.vscodeignore" --no-git-tag-version`
 
-`vsce package <version> --follow-symlinks --ignoreFile "..\.vscodeignore" --no-git-tag-version [--pre-release]`
+`<version>` can be like "0.4.3" or "minor" to increment only the minor number from the previous value in `package.json`.
 
-where `<version>` can be like "0.4.3" or "minor".
+Because this will change the `package.json` version, you should always run it before building the other editor packages.
 
-#### Sublime Text Package
+#### Sublime Text Package, Kate, Notepad++
 
-A Sublime package is just a .zip of the relevant files with a custom file extension (`.sublime-package`). In the current state those files are the `.sublime-syntax` and `.tmLanguage` files as well as the README.
+There are npm build scripts for each of these individually, or you can do `npm run build` to build all 3 at one time. Requires 7-zip to be installed on your system and in your PATH.
 
 ## Acknowledgement
 As this project was inspired by the GIMI INI extension, I feel I should explain why this is a new repo and extension rather than a direct fork. Put simply, the changes I envisioned making were not as iterative as would fit the forking process. I have ditched many of the files, renamed and modified others and the grammar is quite different. I also did not want to inherit the way that repo was set up. That being said, since the original is licensed under GPLv3, I do still need to maintain the same license and state changes made.
