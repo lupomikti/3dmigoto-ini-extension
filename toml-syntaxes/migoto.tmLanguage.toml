@@ -1,5 +1,5 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-version = "0.4.5"
+version = "0.5.0"
 scopeName = "source.migoto"
 name = "migoto"
 fileTypes = ["ini"]
@@ -11,15 +11,30 @@ patterns = [
 
 [repository.preamble]
 name = "meta.head.preamble.migoto"
-begin = '(?i)^(?=namespace)'
+begin = '(?i)^(?=(namespace|condition))'
 end = '$|\n'
 
 [[repository.preamble.patterns]]
 begin = '(?i)(namespace)\b\s*(=)\s*\b'
 end = '$|\n'
-beginCaptures.1.name = "keyword.other.namespace.definition.migoto"
+beginCaptures.1.name = "meta.keyword.lword keyword.other.namespace.migoto"
 beginCaptures.2.name = "keyword.operator.namespace.migoto"
 patterns = [{name = "entity.name.namespace.migoto", match = '(?i)[^>\\|/<?:*\r\n]+(?:[\\/][^>\\|/<?:*\r\n]+)*'}]
+
+[[repository.preamble.patterns]]
+begin = '(?i)(condition)\b\s*(=)\s*\b'
+end = '$|\n'
+beginCaptures.1.name = "meta.keyword.lword keyword.other.condition.migoto"
+beginCaptures.2.name = "keyword.operator.assignment.migoto"
+patterns = [
+    {include = "#illegal-operator"},
+    {include = "#operator"},
+    {name = "constant.language.override-parameters.migoto", match = '\b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b'},
+    {name = "constant.language.boolean.migoto", match = '\b(?i)(?:true|false)\b'},
+    {name = "constant.language.numeric.migoto", match = '\b(?i)(?:null|inf|NaN)\b'},
+    {name = "constant.numeric.migoto", match = '[+-]?\b\d+(?:\.\d+)?\b'},
+    {include = "#round-braces"},
+]
 
 [repository.comment]
 begin = '(?i)(?=^.*?;)'
@@ -97,6 +112,7 @@ begin = '(?i)(?<=^[ \t]*\[Constants\][ \t]*$)'
 end = '(?i)(?=^\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
+	{include = "#conditional-expression"},
     {include = "#declaration"},
 ]
 
@@ -383,7 +399,7 @@ match = '''(?xi)
 )? # Operator and Rvalue are optional, e.g. `global $variable` on a line by itself
 (?:$|\n)'''
 captures.1.patterns = [{include = "#Lexpression"}]
-captures.2.name = "keyword.operator.declaration.migoto"
+captures.2.name = "keyword.operator.assignment.migoto"
 captures.3.patterns = [{include = "#Rvalue"}]
 
 [repository.Lword]
@@ -420,8 +436,8 @@ captures.1.patterns = [
 ]
 captures.2.patterns = [
     {name = "meta.keyword.lword keyword.other.condition.migoto", match='(?i)\b(condition)\b'},
-    {name = "meta.keyword.lword keyword.other.migoto.command-list.general", match = '(?i)\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b'},
-    {name = "meta.keyword.lword keyword.other.migoto.command-list.draw-instruction", match = '(?i)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b'},
+    {name = "meta.keyword.lword keyword.other.instruction.migoto", match = '(?i)\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b'},
+    {name = "meta.keyword.lword keyword.other.instruction.draw.migoto", match = '(?i)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b'},
     {include = "#variable"},
 ]
 
@@ -528,7 +544,7 @@ name = "variable.parameter.migoto"
 match = '(?i)\b(?:(?<!$)[xyzw]\d{0,3})\b'
 
 [[repository.variable.patterns]]
-name = "variable.language.resource-identifiers.migoto"
+name = "variable.language.resource-identifier.migoto"
 match = '\b(?i)(this|(?:ini|stereo)params|cursor_(?:mask|color))\b' # `this` is correct, the rest I don't know if they can be used on the left
 
 [[repository.variable.patterns]]

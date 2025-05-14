@@ -180,6 +180,25 @@ contexts:
           pop: true
         - match: \n
           pop: true
+    - match: (?i)^{{ws}}*(condition)\b{{ws}}*(=){{ws}}*\b
+      captures:
+        "1": keyword.other.condition.migoto
+        "2": keyword.operator.assignment.migoto
+      push:
+        - meta_scope: meta.head.include-condition.migoto
+        - include: illegal-operator
+        - include: operator
+        - match: \b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b
+          scope: constant.language.override-parameters.migoto
+        - match: \b(?i)(?:true|false)\b
+          scope: constant.language.boolean.migoto
+        - match: \b(?i)(?:null|inf|NaN)\b
+          scope: constant.language.numeric.migoto
+        - match: "[+-]?\\b\\d+(?:\\.\\d+)?\\b"
+          scope: constant.numeric.migoto
+        - include: round-braces
+        - match: \n
+          pop: true
   section-base:
     - match: \[
       scope: punctuation.definition.entity.begin.migoto
@@ -263,17 +282,15 @@ contexts:
           pop: true
   constants-body:
     - include: comment
-    - include: Lexpression
-    - match: =
-      scope: keyword.operator.declaration.migoto
-      push: operation
+    - include: conditional-expr
+    - include: declaration
     - include: fallthrough
   key-body:
     - match: (?i)\bcondition\b
       scope: meta.keyword.lword keyword.other.condition.migoto
       push:
         - match: =
-          scope: keyword.operator.declaration.migoto
+          scope: keyword.operator.assignment.migoto
           push:
             - include: operational-expr
             - match: \n
@@ -363,7 +380,7 @@ contexts:
         - meta_scope: meta.structure.declaration.migoto
         - include: Lexpression
         - match: =
-          scope: keyword.operator.declaration.migoto
+          scope: keyword.operator.assignment.migoto
           push: operation
         - match: (?:\n|(?<=\n))
           pop: true
@@ -375,9 +392,9 @@ contexts:
       captures:
         "1": keyword.control.migoto
     - match: (?i)\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b
-      scope: meta.keyword.lword keyword.other.migoto.command-list.general
+      scope: meta.keyword.lword keyword.other.instruction.migoto
     - match: (?i)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b
-      scope: meta.keyword.lword keyword.other.migoto.command-list.draw-instruction
+      scope: meta.keyword.lword keyword.other.instruction.draw.migoto
     - include: variable
   operation:
     - include: functional-expr

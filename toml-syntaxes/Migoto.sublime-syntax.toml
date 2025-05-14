@@ -136,6 +136,22 @@ push = [
     {match = '\n', pop = true}, # lineEndContext = "#pop"
 ]
 
+[[contexts.preamble]]
+match = '(?i)^{{ws}}*(condition)\b{{ws}}*(=){{ws}}*\b'
+captures.1 = "keyword.other.condition.migoto"
+captures.2 = "keyword.operator.assignment.migoto"
+push = [
+    {meta_scope = "meta.head.include-condition.migoto"},
+    {include = "illegal-operator"},
+    {include = "operator"},
+    {match = '\b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b', scope = "constant.language.override-parameters.migoto"},
+    {match = '\b(?i)(?:true|false)\b', scope = "constant.language.boolean.migoto"},
+    {match = '\b(?i)(?:null|inf|NaN)\b', scope = "constant.language.numeric.migoto"},
+    {match = '[+-]?\b\d+(?:\.\d+)?\b', scope = "constant.numeric.migoto"},
+    {include = "round-braces"},
+    {match = '\n', pop = true}, # lineEndContext = "#pop"
+]
+
 [[contexts.section-base]]
 match = '\['
 scope = "punctuation.definition.entity.begin.migoto"
@@ -227,12 +243,10 @@ push = [
 include = "comment"
 
 [[contexts.constants-body]]
-include = "Lexpression"
+include = "conditional-expr"
 
 [[contexts.constants-body]]
-match = '='
-scope = "keyword.operator.declaration.migoto"
-push = "operation"
+include = "declaration"
 
 [[contexts.constants-body]]
 include = "fallthrough"
@@ -241,7 +255,7 @@ include = "fallthrough"
 match = '(?i)\bcondition\b'
 scope = "meta.keyword.lword keyword.other.condition.migoto"
 push = [
-    {match = '=', scope = "keyword.operator.declaration.migoto", push = [
+    {match = '=', scope = "keyword.operator.assignment.migoto", push = [
         {include = "operational-expr"},
         {match = '\n', pop = 2},
     ]},
@@ -369,7 +383,7 @@ match = '''(?xi)
 push = [
     {meta_scope = "meta.structure.declaration.migoto"},
     {include = "Lexpression"}, # When the Left expression is match, stay in the context
-    {match = '=', scope = "keyword.operator.declaration.migoto", push = "operation"},
+    {match = '=', scope = "keyword.operator.assignment.migoto", push = "operation"},
     {match = '(?:\n|(?<=\n))', pop = true}, # leave this anon context at line end + fallthroughContext pop
 ]
 
@@ -383,11 +397,11 @@ captures.1 = "keyword.control.migoto"
 
 [[contexts.Lexpression]]
 match = '(?i)\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b'
-scope = "meta.keyword.lword keyword.other.migoto.command-list.general"
+scope = "meta.keyword.lword keyword.other.instruction.migoto"
 
 [[contexts.Lexpression]]
 match = '(?i)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b'
-scope = "meta.keyword.lword keyword.other.migoto.command-list.draw-instruction"
+scope = "meta.keyword.lword keyword.other.instruction.draw.migoto"
 
 [[contexts.Lexpression]]
 include = "variable"

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
-<language name="Migoto" alternativenames="3DM-INI" version="3" kateversion="5.94"
+<language name="Migoto" alternativenames="3DM-INI" version="4" kateversion="5.94"
           section="Scripts" extensions="*.ini" casesensitive="0" license="GPL-3.0" priority="2">
   <highlighting>
+    <!-- #region @keywords -->
     <list name="boolean-values">
       <item>true</item>
       <item>false</item>
@@ -51,6 +52,13 @@
       <item>cursor_color</item>
     </list>
     <!-- Override Parameters -->
+     <list name="static-override-parameters">
+      <item>stereo_active</item>
+      <item>stereo_available</item>
+      <item>sli</item>
+      <item>hunting</item>
+      <item>frame_analysis</item>
+    </list>
     <list name="override-parameters">
       <item>rt_width</item>
       <item>rt_height</item>
@@ -910,15 +918,44 @@
       <item>dump_vb_txt</item>
       <item>dump_ib_txt</item>
     </list>
+    <!-- #endregion @keywords -->
     <!-- Contexts -->
     <contexts>
       <context attribute="Normal Text" lineEndContext="#stay" name="INI">
         <DetectSpaces/>
         <WordDetect attribute="Keyword" context="NamespaceDeclaration" String="namespace" insensitive="true" lookAhead="true"/>
+        <WordDetect attribute="Keyword" context="IncludeCondition" String="condition" insensitive="true" lookAhead="true"/>
         <DetectChar attribute="Header" context="SectionTitle" char="[" endRegion="Section"/>
         <Detect2Chars attribute="Comment" context="Comment" char=";" char1="&lt;" firstNonSpace="true" beginRegion="CommentFold"/>
         <RegExpr attribute="Comment" context="Comment" insensitive="true" String=";.*&gt;" firstNonSpace="true" endRegion="CommentFold"/>
         <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+      </context>
+      <!-- Include Condition -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="IncludeCondition">
+        <WordDetect attribute="Keyword" context="#stay" String="condition" insensitive="true"/>
+        <DetectChar attribute="Assignment" context="IncludeConditionValue" char="="/>
+        <DetectSpaces/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="IncludeConditionValue">
+        <DetectSpaces/>
+        <!-- Illegal Operators -->
+        <RegExpr attribute="Error" context="#stay" insensitive="true" String="(?x) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [&gt;&lt;]={2,} | ! ={3,} | ={4,} | [&gt;&lt;]{2,} | &amp;{3,} | \|{3,} | \^+ "/>
+        <!-- Legal Operators -->
+        <RegExpr attribute="Operator" context="#stay" insensitive="true" String="(?x) (?: (?: \*\* | \* | \+ | - | % | // | / ) | (?: !== | != | === | == | &gt;= | &lt;= | &gt; | &lt; ) | (?: ! | &amp;&amp; | \|\| ) ) "/>
+        <!-- Override Paramenters that can be statically evaluated -->
+        <keyword attribute="LanguageVariable" String="static-override-parameters"/>
+        <!-- Constant Values -->
+        <keyword attribute="BooleanValue" String="boolean-values"/>
+        <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
+        <Int attribute="Integer" context="#stay"/>
+        <!-- Nested Expressions -->
+        <DetectChar attribute="Symbol" context="NestedExpressionForConditionalInclude" char="("/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="NestedExpressionForConditionalInclude">
+        <DetectChar attribute="Symbol" context="#pop" char=")"/>
+        <IncludeRules context="IncludeConditionValue"/>
       </context>
       <!-- Namespaces -->
       <context attribute="Normal Text" lineEndContext="#pop" name="NamespaceDeclaration">
@@ -975,9 +1012,16 @@
       </context>
       <!-- Special Bodies -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="ConstantsBody">
+        <DetectSpaces/>
         <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <!-- Conditional Expressions -->
+        <RegExpr attribute="ControlFlow" context="OperationalExpression" insensitive="true" String="(?:(if|elif|else if)(?= )|(else[ \t]*$|endif[ \t]*$))"/>
+        <!-- Declarations (Left Expressions) -->
         <IncludeRules context="LeftExpression"/>
-        <DetectChar attribute="Assignment" context="Value" char="="/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Declarations (Right Words and Values) -->
+        <IncludeRules context="OperationalExpression"/>
       </context>
 
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="KeyBody">
@@ -1053,6 +1097,8 @@
       <!-- Body Contents -->
       <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="OperationalExpression">
         <DetectSpaces/>
+        <!-- Functional Expression start -->
+        <keyword attribute="Instruction" String="resource-usage-modifiers"/>
         <!-- Illegal Operators -->
         <RegExpr attribute="Error" context="#stay" insensitive="true" String="(?x) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [&gt;&lt;]={2,} | ! ={3,} | ={4,} | [&gt;&lt;]{2,} | &amp;{3,} | \|{3,} | \^+ "/>
         <!-- Legal Operators -->
@@ -1148,6 +1194,7 @@
       <context attribute="Normal Text" lineEndContext="#pop" name="Value">
         <keyword attribute="BooleanValue" String="boolean-values"/>
         <DetectChar attribute="Operator" context="#stay" char="-"/>
+        <DetectChar attribute="Operator" context="#stay" char="+"/>
         <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
         <Int attribute="Integer" context="#stay"/>
         <DetectChar attribute="String" context="String" char="&quot;"/>
@@ -1163,7 +1210,6 @@
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="KeyValue">
-        <keyword attribute="Instruction" String="resource-usage-modifiers"/>
         <keyword attribute="RValue" String="multi-section-key-values"/>
         <keyword attribute="RValue" String="command-key-values"/>
         <keyword attribute="RValue" String="shader-override-key-values"/>
@@ -1218,7 +1264,7 @@
   </highlighting>
   <general>
     <comments>
-      <comment name="singleline" start=";" position="afterwhitespace"/>
+      <comment name="singleLine" start=";" position="afterwhitespace"/>
     </comments>
     <keywords casesensitive="false"/>
     <folding indentationsensitive="true"/>
