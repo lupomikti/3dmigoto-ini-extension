@@ -10,33 +10,48 @@ Not all scopes are commonly styled by themes. For example, a lot of themes do no
 
 - `variable.other.readwrite`
 - `punctuation.definition.variable`
-- `variable.language.shader.ini.3dm`, `variable.language.buffer.ini.3dm`, `variable.language.ini.3dm`
+- `variable.language.shader.migoto`, `variable.language.buffer.migoto`, `variable.language.resource-identifier.migoto`, `variable.language.migoto`
 - `punctuation.section.embedded`
-- `constant.other.path.ini.3dm`, `constant.other.file.ini.3dm` (I don't color these, but I do underline them)
-- `entity.name.namespace.ini.3dm` (themes usually style this one, I just don't like the color chosen with my theme next to the variable color, so I changed it)
+- `constant.other.path.migoto`, `constant.other.file.migoto` (I don't color these, but I do underline them)
+- `entity.name.namespace.migoto` (themes usually style this one, I just don't like the color chosen with my theme next to the variable color, so I changed it)
+- `entity.name.section.group-title.migoto` (after the change from `.ini.3dm` to `.migoto`, section titles no longer piggy-backed off of the default INI file coloring, so I needed to make a rule for it)
+- `keyword.other.instruction`
 
 Here's how to edit a theme via your `settings.json`:
 
 Open up your `settings.json` file; you can do this by opening the command palette (Ctrl+Shift+P on Windows), typing "Open User Settings" and choosing the one that has (JSON) next to it. In it, start a new property called `"editor.tokenColorCustomizations"` with the value an object, and in that object made a property for the name of your theme in square brackets [ ]. This will also have an object value, with a property of `"textMateRules"` whose value is an array of objects with a scope property and a settings property. That's a bit hard to follow in text, so here's an example using the Catppuccin Mocha theme:
 
-```json
+```jsonc
 {
-    ...
+    // ...
     "editor.tokenColorCustomizations": {
+        // Replace the following with the name of the theme you want to customize in square brackets
         "[Catppuccin Mocha]": {
             "textMateRules": [
                 {
-                    "scope": "variable.other.readwrite",
+                    // fontStyle is always required, but you can leave it set to the empty string ""
+                    "scope": "entity.name.section.group-title.migoto",
                     "settings": {
-                        "foreground": "#89b4fa",
+                        "foreground": "#f9e2af",
+                        "fontStyle": "italic"
+                    }
+                }
+                {
+                    "scope": [
+                        "variable.other.readwrite",
+                        "punctuation.definition.variable"
+                    ],
+                    "settings": {
+                        "foreground": "#f5c2e7",
                         "fontStyle": ""
                     }
                 },
                 {
                     "scope": [
-                        "variable.language.shader.ini.3dm",
-                        "variable.language.buffer.ini.3dm",
-                        "variable.language.ini.3dm"
+                        "variable.language.shader.migoto",
+                        "variable.language.buffer.migoto",
+                        "variable.language.resource-identifier.migoto",
+                        "variable.language.migoto"
                     ],
                     "settings": {
                         "foreground": "#f38ba8",
@@ -45,17 +60,51 @@ Open up your `settings.json` file; you can do this by opening the command palett
                 },
                 {
                     "scope": [
-                        "constant.other.path.ini.3dm",
-                        "constant.other.file.ini.3dm"
+                        "entity.name.function.section-type.migoto",
+                        "support.type.dxgi-format.migoto"
+                    ],
+                    "settings": {
+                        "foreground": "#b4befe",
+                        "fontStyle": ""
+                    }
+                },
+                {
+                    "scope": "punctuation.section.embedded",
+                    "settings": {
+                        "foreground": "#94e2d5",
+                        "fontStyle": ""
+                    }
+                },
+                {
+                    "scope": [
+                        "constant.other.path.migoto",
+                        "constant.other.file.migoto"
                     ],
                     "settings": {
                         "fontStyle": "underline"
+                    }
+                },
+                {
+                    "scope": [
+                        "entity.name.namespace.migoto"
+                    ],
+                    "settings": {
+                        "foreground": "#a6e3a1",
+                        "fontStyle": ""
+                    }
+                },
+                {
+                    "scope": [
+                        "keyword.other.instruction"
+                    ],
+                    "settings": {
+                        "fontStyle": "bold"
                     }
                 }
             ]
         }
     }
-    ...
+    // ...
 }
 ```
 

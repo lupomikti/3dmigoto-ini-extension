@@ -64,7 +64,7 @@ You can customize the colors of the highlighting by going to `Preferences > Cust
 			"foreground": "var(lavender)",
 		},
 		{
-			"scope": "keyword.other.migoto.command-list",
+			"scope": "keyword.other.instruction",
 			"foreground": "var(maroon)",
 			"font_style": "bold"
 		},
