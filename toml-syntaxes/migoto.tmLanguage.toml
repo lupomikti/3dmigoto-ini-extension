@@ -19,7 +19,7 @@ begin = '(?i)(namespace)\b\s*(=)\s*\b'
 end = '$|\n'
 beginCaptures.1.name = "meta.keyword.lword keyword.other.namespace.migoto"
 beginCaptures.2.name = "keyword.operator.namespace.migoto"
-patterns = [{name = "entity.name.namespace.migoto", match = '(?i)[^>\\|/<?:*\r\n]+(?:[\\/][^>\\|/<?:*\r\n]+)*'}]
+patterns = [{name = "entity.name.namespace.migoto", match = '(?i)[^>\\|/<?:*=$\r\n]+(?:[\\/][^>\\|/<?:*=$\r\n]+)*'}]
 
 [[repository.preamble.patterns]]
 begin = '(?i)(condition)\b\s*(=)\s*\b'
@@ -508,7 +508,7 @@ patterns = [
     {include = "#round-braces"},
 ]
 
-[[repository.illegal-operator.patterns]]
+[repository.illegal-operator]
 name = "invalid.illegal.operator.migoto"
 match = '(?xi) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [><]{2,} | &{3,} | \|{3,} | \^+ '
 
@@ -586,10 +586,10 @@ patterns = [
     {include = "#Rword"},
     {name = "constant.language.boolean.migoto", match = '\b(?i)(?:true|false)\b'},
     {name = "constant.language.numeric.migoto", match = '\b(?i)(?:null|inf|NaN)\b'},
-    {name = "constant.other.path.migoto", match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?[^>\\|/<?:*]+(?:(?:\\|/)[^>\\|/<?:*\r\n]+)+)'''},
+    {name = "constant.other.path.migoto", match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?\b[^>\\|/<?:*=$]+(?:(?:\\|/)[^>\\|/<?:*=$\r\n]+)+)'''},
     # This was used to support only \ in paths when it wasn't possible with the rules present to differentiate / as path separator from division operator
     # {name = "constant.other.path.migoto", match = '''(?i)(?=.*\\)(?:(?:(?:[a-z]:|\.)\\)?[^>\\|/<?:*]+(?:\\[^>\\|/<?:*\r\n]+)+)'''},
-    {name = "constant.other.file.migoto", match = '''(?i)[^>\\|/<?:*]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
+    {name = "constant.other.file.migoto", match = '''(?i)[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
     {name = "constant.numeric.migoto", match = '[+-]?\b\d+(?:\.\d+)?\b'},
 ]
 

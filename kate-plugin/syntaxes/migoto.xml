@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
-<language name="Migoto" alternativenames="3DM-INI" version="5" kateversion="5.94"
+<language name="Migoto" alternativenames="3DM-INI" version="6" kateversion="5.94"
           section="Scripts" extensions="*.ini" casesensitive="0" license="GPL-3.0" priority="2">
   <highlighting>
     <!-- #region @keywords -->
@@ -965,7 +965,7 @@
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="NamespaceValue">
-        <RegExpr attribute="Namespace" context="#pop" insensitive="true" String="[^&gt;\\|/&lt;?:*\r\n]+(?:[\\/][^&gt;\\|/&lt;?:*\r\n]+)*"/>
+        <RegExpr attribute="Namespace" context="#pop" insensitive="true" String="[^&gt;\\|/&lt;?:*=$\r\n]+(?:[\\/][^&gt;\\|/&lt;?:*=$\r\n]+)*"/>
       </context>
       <!-- Section headers -->
       <context attribute="Header" lineEndContext="#pop" fallthroughContext="#pop" name="SectionTitle">
@@ -1198,8 +1198,8 @@
         <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
         <Int attribute="Integer" context="#stay"/>
         <DetectChar attribute="String" context="String" char="&quot;"/>
-        <RegExpr attribute="Path" context="#stay" insensitive="true" String="(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?[^&gt;\\|/&lt;?:*]+(?:(?:\\|/)[^&gt;\\|/&lt;?:*\r\n]+)+)"/>
-        <RegExpr attribute="File" context="#stay" insensitive="true" String="[^&gt;\\|/&lt;?:*]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"/>
+        <RegExpr attribute="Path" context="#stay" insensitive="true" String="(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?\b[^&gt;\\|/&lt;?:*=$]+(?:(?:\\|/)[^&gt;\\|/&lt;?:*=$\r\n]+)+)"/>
+        <RegExpr attribute="File" context="#stay" insensitive="true" String="[^&gt;\\|/&lt;?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"/>
         <DetectIdentifier/>
         <AnyChar String=".,':{}|?!@#%^&amp;*/+=`~;"/>
         <DetectSpaces/>

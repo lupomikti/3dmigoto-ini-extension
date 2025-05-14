@@ -9,8 +9,8 @@ kvp_section_names = '(?:(?:Resource|Preset).+(?=\])|Include.*(?=\])|Logging|Syst
 special_section_names = '(?:Constants|Key.+(?=\]))'
 instructions = '(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)'
 ws = '[ \t]'
-namespace_path = '[^>\\|/<?:*\r\n]+(?:[\\/][^>\\|/<?:*\r\n]+)*'
-namespace = '''[^>|/<?:*\r\n]+'''
+namespace_path = '[^>\\|/<?:*=$\r\n]+(?:[\\/][^>\\|/<?:*=$\r\n]+)*'
+namespace = '''[^>|/<?:*=$\r\n]+'''
 var = '''[a-z_]\w+|[a-z]'''
 
 [contexts]
@@ -540,11 +540,11 @@ match = '\b(?i)(?:null|inf|NaN)\b'
 
 [[contexts.constant]]
 scope = "constant.other.path.migoto"
-match = '''\b(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?[^>\\|/<?:*]+(?:(?:\\|/)[^>\\|/<?:*\r\n]+)+)'''
+match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?\b[^>\\|/<?:*=$]+(?:(?:\\|/)[^>\\|/<?:*=$\r\n]+)+)'''
 
 [[contexts.constant]]
 scope = "constant.other.file.migoto"
-match = '''\b(?i)[^>\\|/<?:*]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
+match = '''\b(?i)[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
 
 [[contexts.constant]]
 scope = "constant.numeric.migoto"
