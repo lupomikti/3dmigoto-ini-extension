@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
-<language name="Migoto" alternativenames="3DM-INI" version="4" kateversion="5.94"
+<language name="Migoto" alternativenames="3DM-INI" version="5" kateversion="5.94"
           section="Scripts" extensions="*.ini" casesensitive="0" license="GPL-3.0" priority="2">
   <highlighting>
     <!-- #region @keywords -->
@@ -1179,11 +1179,11 @@
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="SectionNamespaceValue">
-        <RegExpr attribute="Namespace" context="#pop!SectionIdentifier" insensitive="true" String="[^&gt;\\|/&lt;?:*\r\n]+(?:\\[^&gt;\\|/&lt;?:*\r\n]+)*(?=\\)"/>
+        <RegExpr attribute="Namespace" context="#pop!SectionIdentifier" insensitive="true" String="[^&gt;|/&lt;?:*\r\n]+(?:\\[^&gt;\\|/&lt;?:*\r\n]+)*(?=\\)"/>
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="VariableNamespaceValue">
-        <RegExpr attribute="Namespace" context="#pop!Identifier" insensitive="true" String="[^&gt;\\|/&lt;?:*\r\n]+(?:\\[^&gt;\\|/&lt;?:*\r\n]+)*(?=\\)"/>
+        <RegExpr attribute="Namespace" context="#pop!Identifier" insensitive="true" String="[^&gt;|/&lt;?:*\r\n]+(?:\\[^&gt;\\|/&lt;?:*\r\n]+)*(?=\\)"/>
       </context>
 
       <context attribute="Function" lineEndContext="#stay" name="NamespacedCallableSection" fallthroughContext="#pop">

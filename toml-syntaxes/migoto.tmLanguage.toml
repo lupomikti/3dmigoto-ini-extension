@@ -1,5 +1,5 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-version = "0.5.0"
+version = "0.5.1"
 scopeName = "source.migoto"
 name = "migoto"
 fileTypes = ["ini"]
@@ -561,7 +561,7 @@ match = '''(?xi)
 [[repository.variable.patterns]]
 name = "meta.variable.migoto"
 #                  $          variable      or   \     namespace        \     variable
-match = '''(?xi) (\$) (?: ([a-z_]\w+|[a-z])  |  (\\)([^>\\|/<?:*\r\n]+)(\\) ([a-z_]\w+|[a-z]) )'''
+match = '''(?xi) (\$) (?: ([a-z_]\w+|[a-z])  |  (\\)([^>|/<?:*\r\n]+)(\\) ([a-z_]\w+|[a-z]) )'''
 # captures for a normal variable
 captures.1.name = "punctuation.definition.variable.migoto"
 captures.2.name = "variable.other.readwrite.migoto"
@@ -574,7 +574,7 @@ captures.6.name = "variable.other.readwrite.migoto"
 [[repository.variable.patterns]]
 name = "meta.function-call variable.other.function.migoto"
 #                        The prefixable section names I've seen in use              \     namespace        \      user-provided name
-match = '''\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\)([^>\\|/<?:*\r\n]+)(\\))?([\w.\-]+)\b(?!\\)'''
+match = '''\b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\)([^>|/<?:*\r\n]+)(\\))?([\w.\-]+)\b(?!\\)'''
 captures.1.name = "entity.name.function.section-type.migoto"
 captures.2.name = "punctuation.separator.namespace.migoto"
 captures.3.name = "entity.name.namespace.migoto"

@@ -12,7 +12,7 @@ variables:
   instructions: (run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)
   ws: "[ \\t]"
   namespace_path: "[^>\\\\|/<?:*\\r\\n]+(?:[\\\\/][^>\\\\|/<?:*\\r\\n]+)*"
-  namespace: "[^>\\\\|/<?:*\\r\\n]+"
+  namespace: "[^>|/<?:*\\r\\n]+"
   var: "[a-z_]\\w+|[a-z]"
 contexts:
   main:
