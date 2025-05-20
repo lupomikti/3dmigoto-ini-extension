@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
-<language name="Migoto" alternativenames="3DM-INI" version="7" kateversion="5.94"
+<language name="Migoto" alternativenames="3DM-INI" version="8" kateversion="5.94"
           section="Scripts" extensions="*.ini" casesensitive="0" license="GPL-3.0" priority="2">
   <highlighting>
     <!-- #region @keywords -->
@@ -1073,7 +1073,10 @@
         <DetectSpaces/>
         <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
         <IncludeRules context="Keys"/>
-        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <DetectChar attribute="Assignment" context="KVPRValues" char="="/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="KVPRValues">
         <IncludeRules context="KeyValue"/>
         <IncludeRules context="Value"/>
       </context>
