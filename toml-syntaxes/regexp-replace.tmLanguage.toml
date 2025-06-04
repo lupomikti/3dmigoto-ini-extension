@@ -1,6 +1,6 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
 name = "Regular Expression Replacement"
-scopeName = "source.regexp-replace"
+scopeName = "source.regexp-replace.pcre2"
 patterns = [
     {include = "#escapes"},
     {include = "#variables"},

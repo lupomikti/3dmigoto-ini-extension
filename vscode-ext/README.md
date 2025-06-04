@@ -10,12 +10,12 @@ Not all scopes are commonly styled by themes. For example, a lot of themes do no
 
 - `variable.other.readwrite`
 - `punctuation.definition.variable`
-- `variable.language.shader.migoto`, `variable.language.buffer.migoto`, `variable.language.resource-identifier.migoto`, `variable.language.migoto`
+- `variable.language.shader-slot.migoto`, `variable.language.buffer.migoto`, `variable.language.resource-identifier.migoto`, `variable.language.shader-identifier.migoto`
 - `punctuation.section.embedded`
 - `constant.other.path.migoto`, `constant.other.file.migoto` (I don't color these, but I do underline them)
 - `entity.name.namespace.migoto` (themes usually style this one, I just don't like the color chosen with my theme next to the variable color, so I changed it)
 - `entity.name.section.group-title.migoto` (after the change from `.ini.3dm` to `.migoto`, section titles no longer piggy-backed off of the default INI file coloring, so I needed to make a rule for it)
-- `keyword.other.instruction`
+- `keyword.other.instruction` (this was to make them bold)
 
 Here's how to edit a theme via your `settings.json`:
 
@@ -48,10 +48,10 @@ Open up your `settings.json` file; you can do this by opening the command palett
                 },
                 {
                     "scope": [
-                        "variable.language.shader.migoto",
+                        "variable.language.shader-slot.migoto",
                         "variable.language.buffer.migoto",
                         "variable.language.resource-identifier.migoto",
-                        "variable.language.migoto"
+                        "variable.language.shader-identifier.migoto"
                     ],
                     "settings": {
                         "foreground": "#f38ba8",

@@ -1,5 +1,5 @@
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-scopeName = "source.regexp"
+scopeName = "source.regexp.pcre2"
 name = "PCRE2"
 # Everything except conditionals should be supported here. Support may be added later.
 patterns = [
@@ -186,10 +186,10 @@ patterns = [
 
 [[repository.character-class.patterns]]
 begin = '(\[)(\^)?'
-beginCaptures.1.name = "punctuation.definition.character-class.begin.regexp"
+beginCaptures.1.name = "keyword.control.character-class.begin.regexp"
 beginCaptures.2.name = "keyword.operator.negation.regexp"
 end = '(?<!:)(\])'
-endCaptures.0.name = "punctuation.definition.character-class.end.regexp"
+endCaptures.0.name = "keyword.control.character-class.end.regexp"
 patterns = [
     {include = "#posix-class"},
     {match = '\\[\\\^\-\[\]b]', name = "constant.character.escape.character-set.regexp"},

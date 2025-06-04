@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "scopeName": "source.regexp",
+  "scopeName": "source.regexp.pcre2",
   "name": "PCRE2",
   "patterns": [
     {
@@ -419,7 +419,7 @@
           "begin": "(\\[)(\\^)?",
           "beginCaptures": {
             "1": {
-              "name": "punctuation.definition.character-class.begin.regexp"
+              "name": "keyword.control.character-class.begin.regexp"
             },
             "2": {
               "name": "keyword.operator.negation.regexp"
@@ -428,7 +428,7 @@
           "end": "(?<!:)(\\])",
           "endCaptures": {
             "0": {
-              "name": "punctuation.definition.character-class.end.regexp"
+              "name": "keyword.control.character-class.end.regexp"
             }
           },
           "patterns": [
