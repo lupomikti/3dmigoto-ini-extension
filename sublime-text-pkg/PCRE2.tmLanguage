@@ -215,7 +215,7 @@
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>punctuation.definition.character-class.begin.regexp</string>
+							<string>keyword.control.character-class.begin.regexp</string>
 						</dict>
 						<key>2</key>
 						<dict>
@@ -230,7 +230,7 @@
 						<key>0</key>
 						<dict>
 							<key>name</key>
-							<string>punctuation.definition.character-class.end.regexp</string>
+							<string>keyword.control.character-class.end.regexp</string>
 						</dict>
 					</dict>
 					<key>patterns</key>

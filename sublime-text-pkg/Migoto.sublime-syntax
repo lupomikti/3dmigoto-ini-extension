@@ -7,9 +7,8 @@ scope: source.migoto
 version: 2
 variables:
   cl_section_names: (?:(?:(?:Shader|Texture)Override|ShaderRegex|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))
-  kvp_section_names: (?:(?:Resource|Preset).+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)
-  special_section_names: (?:Constants|Key.+(?=\]))
-  instructions: (run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)
+  kvp_section_names: (?:Resource.+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)
+  special_section_names: (?:Constants|(?:Key|Preset).+(?=\]))
   ws: "[ \\t]"
   namespace_path: "[^>\\\\|/<?:*=$\\r\\n]+(?:[\\\\/][^>\\\\|/<?:*=$\\r\\n]+)*"
   namespace: "[^>|/<?:*=$\\r\\n]+"
@@ -19,24 +18,22 @@ contexts:
     - include: comment
     - include: preamble
     - include: section-base
-  Lword:
-    - meta_scope: meta.keyword.lword
+  key:
+    - meta_scope: meta.keyword.key
     - scope: keyword.other.migoto.multi-section
-      match: (?i)\b(separation|convergence|hash|filter_index|match_priority|format|(?:width|height)(?:_multiply)?|analyse_options|type)\b
-    - scope: keyword.other.migoto.key-section
-      match: (?i)\b(key|back|(?:release_)?delay|wrap|smart|(?:release_)?transition(?:_type)?)\b
+      match: (?i)\b(hash|filter_index|match_priority|format|(?:width|height)(?:_multiply)?)\b
     - scope: keyword.other.migoto.resource
-      match: (?i)\b(filename|data|max_copies_per_frame|mode|(?:bind|misc)_flags|depth|mips|array|msaa(?:_quality)?|byte_width|stride)\b
+      match: (?i)\b(type|filename|data|max_copies_per_frame|mode|(?:bind|misc)_flags|depth|mips|array|msaa(?:_quality)?|byte_width|stride)\b
     - scope: keyword.other.migoto.texture-override.resource-match
       match: (?i)\b(stereomode|expand_region_copy|deny_cpu_read|iteration)\b
     - scope: keyword.other.migoto.texture-override.vertex-limit
-      match: (?i)\b(override_(?:byte_stride|vertex_count))\b
+      match: (?i)\b((?:override_|uav_)?byte_stride|override_vertex_count))\b
     - scope: keyword.other.migoto.texture-override.draw-match
       match: (?i)\b(match_(?:(?:first_)?(?:vertex|index|instance)(?:_count)?))\b
     - scope: keyword.other.migoto.texture-override.fuzzy-match
       match: (?i)\b(match_(?:type|usage|(?:bind|cpu_access|misc)_flags|(?:byte_)?width|height|stride|mips|format|depth|array|msaa(?:_quality)?))\b
     - scope: keyword.other.migoto.custom-shader
-      match: (?i)\b(flags|max_executions_per_frame|topology|sampler)\b
+      match: (?i)\b([vhdgpc]s|flags|max_executions_per_frame|topology|sampler)\b
     - scope: keyword.other.migoto.custom-shader.blend-state
       match: (?i)\b((?:blend|alpha|mask)(?:\[([0-7])\])?|blend_factor\[([0-3])\]|alpha_to_coverage|sample_mask|blend_state_merge)\b
       captures:
@@ -53,9 +50,9 @@ contexts:
     - scope: keyword.other.migoto.include
       match: (?i)\b((?:in|ex)clude(?:_recursive)?|user_config)\b
     - scope: keyword.other.migoto.logging
-      match: (?i)\b(calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|wait_for_debugger|crash|dump_all_profiles|show_warnings)\b
+      match: (?i)\b(separation|convergence|calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|wait_for_debugger|crash|dump_all_profiles|show_warnings)\b
     - scope: keyword.other.migoto.hunting
-      match: (?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking_mode|marking_actions|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune[123]_(?:up|down)|analyse_frame|kill_deferred)\b
+      match: (?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking_mode|marking_actions|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune[123]_(?:up|down)|analyse_frame|analyse_options|kill_deferred)\b
     - scope: keyword.other.migoto.system
       match: (?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval)\b
     - scope: keyword.other.migoto.loader
@@ -66,41 +63,28 @@ contexts:
       match: (?i)\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)\b
     - scope: keyword.other.migoto.rendering
       match: (?i)\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl|binary)|dump_usage|fix_(?:sv_position|ZRepair_.+|BackProjectionTransform\d|ObjectPosition\d(?:Multiplier)?|MatrixOperand\d(?:Multiplier)?)|recompile_all_vs)\b
-  Rword:
-    - meta_scope: meta.keyword.rword
-    - scope: meta.keyword.multi-section constant.language.migoto
-      match: \b(?i)(none|skip|hold|mono|stereo|auto|depth_stencil|texturecube)\b
-    - scope: meta.keyword.commands constant.language.migoto.draw
-      match: \b(?i)(from_caller)\b
-    - scope: meta.keyword.commands constant.language.migoto.handling
-      match: \b(?i)(abort)\b
-    - scope: meta.keyword.commands constant.language.migoto.special
-      match: \b(?i)(upscaling_switch_bb|draw_3dmigoto_overlay)\b
-    - scope: meta.keyword.commands keyword.other.migoto.clear
-      match: \b(?i)(int|depth|stencil)\b
-    - scope: meta.keyword.commands constant.language.migoto.direct-mode-eye
-      match: \b(?i)(left|right)\b
-    - scope: constant.language.migoto.shader-override
-      match: \b(?i)(overrule|depth_(?:(?:in)?active))\b
-    - scope: meta.keyword.custom-shader constant.language.migoto.cull
+  key-value:
+    - meta_scope: meta.keyword.rhs
+    - scope: meta.keyword.override constant.language.override.migoto
+      match: \b(?i)(none|overrule|depth_(?:(?:in)?active))\b
+    - scope: meta.keyword.custom-shader constant.language.cull.migoto
       match: \b(?i)(front|back)\b
-    - scope: meta.keyword.custom-shader constant.language.migoto.fill
+    - scope: meta.keyword.custom-shader constant.language.fill.migoto
       match: \b(?i)(wireframe|solid)\b
-    - scope: meta.keyword.custom-shader constant.language.migoto.topology
+    - scope: meta.keyword.custom-shader constant.language.topology.migoto
       match: \b(?i)(undefined|(point|line|triangle)_list|(line|triangle)_strip|(line|triangle)_(list|strip)_adj|[123]?\d_control_point_patch_list)\b
-    - scope: meta.keyword.custom-shader constant.language.migoto.compile-flag
+    - scope: meta.keyword.custom-shader constant.language.compile-flag.migoto
       match: \b(?i)(debug|skip_(validation|optimization)|pack_matrix_(row_major|column_major)|partial_precision|force_[vp]s_software_no_opt|no_preshader|(avoid|prefer)_flow_control|enable_(strictness|backwards_compatibility|unbounded_descriptor_tables)|ieee_strictness|optimization_level[0123]|warnings_are_errors|resources_may_alias|all_resources_bound)\b
-    - scope: meta.keyword.resource-usage-modifier keyword.other.migoto.functional
-      match: \b(?i)(unless_null)\b
-    - scope: meta.keyword.rword meta.keyword.fuzzy-match
-        constant.language.match-usage.migoto
+    - scope: meta.keyword.fuzzy-match constant.language.match-usage.migoto
       match: \b(?i)(default|immutable|dynamic|staging)\b
-    - scope: meta.keyword.resource constant.language.migoto.resource-type
-      match: \b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D)\b
-    - scope: meta.keyword.resource constant.language.migoto.bind-flag
+    - scope: meta.keyword.resource constant.language.resource-mode.migoto
+      match: \b(?i)(auto|mono|stereo)\b
+    - scope: meta.keyword.resource constant.language.resource-type.migoto
+      match: \b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|TextureCube)\b
+    - scope: meta.keyword.resource constant.language.bind-flag.migoto
       match: \b(?i)((?:vertex|index|constant)_buffer|shader_resource|stream_output|render_target|unordered_access|decoder|video_encoder)\b
-    - scope: meta.keyword.resource constant.language.migoto.misc-flag
-      match: \b(?i)(generate_mips|shared|drawindirect_args|buffer_(?:allow_raw_views|structured)|resource_clamp|shared_(?:keymutex|nthandle)|gdi_compatible|restricted_content|restrict_shared_resource(?:_driver)?|guarded|tile_pool|tiled|hw_protected)\b
+    - scope: meta.keyword.resource constant.language.misc-flag.migoto
+      match: \b(?i)(texturecube|generate_mips|shared|drawindirect_args|buffer_(?:allow_raw_views|structured)|resource_clamp|shared_(?:keymutex|nthandle)|gdi_compatible|restricted_content|restrict_shared_resource(?:_driver)?|guarded|tile_pool|tiled|hw_protected)\b
     - scope: meta.keyword.resource support.type.dxgi-format.migoto
       match: |-
         \b(?xi)(?:DXGI_FORMAT_)?(UNKNOWN|R32G32B32A32_TYPELESS|R32G32B32A32_FLOAT|R32G32B32A32_UINT|R32G32B32A32_SINT|R32G32B32_TYPELESS|R32G32B32_FLOAT|R32G32B32_UINT|R32G32B32_SINT|R16G16B16A16_TYPELESS|R16G16B16A16_FLOAT|R16G16B16A16_UNORM|R16G16B16A16_UINT|R16G16B16A16_SNORM|R16G16B16A16_SINT
@@ -108,29 +92,23 @@ contexts:
         |R8G8B8A8_UINT|R8G8B8A8_SNORM|R8G8B8A8_SINT|R16G16_TYPELESS|R16G16_FLOAT|R16G16_UNORM|R16G16_UINT|R16G16_SNORM|R16G16_SINT|R32_TYPELESS|D32_FLOAT|R32_FLOAT|R32_UINT|R32_SINT|R24G8_TYPELESS|D24_UNORM_S8_UINT|R24_UNORM_X8_TYPELESS|X24_TYPELESS_G8_UINT|R8G8_TYPELESS
         |R8G8_UNORM|R8G8_UINT|R8G8_SNORM|R8G8_SINT|R16_TYPELESS|R16_FLOAT|D16_UNORM|R16_UNORM|R16_UINT|R16_SNORM|R16_SINT|R8_TYPELESS|R8_UNORM|R8_UINT|R8_SNORM|R8_SINT|A8_UNORM|R1_UNORM|R9G9B9E5_SHAREDEXP|R8G8_B8G8_UNORM|G8R8_G8B8_UNORM|BC1_TYPELESS|BC1_UNORM|BC1_UNORM_SRGB
         |BC2_TYPELESS|BC2_UNORM|BC2_UNORM_SRGB|BC3_TYPELESS|BC3_UNORM|BC3_UNORM_SRGB|BC4_TYPELESS|BC4_UNORM|BC4_SNORM|BC5_TYPELESS|BC5_UNORM|BC5_SNORM|B5G6R5_UNORM|B5G5R5A1_UNORM|B8G8R8A8_UNORM|B8G8R8X8_UNORM|R10G10B10_XR_BIAS_A2_UNORM|B8G8R8A8_TYPELESS|B8G8R8A8_UNORM_SRGB
-        |B8G8R8X8_TYPELESS|B8G8R8X8_UNORM_SRGB|BC6H_TYPELESS|BC6H_UF16|BC6H_SF16|BC7_TYPELESS|BC7_UNORM|BC7_UNORM_SRGB|AYUV|Y410|Y416|NV12|P010|P016|420_OPAQUE|YUY2|Y210|Y216|NV11|AI44|IA44|P8|A8P8|B4G4R4A4_UNORM)
+        |B8G8R8X8_TYPELESS|B8G8R8X8_UNORM_SRGB|BC6H_TYPELESS|BC6H_UF16|BC6H_SF16|BC7_TYPELESS|BC7_UNORM|BC7_UNORM_SRGB|AYUV|Y410|Y416|NV12|P010|P016|420_OPAQUE|YUY2|Y210|Y216|NV11|AI44|IA44|P8|A8P8|B4G4R4A4_UNORM)\b
     - scope: meta.keyword.blend-state keyword.operator.migoto.blend-operator
       match: \b(?i)(add|(?:rev_)?subtract|min|max|disable)\b
-    - scope: meta.keyword.blend-state constant.language.migoto.blend-factor
+    - scope: meta.keyword.blend-state constant.language.blend-factor.migoto
       match: \b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\b
-    - scope: meta.keyword.keys constant.language.migoto.key-type
-      match: \b(?i)(activate|toggle|cycle)\b
-    - scope: meta.keyword.keys constant.language.migoto.transition-type
-      match: \b(?i)(linear|cosine)\b
-    - scope: meta.keyword.keys keyword.other.modifier-key.migoto
-      match: \b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)\b
-    - scope: meta.keyword.system constant.language.migoto.hook-option
+    - scope: meta.keyword.system constant.language.hook-option.migoto
       match: \b(?i)(deferred_contexts|(?:immediate_)?context|device|all|recommended|except_set_(?:shader_resources|sampler|rasterizer_state)|skip_dxgi_(?:factory|device))\b
-    - scope: meta.keyword.device constant.language.migoto.resolution-source
-      match: \b(?i)(swap_chain)\b
-    - scope: meta.keyword.rendering constant.language.migoto.shader-hash-type
+    - scope: meta.keyword.device constant.language.resolution-source.migoto
+      match: \b(?i)(depth_stencil|swap_chain)\b
+    - scope: meta.keyword.rendering constant.language.shader-hash-type.migoto
       match: \b(?i)(3dmigoto|embedded|bytecode)\b
-    - scope: meta.keyword.marking constant.language.migoto.marking-mode
-      match: \b(?i)(original|pink)\b
-    - scope: meta.keyword.marking constant.language.migoto.marking-action
+    - scope: meta.keyword.marking constant.language.marking-mode.migoto
+      match: \b(?i)(skip|mono|original|pink)\b
+    - scope: meta.keyword.marking constant.language.marking-action.migoto
       match: \b(?i)(hlsl|asm|assembly|regex|ShaderRegex|clipboard|mono_snapshot|stereo_snapshot|snapshot_if_pink)\b
-    - scope: meta.keyword.analysis constant.language.migoto.analysis-option
-      match: \b(?i)(dump_(?:rt|depth|tex|[cvi]b)|jp(?:s|e?g)|(?:jp(?:s|e?g)_)?dds|buf|txt|desc|clear_rt|persist|filename_(?:reg|handle)|log|dump_on_(?:unmap|update)|deferred_ctx_(?:immediate|accurate)|share_dupes|symlink|dump_(?:rt|depth|tex)_(?:jps|dds)|dump_[cvi]b_txt)\b
+    - scope: meta.keyword.key-binding constant.language.modifier-key.migoto
+      match: \b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)\b
   fallthrough:
     - match: (?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\])
       pop: 2
@@ -223,6 +201,15 @@ contexts:
           set: key-body
         - match: \n
           pop: true
+    - match: (?i)Preset.+(?=\])
+      scope: entity.name.section.group-title.migoto.preset
+      push:
+        - match: \]
+          scope: punctuation.definition.entity.end.migoto
+          pop: 2
+          set: preset-body
+        - match: \n
+          pop: true
     - match: (?i)ShaderRegex.+\.Pattern(?=\])
       scope: entity.name.section.group-title.migoto.shader-regex-pattern
       push:
@@ -282,149 +269,603 @@ contexts:
           pop: true
   constants-body:
     - include: comment
-    - include: conditional-expr
-    - include: declaration
+    - include: global-declaration
+    - include: primary-statement
     - include: fallthrough
   key-body:
-    - match: (?i)\bcondition\b
-      scope: meta.keyword.lword keyword.other.condition.migoto
+    - match: (?i)\btype\b
+      scope: meta.keyword.key keyword.other.migoto
       push:
+        - meta_scope: meta.statement.setting.migoto
         - match: =
-          scope: keyword.operator.assignment.migoto
+          scope: punctuation.separator.key-value.migoto
           push:
-            - include: operational-expr
+            - match: \b(?i)(hold|activate|toggle|cycle)\b
+              scope: meta.keyword.rhs meta.keyword.key-binding
+                constant.language.key-type.migoto
             - match: \n
               pop: 2
         - match: (?:\n|(?<=\n))
           pop: true
-    - match: (?i)\b{{instructions}}\b
-      scope: meta.keyword.lword keyword.other.instruction.migoto
-    - include: variable
-    - include: Lword
-    - match: =
-      scope: punctuation.separator.key-value.migoto
-    - include: constant
+    - match: (?i)\b(key|back)\b
+      scope: meta.keyword.key keyword.other.migoto
+      push:
+        - meta_scope: meta.statement.setting.migoto
+        - match: =
+          scope: punctuation.separator.key-value.migoto
+          push:
+            - match: \b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)\b
+              scope: meta.keyword.rhs meta.keyword.key-binding
+                constant.language.modifier-key.migoto
+            - match: \n
+              pop: 2
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)\b((?:release_)?delay)\b
+      scope: meta.keyword.key keyword.other.migoto
+      push:
+        - meta_scope: meta.statement.setting.migoto
+        - match: =
+          scope: punctuation.separator.key-value.migoto
+          push:
+            - include: constant
+            - match: \n
+              pop: 2
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)\b(wrap|smart)\b
+      scope: meta.keyword.key keyword.other.migoto
+      push:
+        - meta_scope: meta.statement.setting.migoto
+        - match: =
+          scope: punctuation.separator.key-value.migoto
+          push:
+            - match: \b(?i)(?:true|false|yes|no|on|off)\b
+              scope: constant.language.boolean.migoto
+            - match: "[01]"
+              scope: constant.numeric.migoto
+            - match: \n
+              pop: 2
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)\b(separation|convergence|(?:release_)?transition)\b
+      scope: meta.keyword.key keyword.other.migoto
+      push:
+        - meta_scope: meta.statement.setting.migoto
+        - match: =
+          scope: punctuation.separator.key-value.migoto
+          push:
+            - match: \d+
+              scope: constant.numeric.migoto
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)\b((?:release_)?transition_type)\b
+      scope: meta.keyword.key keyword.other.migoto
+      push:
+        - meta_scope: meta.statement.setting.migoto
+        - match: =
+          scope: punctuation.separator.key-value.migoto
+          push:
+            - match: \b(?i)(linear|cosine)\b
+              scope: meta.keyword.rhs meta.keyword.key-binding
+                constant.language.transition-type.migoto
+            - match: \n
+              pop: 2
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)\brun\b
+      scope: meta.keyword.key keyword.other.instruction.migoto
+      push:
+        - meta_scope: meta.statement.instruction.migoto
+        - match: =
+          scope: keyword.operator.execution.migoto
+          push:
+            - include: callable-commandlist
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)\bcondition\b
+      scope: meta.keyword.key keyword.other.condition.migoto
+      push:
+        - meta_scope: meta.statement.condition.migoto
+        - match: =
+          scope: keyword.operator.assignment.migoto
+          push:
+            - include: operational-expr
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)(?=\b[xyzw]\d{0,3}\b)
+      push:
+        - meta_scope: meta.statement.assignment.migoto
+        - include: ini-parameter
+        - match: =
+          scope: keyword.operator.assignment.migoto
+          push:
+            - include: constant
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)(?=\$(\\.+\\)?\w+\b)
+      push:
+        - meta_scope: meta.statement.assignment.migoto
+        - include: named-variable
+        - match: =
+          scope: keyword.operator.assignment.migoto
+          push:
+            - include: constant
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
     - include: comment
+    - include: fallthrough
+  preset-body:
+    - include: comment
+    - match: (?i)\b(separation|convergence|(?:release_)?transition|unique_triggers_required)\b
+      scope: meta.keyword.key keyword.other.migoto
+      push:
+        - meta_scope: meta.statement.setting.migoto
+        - match: =
+          scope: punctuation.separator.key-value.migoto
+          push:
+            - match: \d+
+              scope: constant.numeric.migoto
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)\b((?:release_)?transition_type)\b
+      scope: meta.keyword.key keyword.other.migoto
+      push:
+        - meta_scope: meta.statement.setting.migoto
+        - match: =
+          scope: punctuation.separator.key-value.migoto
+          push:
+            - match: \b(?i)(linear|cosine)\b
+              scope: meta.keyword.rhs meta.keyword.key-binding
+                constant.language.transition-type.migoto
+            - match: \n
+              pop: 2
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)\brun\b
+      scope: meta.keyword.key keyword.other.instruction.migoto
+      push:
+        - meta_scope: meta.statement.instruction.migoto
+        - match: =
+          scope: keyword.operator.execution.migoto
+          push:
+            - include: callable-commandlist
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)\bcondition\b
+      scope: meta.keyword.key keyword.other.condition.migoto
+      push:
+        - meta_scope: meta.statement.condition.migoto
+        - match: =
+          scope: keyword.operator.assignment.migoto
+          push:
+            - include: operational-expr
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)(?=\b[xyzw]\d{0,3}\b)
+      push:
+        - meta_scope: meta.statement.assignment.migoto
+        - include: ini-parameter
+        - match: =
+          scope: keyword.operator.assignment.migoto
+          push:
+            - include: constant
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
+    - match: (?i)(?=\$(\\.+\\)?\w+\b)
+      push:
+        - meta_scope: meta.statement.assignment.migoto
+        - include: named-variable
+        - match: =
+          scope: keyword.operator.assignment.migoto
+          push:
+            - include: constant
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
     - include: fallthrough
   regex-declarations-body:
     - include: comment
     - include: fallthrough
   kvp-body:
     - include: comment
-    - include: Lword
-    - match: =
-      scope: punctuation.separator.key-value.migoto
-    - include: constant
-    - include: string
+    - include: setting-statement
     - include: fallthrough
   cl-body:
     - include: comment
-    - include: conditional-expr
-    - include: definition
-    - include: declaration
+    - include: setting-statement
+    - include: primary-statement
     - include: fallthrough
-  conditional-expr:
+  conditional-statement:
     - match: (?i)^{{ws}}*(?:(if|elif|else if)(?= )|(else|endif){{ws}}*$)
       captures:
         "1": keyword.control.flow.migoto
         "2": keyword.control.flow.migoto
       push:
-        - meta_scope: meta.expression.conditional.migoto
+        - meta_scope: meta.statement.conditional.migoto
         - meta_content_scope: meta.expression.operational.migoto
         - include: operational-expr
         - match: (?:\n|(?<=\n))
           pop: true
-  definition:
+  setting-statement:
     - match: |
         (?xi)
         (?!run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|store|condition|
           draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|
-          vb\d|ib|(?:[rf]_)?bb|s?o\d|od|[vhdgpc]s|
-          (?<!$)[xyzw]\d{0,3}|
+          vb\d|ib|(?:[rf]_)?bb|s?o\d|od|
+          (?<!$)\b[xyzw]\d{0,3}\b|
           this|(?:ini|stereo)params|cursor_(?:mask|color)|
-          (?:(?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex).+
-        ) # keywords and variables that are not keys and should only be matched by declaration
+          Resource.+
+        ) # keywords and variables that are not keys and should only be matched by general-statement
         \b
         (?= \w+ # optional whitespace followed by a word-like that is not in the preceding list
             \s* = \s* # kvp separator surrounded by optional whitespace
-            [@\w\$.\-,+/* \t%=\\!><"\[\]';:|&()]+ # partial Rvalue
+            [^\r\n]+ # match anything on the right-hand-side
         )
       push:
-        - meta_scope: meta.structure.definition.migoto
-        - include: Lword
+        - meta_scope: meta.statement.setting.migoto
+        - include: key
         - match: =
           scope: punctuation.separator.key-value.migoto
           push:
-            - include: functional-expr
             - include: literal-list
+            - include: key-value
+            - include: frame-analysis-opt
+            - match: \b(?i)(?:yes|no|on|off)\b
+              scope: constant.language.boolean.migoto
+            - match: \b(?i)(null)\b
+              scope: meta.keyword.rhs meta.keyword.resource constant.language.null.migoto
             - include: constant
+            - include: path-value
             - include: string
             - match: (?:\n|(?<=\n))
               pop: true
         - match: (?:\n|(?<=\n))
           pop: true
-  declaration:
+  primary-statement:
+    - include: local-declaration
+    - include: general-statement
+    - include: conditional-statement
+  global-declaration:
     - match: >-
         (?xi)
 
         (?=
-          (?:(?:\w+)\ +){0,2}     # between 0 and 2 keywords inclusive
-          (?:[$\w\-.\\/@& ']+) # another keyword or a variable
+          (?:\b persist \s+)? # the persist keyword, which can only pair with global, and which apparently can come before global
+          \b global \s+ # the global keyword which must be followed by at least one whitespace character
+          (?:\b persist \s+)? # the persist keyword, which can only pair with global, and which is usually in this position
         \s*
           (?:
             = \s* # assignment operator, surrounded by optional whitespace
-            [=$!@\w.\-,+/* \t%\\()"|&><]+ # Rvalue
-          )? # Operator and Rvalue are optional, e.g. `global $variable` on a line by itself
+            (?:[+\-]?[\d.]+|true|false|inf|NaN) # RHS value, only Numbers allowed
+          )? # Assignment operator and RHS-value are optional, e.g. `global $variable` on a line by itself
         )
       push:
-        - meta_scope: meta.structure.declaration.migoto
-        - include: Lexpression
+        - meta_scope: meta.statement.declaration.global.migoto
+        - match: (?i)\b(global|persist)\b
+          scope: storage.modifier.migoto
+        - include: named-variable
         - match: =
           scope: keyword.operator.assignment.migoto
-          push: operation
+          push:
+            - include: constant
+            - match: (?:\n|(?<=\n))
+              pop: true
         - match: (?:\n|(?<=\n))
           pop: true
-  Lexpression:
-    - match: (?i)\b(global|local|persist)(?= )
-      captures:
-        "1": storage.modifier.migoto
-    - match: (?i)\b(pre|post)(?= )
-      captures:
-        "1": keyword.control.migoto
-    - match: (?i)\b(run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store)\b
-      scope: meta.keyword.lword keyword.other.instruction.migoto
-    - match: (?i)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b
-      scope: meta.keyword.lword keyword.other.instruction.draw.migoto
-    - include: variable
-  operation:
-    - include: functional-expr
-    - include: literal-list
-    - include: operational-expr
-    - match: (?:\n|(?<=\n))
-      pop: true
-  functional-expr:
-    - match: (?i)\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa)\b
-      scope: keyword.other.functional.migoto
+  local-declaration:
+    - match: >-
+        (?xi)
+
+        (?=
+          \b local \s+ # the local keyword which must be followed by at least one whitespace character
+          \$\w+ \b # a $ variable
+        \s*
+          (?:
+            = \s* # assignment operator, surrounded by optional whitespace
+            [^\r\n]+ # RHS value
+          )? # Assignment operator and RHS-value are optional, e.g. `local $variable` on a line by itself
+        )
       push:
-        - meta_scope: meta.expression.functional.migoto
-        - include: variable
-        - include: constant
-        - match: \n
+        - meta_scope: meta.statement.declaration.local.migoto
+        - match: (?i)\blocal\b
+          scope: storage.modifier.migoto
+        - include: named-variable
+        - match: =
+          scope: keyword.operator.assignment.migoto
+          push:
+            - include: operational-expr
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
           pop: true
-  literal-list:
-    - match: "(?i)\\b(?!(?:.+[\\\\./].+|.*unless_null.*))(?=(\\w+) +(\\w+)(?:
-        +(\\w+))?$|(\\w+) +(\\w+))"
+  general-statement:
+    - include: assignment-statement
+    - include: instruction-statement
+  assignment-statement:
+    - match: |-
+        (?xi)
+        (?=
+          (?: (?:pre|post) \s+)? # pre and post modifiers, optional
+          (?: \$ (?:\\.+\\)? \w+ |
+              \b[xyzw]\d{0,3}\b | \b[vgdhpcstubo\-\d_]+\b |
+              this|(?:ini|stereo)params|cursor_(?:mask|color) |
+              Resource.+
+          ) # a $ variable, a resource, an ini parameter
+          \s* = \s* # assignment operator, surrounded by optional whitespace
+          [^\r\n]+ # RHS value, depends on type of assignment
+        )
       push:
-        - meta_scope: meta.expression.literal-list.migoto
-        - include: constant
-        - match: \n
+        - meta_scope: meta.statement.assignment.migoto
+        - match: (?i)\b(pre|post)\b
+          scope: meta.command-list.priority keyword.control.migoto
+        - include: ini-parameter
+        - include: resource
+        - include: named-variable
+        - match: =
+          scope: keyword.operator.assignment.migoto
+          push:
+            - include: resource-usage-expr
+            - include: operational-expr
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
           pop: true
+  instruction-statement:
+    - match: >-
+        (?xi)
+
+        (?=
+          (?: (?:pre|post) \s+)? # pre and post modifiers, optional
+          (?:
+            run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store|
+            (?:draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)
+          ) # an instruction
+          \s* = \s* # assignment operator, surrounded by optional whitespace
+          [^\r\n]+ # RHS value, depends on type of instruction
+        )
+      push:
+        - meta_scope: meta.statement.instruction.migoto
+        - match: (?i)\b(pre|post)\b
+          scope: meta.command-list.priority keyword.control.migoto
+        - match: (?xi)(?= \b checktextureoverride \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.checktextureoverride
+            - match: (?i)\b(checktextureoverride)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - include: resource
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b run \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.run-instruction
+            - match: (?i)\b(run)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - include: callable-commandlist
+                - include: callable-customshader
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b (?:exclude_)?preset \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.preset-instruction
+            - match: (?i)\b(())\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - match: (?xi)(?= (?:Preset)? (?:\\.+\\)? [^\r\n]+ )
+                  push:
+                    - meta_scope: meta.function-call
+                    - match: (?i)\b(Preset)
+                      scope: variable.other.function.migoto
+                    - match: (?=\\)
+                      push:
+                        - include: namespace
+                    - include: section-identifier
+                    - match: (?:\n|(?<=\n))
+                      pop: true
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b handling \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.handling-instruction
+            - match: (?i)\b(handling)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+            - match: (?i)\b(skip|abort)\b
+              scope: meta.keyword.rhs constant.language.handling.migoto
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b reset_per_frame_limits \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.reset-limits
+            - match: (?i)\b(reset_per_frame_limits)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - include: custom-resource
+                - include: callable-customshader
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b clear \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.clear-instruction
+            - match: (?i)\b(clear)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - include: resource
+                - match: (?i)0x[a-f0-9]{1,}
+                  scope: constant.numeric.migoto
+                - include: constant
+                - match: (?i)\b(int|depth|stencil)\b
+                  scope: meta.keyword.rhs constant.language.clear.migoto
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b (?:separation|convergence) \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.stereo-instruction
+            - match: (?i)\b(separation|convergence)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - include: constant
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b direct_mode_eye \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.dme-instruction
+            - match: (?i)\b(direct_mode_eye)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+            - match: (?i)\b(mono|left|right)\b
+              scope: meta.keyword.rhs constant.language.dme.migoto
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b analyse_options \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.analysis-instruction
+            - match: (?i)\b(analyse_options)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - include: frame-analysis-opt
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b dump \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.dump-instruction
+            - match: (?i)\b(dump)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - include: resource
+                - include: frame-analysis-opt
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b special \b \s* = \s* [^\r\n]+)
+          push:
+            - meta_scope: meta.special-instruction
+            - match: (?i)\b(special)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+            - match: (?i)\b(upscaling_switch_bb|draw_3dmigoto_overlay)\b
+              scope: meta.keyword.rhs constant.language.special.migoto
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?xi)(?= \b store \b \s* = \s*
+            (?:(\$[^,\r\n]+)\s*,\s*([^,\r\n]+)\s*,\s*(\d+)) )
+          push:
+            - meta_scope: meta.store-instruction
+            - match: (?i)\b(store)\b
+              scope: meta.keyword.key keyword.other.instruction.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - include: named-variable
+                - include: resource-usage-expr
+                - match: \d+
+                  scope: constant.numeric.migoto
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: "(?xi)(?= \\b (?:
+            draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexed\
+            instancedindirect)? | dispatch(?:indirect)? ) \\b \\s* = \\s*
+            [^\\r\\n]+ )"
+          push:
+            - meta_scope: meta.draw-instrcution
+            - match: (?xi)\b(
+                draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?
+                | dispatch(?:indirect)? )\b
+              scope: meta.keyword.key keyword.other.instruction.draw.migoto
+            - match: =
+              scope: keyword.operator.execution.migoto
+              push:
+                - match: \d+
+                  scope: constant.numeric.migoto
+                - include: named-variable
+                - match: (?i)\b(auto|from_caller)\b
+                - match: (?xi)(?= [^,\d\r\n]+ \s* , \s* \d+ \s* $)
+                  scope: meta.statement.resource-offset
+                  push:
+                    - match: (?i)\b[^,\d\r\n]+\b
+                      push:
+                        - include: resource
+                        - match: ","
+                          pop: true
+                    - match: \d+
+                      scope: constant.numeric.migoto
+                    - match: (?:\n|(?<=\n))
+                      pop: true
+                - match: (?:\n|(?<=\n))
+                  pop: true
+            - match: (?:\n|(?<=\n))
+              pop: true
+        - match: (?:\n|(?<=\n))
+          pop: true
+  resource-usage-expr:
+    - meta_scope: meta.expression.resource-usage.migoto
+    - include: resource-usage-modifier
+    - include: resource
+  resource-usage-modifier:
+    - match: (?i)\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa|unless_null)\b
+      scope: meta.keyword.resource-usage-modifier keyword.other.functional.migoto
   operational-expr:
     - meta_scope: meta.expression.operational.migoto
     - include: illegal-operator
     - include: operator
-    - include: variable
-    - include: constant
+    - include: operand
     - include: round-braces
   illegal-operator:
     - scope: invalid.illegal.operator.migoto
@@ -454,16 +895,24 @@ contexts:
           captures:
             "0": punctuation.parenthesis.end.migoto
           pop: true
-  variable:
+  resource:
     - scope: variable.language.buffer.migoto
-      match: \b(?i)(?<!\.)(?:[vhdgpc]s-cb\d{1,2}|vb\d|ib|(?:[rf]_)?bb)\b
-    - scope: variable.language.shader.migoto
-      match: \b(?i)([pc]s-u\d|s?o\d|od|[vhdgpc]s(?:-t\d{1,3})?)\b
-    - scope: variable.parameter.migoto
-      match: (?i)\b(?:(?<!$)[xyzw]\d{0,3})\b
-    - scope: variable.language.resource-identifiers.migoto
-      match: \b(?i)(this|(?:ini|stereo)params|cursor_(?:mask|color))\b
-    - scope: constant.language.override-parameters.migoto
+      match: \b(?i)(?:[vhdgpc]s-cb\d{1,2}|vb\d|ib|(?:[rf]_)?bb)\b
+    - scope: variable.language.shader-slot.migoto
+      match: \b(?i)([pc]s-u\d|s?o\d|od|[vhdgpc]s(?:-t\d{1,3}))\b
+    - scope: variable.language.resource-identifier.migoto
+      match: \b(?i)(this|null|(?:ini|stereo)params|cursor_(?:mask|color))\b
+    - include: custom-resource
+  operand:
+    - include: constant
+    - include: named-variable
+    - include: ini-parameter
+    - include: resource
+    - scope: variable.language.shader-identifier.migoto
+      match: \b(?i)([vhdgpc]s)\b
+    - scope: constant.language.scissor-rectangle.migoto
+      match: \b(?i)(scissor\d+_(?:left|top|right|bottom))\b
+    - scope: constant.language.override-parameter.migoto
       match: >-
         (?xi)
 
@@ -473,35 +922,126 @@ contexts:
           time | hunting | sli | frame_analysis | effective_dpi | (?:raw_|eye_)?separation | convergence |
           stereo_(?:active|available) | scissor_(?:left|top|right|bottom)
         )\b
-    - scope: meta.variable.migoto
-      match: "(?xi) (\\$) (?: ({{var}})  |  (\\\\)({{namespace}})(\\\\) ({{var}}) )"
-      captures:
-        "1": punctuation.definition.variable.migoto
-        "2": variable.other.readwrite.migoto
-        "3": punctuation.separator.namespace.migoto
-        "4": entity.name.namespace.migoto
-        "5": punctuation.separator.namespace.migoto
-        "6": variable.other.readwrite.migoto
-    - scope: meta.function-call.migoto
-      match: \b(?i)((?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?:(\\)({{namespace}})(\\))?([\w.\-]+)\b(?!\\)
-      captures:
-        "1": entity.name.function.section-type.migoto
-        "2": punctuation.separator.namespace.migoto
-        "3": entity.name.namespace.migoto
-        "4": punctuation.separator.namespace.migoto
-        "5": entity.name.function.migoto
+  named-variable:
+    - match: (?xi) (?= \$ (?:\\[^\r\n]+\\)? (?:{{var}}) \b )
+      push:
+        - meta_scope: meta.variable.named
+        - match: \$
+          scope: punctuation.definition.variable.migoto
+        - match: (?=\\)
+          push:
+            - include: namespace
+        - match: (?i)({{var}})
+          scope: variable.other.readwrite.migoto
+        - match: \b
+          pop: true
+  callable-commandlist:
+    - match: |-
+        (?xi)
+        (?=
+          (?:BuiltIn)?CommandList
+          (?:\\[^\r\n]+\\)?
+          [^\-+*/&% !>|<=$\r\n]+
+          \b (?!\\)
+        )
+      push:
+        - meta_scope: meta.function-call.commands
+        - match: (?i)\b(?:BuiltIn)?CommandList
+          scope: entity.name.function.section-type.migoto
+        - match: (?=\\)
+          push:
+            - include: namespace
+        - include: section-identifier
+        - match: \s
+          pop: true
+  callable-customshader:
+    - match: |-
+        (?xi)
+        (?=
+          (?:BuiltIn)?CustomShader
+          (?:\\[^\r\n]+\\)?
+          [^\-+*/&% !>|<=$\r\n]+
+          \b (?!\\)
+        )
+      push:
+        - meta_scope: meta.function-call.shader
+        - match: (?i)\b(?:BuiltIn)?CustomShader
+          scope: entity.name.function.section-type.migoto
+        - match: (?=\\)
+          push:
+            - include: namespace
+        - include: section-identifier
+        - match: \s
+          pop: true
+  custom-resource:
+    - match: |-
+        (?xi)
+        (?=
+          Resource
+          (?:\\[^\r\n]+\\)?
+          [^\-+*/&% !>|<=$\r\n]+
+          \b (?!\\)
+        )
+      push:
+        - meta_scope: meta.variable.custom-resource
+        - match: (?i)\bResource
+          scope: variable.other.readwrite.migoto
+        - match: (?=\\)
+          push:
+            - include: namespace
+        - include: section-identifier
+        - match: \s
+          pop: true
+  namespace:
+    - match: \\
+      scope: punctuation.separator.namespace.migoto
+      push:
+        - meta_scope: meta.structure.namespace-resolution entity.name.namespace.migoto
+        - match: "[^=$\\r\\n]+(?=\\\\)"
+          push:
+            - match: \\
+              scope: punctuation.separator.namespace.migoto
+              pop: 3
+  section-identifier:
+    - scope: entity.name.function.migoto
+      match: "[^\\-+*/&% !>|<=$\\r\\n]+"
+  ini-parameter:
+    - scope: variable.parameter.migoto
+      match: (?i)\b(?:(?<!$)[xyzw]\d{0,3})\b
+  literal-list:
+    - match:
+        "(?i)\\b(?!(?:\\S+[\\\\./]\\S+))(?=(\\w+) +(\\w+)(?: +(\\w+))?$|(\\w+)
+        +(\\w+))"
+      push:
+        - meta_scope: meta.expression.literal-list.migoto
+        - include: constant
+        - include: key-value
+        - match: \n
+          pop: true
   constant:
-    - include: Rword
     - scope: constant.language.boolean.migoto
       match: \b(?i)(?:true|false)\b
     - scope: constant.language.numeric.migoto
-      match: \b(?i)(?:null|inf|NaN)\b
-    - scope: constant.other.path.migoto
-      match: (?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?\b[^>\\|/<?:*=$]+(?:(?:\\|/)[^>\\|/<?:*=$\r\n]+)+)
-    - scope: constant.other.file.migoto
-      match: \b(?i)[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+
+      match: \b(?i)(?:inf|NaN)\b
     - scope: constant.numeric.migoto
       match: "[+-]?\\b\\d+(?:\\.\\d+)?\\b"
+  path-value:
+    - scope: constant.other.path.migoto
+      match: (?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?(?![\s\\/]+)\b[^>\\|/<?:*=$]+(?:(?:\\|/)[^>\\|/<?:*=$\r\n]+)+)
+    - scope: constant.other.file.migoto
+      match: (?i)\b[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+
+  frame-analysis-opt:
+    - scope: meta.keyword.rhs constant.language.analysis-option.migoto
+      match: >-
+        (?xi)
+
+        \b
+
+        (hold|stereo|mono|
+         dump_(?:rt|depth|tex|[cvi]b)|jp(?:s|e?g)|(?:jp(?:s|e?g)_)?dds|buf|txt|desc|clear_rt|persist|
+         filename_(?:reg|handle)|log|dump_on_(?:unmap|update)|deferred_ctx_(?:immediate|accurate)|
+         share_dupes|symlink|dump_(?:rt|depth|tex)_(?:jps|dds)|dump_[cvi]b_txt)
+        \b
   string:
     - match: '"'
       push:
