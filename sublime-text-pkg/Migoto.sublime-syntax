@@ -27,7 +27,7 @@ contexts:
     - scope: keyword.other.migoto.texture-override.resource-match
       match: (?i)\b(stereomode|expand_region_copy|deny_cpu_read|iteration)\b
     - scope: keyword.other.migoto.texture-override.vertex-limit
-      match: (?i)\b((?:override_|uav_)?byte_stride|override_vertex_count))\b
+      match: (?i)\b((?:override_|uav_)?byte_stride|override_vertex_count)\b
     - scope: keyword.other.migoto.texture-override.draw-match
       match: (?i)\b(match_(?:(?:first_)?(?:vertex|index|instance)(?:_count)?))\b
     - scope: keyword.other.migoto.texture-override.fuzzy-match
