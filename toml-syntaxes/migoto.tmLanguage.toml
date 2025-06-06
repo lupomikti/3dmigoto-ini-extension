@@ -60,7 +60,7 @@ patterns = [
     {name = "meta.keyword.key keyword.other.migoto.multi-section", match = '(?i)\b(hash|filter_index|match_priority|format|(?:width|height)(?:_multiply)?)\b'},
     {name = "meta.keyword.key keyword.other.migoto.resource", match = '(?i)\b(type|filename|data|max_copies_per_frame|mode|(?:bind|misc)_flags|depth|mips|array|msaa(?:_quality)?|byte_width|stride)\b'},
     {name = "meta.keyword.key keyword.other.migoto.texture-override.resource-match", match = '(?i)\b(stereomode|expand_region_copy|deny_cpu_read|iteration)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.texture-override.vertex-limit", match = '(?i)\b((?:override_|uav_)?byte_stride|override_vertex_count))\b'},
+    {name = "meta.keyword.key keyword.other.migoto.texture-override.vertex-limit", match = '(?i)\b((?:override_|uav_)?byte_stride|override_vertex_count)\b'},
     {name = "meta.keyword.key keyword.other.migoto.texture-override.draw-match", match = '(?i)\b(match_(?:(?:first_)?(?:vertex|index|instance)(?:_count)?))\b'}, # TODO: Make it required to have first or count but not both
     {name = "meta.keyword.key keyword.other.migoto.texture-override.fuzzy-match", match = '(?i)\b(match_(?:type|usage|(?:bind|cpu_access|misc)_flags|(?:byte_)?width|height|stride|mips|format|depth|array|msaa(?:_quality)?))\b'},
     {name = "meta.keyword.key keyword.other.migoto.custom-shader", match = '(?i)\b([vhdgpc]s|flags|max_executions_per_frame|topology|sampler)\b'},
@@ -180,6 +180,7 @@ patterns = [
 	{include = "#primary-statement"},
 ]
 
+# Key Section
 [[repository.section.patterns]]
 name = "meta.structure.section.key.migoto"
 begin = '(?i)(?<=^[ \t]*\[Key.+\][ \t]*$)'
@@ -259,7 +260,7 @@ captures.3.patterns = [{include = "#constant"}]
 name = "meta.statement.assignment.migoto"
 match = '''(?xi)
 ^[ \t]* # optional leading whitespace
-(\$(\\.+\\)?\w+\b) # a $ variable
+(\$(?:\\.+\\)?\w+\b) # a $ variable
 \s*
 (=) # assignment operator, surrounded by optional whitespace
 \s*
@@ -360,6 +361,7 @@ patterns = [
 	{include = "#setting-statement"},
 ]
 
+# Preset Section
 [[repository.section.patterns]]
 name = "meta.structure.section.preset.migoto"
 begin = '(?i)(?<=^[ \t]*\[Preset.+\][ \t]*$)'
@@ -416,7 +418,7 @@ captures.3.patterns = [{include = "#constant"}]
 name = "meta.statement.assignment.migoto"
 match = '''(?xi)
 ^[ \t]* # optional leading whitespace
-(\$\w+) # a $ variable
+(\$(?:\\.+\\)?\w+) # a $ variable
 \s*
 (=) # assignment operator, surrounded by optional whitespace
 \s*
@@ -572,8 +574,8 @@ captures.3.patterns = [
     {name = "constant.language.boolean.migoto", match = '\b(?i)(?:yes|no|on|off)\b'},
     {name = "meta.keyword.rhs meta.keyword.resource constant.language.null.migoto", match = '\b(?i)(null)\b'}, # exists because of partner shader keys in custom shader
     {include = "#constant"},
-    {include = "#path-value"},
     {include = "#string"},
+    {include = "#path-value"},
 ]
 
 [repository.primary-statement]
@@ -640,7 +642,7 @@ name = "meta.statement.assignment.migoto"
 match = '''(?xi)
 ^[ \t]* # optional leading whitespace
 (?:(pre|post)\s+)? # pre and post modifiers, optional
-(\$(?:\\.+\\)?\w+|\b[xyzw]\d{0,3}\b|\b[vgdhpcstubo\-\d_]+\b|this|(?:ini|stereo)params|cursor_(?:mask|color)|Resource.+) # a $ variable, a resource, an ini parameter
+(\$(?:\\.+\\)?\w+|\b[xyzw]\d{0,3}\b|\b[vgdhpcsturfibo\-\d_]+\b|this|(?:ini|stereo)params|cursor_(?:mask|color)|Resource.+) # a $ variable, a resource, an ini parameter
 \s*
 (=) # assignment operator, surrounded by optional whitespace
 \s*
@@ -878,7 +880,7 @@ match = '''(?xi)
 
 [repository.named-variable]
 name = "meta.variable.named"
-match = '''(?xi) (\$) (?: ([a-z_]\w+|[a-z_]) | (\\[^\r\n]+\\) ([a-z_]\w+|[a-z_]) )'''
+match = '''(?xi) (\$) (?: ([a-z_]\w+|[a-z_]) | (\\[^\-+*/&% !>|<=$\r\n]+\\) ([a-z_]\w+|[a-z_]) )'''
 # captures for a normal variable
 captures.1.name = "punctuation.definition.variable.migoto"
 captures.2.name = "variable.other.readwrite.migoto"
@@ -888,21 +890,21 @@ captures.4.name = "variable.other.readwrite.migoto"
 
 [repository.callable-commandlist]
 name = "meta.function-call.commands"
-match = '''\b(?i)((?:BuiltIn)?CommandList)(\\[^\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
+match = '''\b(?i)((?:BuiltIn)?CommandList)(\\[^\-+*/&% !>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
 captures.1.name = "entity.name.function.section-type.migoto"
 captures.2.patterns = [{include = "#namespace"}]
 captures.3.patterns = [{include = "#section-identifier"}]
 
 [repository.callable-customshader]
 name = "meta.function-call.shader"
-match = '''\b(?i)((?:BuiltIn)?CustomShader)(\\[^\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
+match = '''\b(?i)((?:BuiltIn)?CustomShader)(\\[^\-+*/&% !>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
 captures.1.name = "entity.name.function.section-type.migoto"
 captures.2.patterns = [{include = "#namespace"}]
 captures.3.patterns = [{include = "#section-identifier"}]
 
 [repository.custom-resource]
 name = "meta.variable.custom-resource variable.other.readwrite.migoto"
-match = '''\b(?i)Resource(\\[^\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
+match = '''\b(?i)Resource(\\[^\-+*/&% !>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
 captures.1.patterns = [{include = "#namespace"}]
 captures.2.patterns = [{include = "#section-identifier"}]
 

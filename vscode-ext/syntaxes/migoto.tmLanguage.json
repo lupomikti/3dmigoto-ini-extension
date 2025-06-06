@@ -133,7 +133,7 @@
         },
         {
           "name": "meta.keyword.key keyword.other.migoto.texture-override.vertex-limit",
-          "match": "(?i)\\b((?:override_|uav_)?byte_stride|override_vertex_count))\\b"
+          "match": "(?i)\\b((?:override_|uav_)?byte_stride|override_vertex_count)\\b"
         },
         {
           "name": "meta.keyword.key keyword.other.migoto.texture-override.draw-match",
@@ -619,7 +619,7 @@
             },
             {
               "name": "meta.statement.assignment.migoto",
-              "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(\\$(\\\\.+\\\\)?\\w+\\b) # a $ variable\n\\s*\n(=) # assignment operator, surrounded by optional whitespace\n\\s*\n([^\\r\\n]+) # RHS value, here must be parsed to float\n(?:$|\\n)",
+              "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(\\$(?:\\\\.+\\\\)?\\w+\\b) # a $ variable\n\\s*\n(=) # assignment operator, surrounded by optional whitespace\n\\s*\n([^\\r\\n]+) # RHS value, here must be parsed to float\n(?:$|\\n)",
               "captures": {
                 "1": {
                   "patterns": [
@@ -889,7 +889,7 @@
             },
             {
               "name": "meta.statement.assignment.migoto",
-              "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(\\$\\w+) # a $ variable\n\\s*\n(=) # assignment operator, surrounded by optional whitespace\n\\s*\n([^\\r\\n]+) # RHS value, here must be parsed to float\n(?:$|\\n)",
+              "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(\\$(?:\\\\.+\\\\)?\\w+) # a $ variable\n\\s*\n(=) # assignment operator, surrounded by optional whitespace\n\\s*\n([^\\r\\n]+) # RHS value, here must be parsed to float\n(?:$|\\n)",
               "captures": {
                 "1": {
                   "patterns": [
@@ -1135,10 +1135,10 @@
               "include": "#constant"
             },
             {
-              "include": "#path-value"
+              "include": "#string"
             },
             {
-              "include": "#string"
+              "include": "#path-value"
             }
           ]
         }
@@ -1227,7 +1227,7 @@
     },
     "assignment-statement": {
       "name": "meta.statement.assignment.migoto",
-      "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(?:(pre|post)\\s+)? # pre and post modifiers, optional\n(\\$(?:\\\\.+\\\\)?\\w+|\\b[xyzw]\\d{0,3}\\b|\\b[vgdhpcstubo\\-\\d_]+\\b|this|(?:ini|stereo)params|cursor_(?:mask|color)|Resource.+) # a $ variable, a resource, an ini parameter\n\\s*\n(=) # assignment operator, surrounded by optional whitespace\n\\s*\n([^\\r\\n]+) # RHS value, depends on type of assignment\n(?:$|\\n)",
+      "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(?:(pre|post)\\s+)? # pre and post modifiers, optional\n(\\$(?:\\\\.+\\\\)?\\w+|\\b[xyzw]\\d{0,3}\\b|\\b[vgdhpcsturfibo\\-\\d_]+\\b|this|(?:ini|stereo)params|cursor_(?:mask|color)|Resource.+) # a $ variable, a resource, an ini parameter\n\\s*\n(=) # assignment operator, surrounded by optional whitespace\n\\s*\n([^\\r\\n]+) # RHS value, depends on type of assignment\n(?:$|\\n)",
       "captures": {
         "1": {
           "name": "meta.command-list.priority keyword.control.migoto"
@@ -1699,7 +1699,7 @@
     },
     "named-variable": {
       "name": "meta.variable.named",
-      "match": "(?xi) (\\$) (?: ([a-z_]\\w+|[a-z_]) | (\\\\[^\\r\\n]+\\\\) ([a-z_]\\w+|[a-z_]) )",
+      "match": "(?xi) (\\$) (?: ([a-z_]\\w+|[a-z_]) | (\\\\[^\\-+*/&% !>|<=$\\r\\n]+\\\\) ([a-z_]\\w+|[a-z_]) )",
       "captures": {
         "1": {
           "name": "punctuation.definition.variable.migoto"
@@ -1721,7 +1721,7 @@
     },
     "callable-commandlist": {
       "name": "meta.function-call.commands",
-      "match": "\\b(?i)((?:BuiltIn)?CommandList)(\\\\[^\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
+      "match": "\\b(?i)((?:BuiltIn)?CommandList)(\\\\[^\\-+*/&% !>|<=$\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
       "captures": {
         "1": {
           "name": "entity.name.function.section-type.migoto"
@@ -1744,7 +1744,7 @@
     },
     "callable-customshader": {
       "name": "meta.function-call.shader",
-      "match": "\\b(?i)((?:BuiltIn)?CustomShader)(\\\\[^\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
+      "match": "\\b(?i)((?:BuiltIn)?CustomShader)(\\\\[^\\-+*/&% !>|<=$\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
       "captures": {
         "1": {
           "name": "entity.name.function.section-type.migoto"
@@ -1767,7 +1767,7 @@
     },
     "custom-resource": {
       "name": "meta.variable.custom-resource variable.other.readwrite.migoto",
-      "match": "\\b(?i)Resource(\\\\[^\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
+      "match": "\\b(?i)Resource(\\\\[^\\-+*/&% !>|<=$\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
       "captures": {
         "1": {
           "patterns": [
