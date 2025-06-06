@@ -528,8 +528,8 @@ push = [
         {match = '\b(?i)(?:yes|no|on|off)\b', scope = "constant.language.boolean.migoto"},
         {match = '\b(?i)(null)\b', scope = "meta.keyword.rhs meta.keyword.resource constant.language.null.migoto"}, # exists because of partner shader keys in custom shader
         {include = "constant"},
-        {include = "path-value"},
         {include = "string"},
+        {include = "path-value"},
         {match = '(?:\n|(?<=\n))', pop = true},
     ]},
     {match = '(?:\n|(?<=\n))', pop = true},
@@ -600,7 +600,7 @@ match = '''(?xi)
 (?=
   (?: (?:pre|post) \s+)? # pre and post modifiers, optional
   (?: \$ (?:\\.+\\)? \w+ |
-      \b[xyzw]\d{0,3}\b | \b[vgdhpcstubo\-\d_]+\b |
+      \b[xyzw]\d{0,3}\b | \b[vgdhpcsturfibo\-\d_]+\b |
       this|(?:ini|stereo)params|cursor_(?:mask|color) |
       Resource.+
   ) # a $ variable, a resource, an ini parameter
@@ -919,7 +919,7 @@ match = '''(?xi)
 )\b'''
 
 [[contexts.named-variable]]
-match = '''(?xi) (?= \$ (?:\\[^\r\n]+\\)? (?:{{var}}) \b )'''
+match = '''(?xi) (?= \$ (?:\\[^\-+*/&% !>|<=$\r\n]+\\)? (?:{{var}}) \b )'''
 push = [
     {meta_scope = "meta.variable.named"},
     {match = '\$', scope = "punctuation.definition.variable.migoto"},
@@ -932,7 +932,7 @@ push = [
 match = '''(?xi)
 (?=
   (?:BuiltIn)?CommandList
-  (?:\\[^\r\n]+\\)?
+  (?:\\[^\-+*/&% !>|<=$\r\n]+\\)?
   [^\-+*/&% !>|<=$\r\n]+
   \b (?!\\)
 )'''
@@ -948,7 +948,7 @@ push = [
 match = '''(?xi)
 (?=
   (?:BuiltIn)?CustomShader
-  (?:\\[^\r\n]+\\)?
+  (?:\\[^\-+*/&% !>|<=$\r\n]+\\)?
   [^\-+*/&% !>|<=$\r\n]+
   \b (?!\\)
 )'''
@@ -964,7 +964,7 @@ push = [
 match = '''(?xi)
 (?=
   Resource
-  (?:\\[^\r\n]+\\)?
+  (?:\\[^\-+*/&% !>|<=$\r\n]+\\)?
   [^\-+*/&% !>|<=$\r\n]+
   \b (?!\\)
 )'''

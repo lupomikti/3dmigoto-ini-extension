@@ -535,8 +535,8 @@ contexts:
             - match: \b(?i)(null)\b
               scope: meta.keyword.rhs meta.keyword.resource constant.language.null.migoto
             - include: constant
-            - include: path-value
             - include: string
+            - include: path-value
             - match: (?:\n|(?<=\n))
               pop: true
         - match: (?:\n|(?<=\n))
@@ -607,7 +607,7 @@ contexts:
         (?=
           (?: (?:pre|post) \s+)? # pre and post modifiers, optional
           (?: \$ (?:\\.+\\)? \w+ |
-              \b[xyzw]\d{0,3}\b | \b[vgdhpcstubo\-\d_]+\b |
+              \b[xyzw]\d{0,3}\b | \b[vgdhpcsturfibo\-\d_]+\b |
               this|(?:ini|stereo)params|cursor_(?:mask|color) |
               Resource.+
           ) # a $ variable, a resource, an ini parameter
@@ -923,7 +923,7 @@ contexts:
           stereo_(?:active|available) | scissor_(?:left|top|right|bottom)
         )\b
   named-variable:
-    - match: (?xi) (?= \$ (?:\\[^\r\n]+\\)? (?:{{var}}) \b )
+    - match: (?xi) (?= \$ (?:\\[^\-+*/&% !>|<=$\r\n]+\\)? (?:{{var}}) \b )
       push:
         - meta_scope: meta.variable.named
         - match: \$
@@ -940,7 +940,7 @@ contexts:
         (?xi)
         (?=
           (?:BuiltIn)?CommandList
-          (?:\\[^\r\n]+\\)?
+          (?:\\[^\-+*/&% !>|<=$\r\n]+\\)?
           [^\-+*/&% !>|<=$\r\n]+
           \b (?!\\)
         )
@@ -959,7 +959,7 @@ contexts:
         (?xi)
         (?=
           (?:BuiltIn)?CustomShader
-          (?:\\[^\r\n]+\\)?
+          (?:\\[^\-+*/&% !>|<=$\r\n]+\\)?
           [^\-+*/&% !>|<=$\r\n]+
           \b (?!\\)
         )
@@ -978,7 +978,7 @@ contexts:
         (?xi)
         (?=
           Resource
-          (?:\\[^\r\n]+\\)?
+          (?:\\[^\-+*/&% !>|<=$\r\n]+\\)?
           [^\-+*/&% !>|<=$\r\n]+
           \b (?!\\)
         )
