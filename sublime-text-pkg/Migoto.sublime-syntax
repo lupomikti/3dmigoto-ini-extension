@@ -923,7 +923,7 @@ contexts:
           stereo_(?:active|available) | scissor_(?:left|top|right|bottom)
         )\b
   named-variable:
-    - match: (?xi) (?= \$ (?:\\[^\-+*/&% !>|<=$\r\n]+\\)? (?:{{var}}) \b )
+    - match: (?xi) (?= \$ (?:\\[^\-+*/&%!>|<=$\r\n]+\\)? (?:{{var}}) \b )
       push:
         - meta_scope: meta.variable.named
         - match: \$
@@ -940,7 +940,7 @@ contexts:
         (?xi)
         (?=
           (?:BuiltIn)?CommandList
-          (?:\\[^\-+*/&% !>|<=$\r\n]+\\)?
+          (?:\\[^\-+*/&%!>|<=$\r\n]+\\)?
           [^\-+*/&% !>|<=$\r\n]+
           \b (?!\\)
         )
@@ -959,7 +959,7 @@ contexts:
         (?xi)
         (?=
           (?:BuiltIn)?CustomShader
-          (?:\\[^\-+*/&% !>|<=$\r\n]+\\)?
+          (?:\\[^\-+*/&%!>|<=$\r\n]+\\)?
           [^\-+*/&% !>|<=$\r\n]+
           \b (?!\\)
         )
@@ -978,7 +978,7 @@ contexts:
         (?xi)
         (?=
           Resource
-          (?:\\[^\-+*/&% !>|<=$\r\n]+\\)?
+          (?:\\[^\-+*/&%!>|<=$\r\n]+\\)?
           [^\-+*/&% !>|<=$\r\n]+
           \b (?!\\)
         )
@@ -1010,12 +1010,13 @@ contexts:
       match: (?i)\b(?:(?<!$)[xyzw]\d{0,3})\b
   literal-list:
     - match:
-        "(?i)\\b(?!(?:\\S+[\\\\./]\\S+))(?=(\\w+) +(\\w+)(?: +(\\w+))?$|(\\w+)
+        "(?i)\\b(?!(?:.+\\S[\\\\./]\\S+))(?=(\\w+) +(\\w+)(?: +(\\w+))?$|(\\w+)
         +(\\w+))"
       push:
         - meta_scope: meta.expression.literal-list.migoto
         - include: constant
         - include: key-value
+        - include: frame-analysis-opt
         - match: \n
           pop: true
   constant:
