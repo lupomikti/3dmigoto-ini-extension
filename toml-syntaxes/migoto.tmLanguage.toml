@@ -598,6 +598,7 @@ match = '''(?xi)
   (=) \s* # assignment operator, surrounded by optional whitespace
   ([+\-]?[\d.]+|true|false|inf|NaN) # RHS value, only Numbers allowed
 )? # Assignment operator and RHS-value are optional, e.g. `global $variable` on a line by itself
+\s*
 (?:$|\n)'''
 captures.1.name = "storage.modifier.migoto"
 captures.2.name = "storage.modifier.migoto"
@@ -621,6 +622,7 @@ match = '''(?xi)
   (=) \s* # assignment operator, surrounded by optional whitespace
   ([^\r\n]+) # RHS value
 )? # Assignment operator and RHS-value are optional, e.g. `local $variable` on a line by itself
+\s*
 (?:$|\n)'''
 captures.1.name = "storage.modifier.migoto"
 captures.2.patterns = [
@@ -880,7 +882,7 @@ match = '''(?xi)
 
 [repository.named-variable]
 name = "meta.variable.named"
-match = '''(?xi) (\$) (?: ([a-z_]\w+|[a-z_]) | (\\[^\-+*/&% !>|<=$\r\n]+\\) ([a-z_]\w+|[a-z_]) )'''
+match = '''(?xi) (\$) (?: ([a-z_]\w+|[a-z_]) | (\\[^\-+*/&%!>|<=$\r\n]+\\) ([a-z_]\w+|[a-z_]) )'''
 # captures for a normal variable
 captures.1.name = "punctuation.definition.variable.migoto"
 captures.2.name = "variable.other.readwrite.migoto"
@@ -890,21 +892,21 @@ captures.4.name = "variable.other.readwrite.migoto"
 
 [repository.callable-commandlist]
 name = "meta.function-call.commands"
-match = '''\b(?i)((?:BuiltIn)?CommandList)(\\[^\-+*/&% !>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
+match = '''\b(?i)((?:BuiltIn)?CommandList)(\\[^\-+*/&%!>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
 captures.1.name = "entity.name.function.section-type.migoto"
 captures.2.patterns = [{include = "#namespace"}]
 captures.3.patterns = [{include = "#section-identifier"}]
 
 [repository.callable-customshader]
 name = "meta.function-call.shader"
-match = '''\b(?i)((?:BuiltIn)?CustomShader)(\\[^\-+*/&% !>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
+match = '''\b(?i)((?:BuiltIn)?CustomShader)(\\[^\-+*/&%!>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
 captures.1.name = "entity.name.function.section-type.migoto"
 captures.2.patterns = [{include = "#namespace"}]
 captures.3.patterns = [{include = "#section-identifier"}]
 
 [repository.custom-resource]
 name = "meta.variable.custom-resource variable.other.readwrite.migoto"
-match = '''\b(?i)Resource(\\[^\-+*/&% !>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
+match = '''\b(?i)Resource(\\[^\-+*/&%!>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
 captures.1.patterns = [{include = "#namespace"}]
 captures.2.patterns = [{include = "#section-identifier"}]
 
@@ -929,27 +931,32 @@ match = '(?i)\b(?:(?<!$)[xyzw]\d{0,3})\b'
 [repository.literal-list]
 # The only remaining problem with this is that if a file is one of the literals, this whole thing will not match
 # But after carefully looking through the source code, this scenario is not currently possible
-match = '''(?i)\b(?!(?:\S+[\\./]\S+))(?:(\w+) +(\w+)(?: +(\w+))?$|(\w+) +(\w+))'''
+match = '''(?i)\b(?!(?:.+\S[\\./]\S+))(?:(\w+) +(\w+)(?: +(\w+))?$|(\w+) +(\w+))'''
 name = "meta.expression.literal-list.migoto"
 captures.1.patterns = [
     {include = "#constant"},
     {include = "#key-value"},
+    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
 ]
 captures.2.patterns = [
     {include = "#constant"},
     {include = "#key-value"},
+    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
 ]
 captures.3.patterns = [
     {include = "#constant"},
     {include = "#key-value"},
+    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
 ]
 captures.4.patterns = [
     {include = "#constant"},
     {include = "#key-value"},
+    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
 ]
 captures.5.patterns = [
     {include = "#constant"},
     {include = "#key-value"},
+    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
 ]
 
 [repository.constant]

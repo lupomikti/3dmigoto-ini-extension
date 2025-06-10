@@ -1159,7 +1159,7 @@
     },
     "global-declaration": {
       "name": "meta.statement.declaration.global.migoto",
-      "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(?:(persist)\\s+)? # the persist keyword, which can only pair with global, and which apparently can come before global\n(global)\\s+ # the global keyword which must be followed by at least one whitespace character\n(?:(persist)\\s+)? # the persist keyword, which can only pair with global, and which is usually in this position\n(\\$\\w+) # a $ variable\n\\s*\n(?:\n  (=) \\s* # assignment operator, surrounded by optional whitespace\n  ([+\\-]?[\\d.]+|true|false|inf|NaN) # RHS value, only Numbers allowed\n)? # Assignment operator and RHS-value are optional, e.g. `global $variable` on a line by itself\n(?:$|\\n)",
+      "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(?:(persist)\\s+)? # the persist keyword, which can only pair with global, and which apparently can come before global\n(global)\\s+ # the global keyword which must be followed by at least one whitespace character\n(?:(persist)\\s+)? # the persist keyword, which can only pair with global, and which is usually in this position\n(\\$\\w+) # a $ variable\n\\s*\n(?:\n  (=) \\s* # assignment operator, surrounded by optional whitespace\n  ([+\\-]?[\\d.]+|true|false|inf|NaN) # RHS value, only Numbers allowed\n)? # Assignment operator and RHS-value are optional, e.g. `global $variable` on a line by itself\n\\s*\n(?:$|\\n)",
       "captures": {
         "1": {
           "name": "storage.modifier.migoto"
@@ -1191,7 +1191,7 @@
     },
     "local-declaration": {
       "name": "meta.statement.declaration.local.migoto",
-      "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(local)\\s+ # the local keyword which must be followed by at least one whitespace character\n(\\$\\w+) # a $ variable\n\\s*\n(?:\n  (=) \\s* # assignment operator, surrounded by optional whitespace\n  ([^\\r\\n]+) # RHS value\n)? # Assignment operator and RHS-value are optional, e.g. `local $variable` on a line by itself\n(?:$|\\n)",
+      "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(local)\\s+ # the local keyword which must be followed by at least one whitespace character\n(\\$\\w+) # a $ variable\n\\s*\n(?:\n  (=) \\s* # assignment operator, surrounded by optional whitespace\n  ([^\\r\\n]+) # RHS value\n)? # Assignment operator and RHS-value are optional, e.g. `local $variable` on a line by itself\n\\s*\n(?:$|\\n)",
       "captures": {
         "1": {
           "name": "storage.modifier.migoto"
@@ -1699,7 +1699,7 @@
     },
     "named-variable": {
       "name": "meta.variable.named",
-      "match": "(?xi) (\\$) (?: ([a-z_]\\w+|[a-z_]) | (\\\\[^\\-+*/&% !>|<=$\\r\\n]+\\\\) ([a-z_]\\w+|[a-z_]) )",
+      "match": "(?xi) (\\$) (?: ([a-z_]\\w+|[a-z_]) | (\\\\[^\\-+*/&%!>|<=$\\r\\n]+\\\\) ([a-z_]\\w+|[a-z_]) )",
       "captures": {
         "1": {
           "name": "punctuation.definition.variable.migoto"
@@ -1721,7 +1721,7 @@
     },
     "callable-commandlist": {
       "name": "meta.function-call.commands",
-      "match": "\\b(?i)((?:BuiltIn)?CommandList)(\\\\[^\\-+*/&% !>|<=$\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
+      "match": "\\b(?i)((?:BuiltIn)?CommandList)(\\\\[^\\-+*/&%!>|<=$\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
       "captures": {
         "1": {
           "name": "entity.name.function.section-type.migoto"
@@ -1744,7 +1744,7 @@
     },
     "callable-customshader": {
       "name": "meta.function-call.shader",
-      "match": "\\b(?i)((?:BuiltIn)?CustomShader)(\\\\[^\\-+*/&% !>|<=$\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
+      "match": "\\b(?i)((?:BuiltIn)?CustomShader)(\\\\[^\\-+*/&%!>|<=$\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
       "captures": {
         "1": {
           "name": "entity.name.function.section-type.migoto"
@@ -1767,7 +1767,7 @@
     },
     "custom-resource": {
       "name": "meta.variable.custom-resource variable.other.readwrite.migoto",
-      "match": "\\b(?i)Resource(\\\\[^\\-+*/&% !>|<=$\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
+      "match": "\\b(?i)Resource(\\\\[^\\-+*/&%!>|<=$\\r\\n]+\\\\)?([^\\-+*/&% !>|<=$\\r\\n]+)\\b(?!\\\\)",
       "captures": {
         "1": {
           "patterns": [
@@ -1815,7 +1815,7 @@
       "match": "(?i)\\b(?:(?<!$)[xyzw]\\d{0,3})\\b"
     },
     "literal-list": {
-      "match": "(?i)\\b(?!(?:\\S+[\\\\./]\\S+))(?:(\\w+) +(\\w+)(?: +(\\w+))?$|(\\w+) +(\\w+))",
+      "match": "(?i)\\b(?!(?:.+\\S[\\\\./]\\S+))(?:(\\w+) +(\\w+)(?: +(\\w+))?$|(\\w+) +(\\w+))",
       "name": "meta.expression.literal-list.migoto",
       "captures": {
         "1": {
@@ -1825,6 +1825,9 @@
             },
             {
               "include": "#key-value"
+            },
+            {
+              "include": "#frame-analysis-opt"
             }
           ]
         },
@@ -1835,6 +1838,9 @@
             },
             {
               "include": "#key-value"
+            },
+            {
+              "include": "#frame-analysis-opt"
             }
           ]
         },
@@ -1845,6 +1851,9 @@
             },
             {
               "include": "#key-value"
+            },
+            {
+              "include": "#frame-analysis-opt"
             }
           ]
         },
@@ -1855,6 +1864,9 @@
             },
             {
               "include": "#key-value"
+            },
+            {
+              "include": "#frame-analysis-opt"
             }
           ]
         },
@@ -1865,6 +1877,9 @@
             },
             {
               "include": "#key-value"
+            },
+            {
+              "include": "#frame-analysis-opt"
             }
           ]
         }
