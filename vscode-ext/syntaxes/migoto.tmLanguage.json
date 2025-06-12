@@ -1135,6 +1135,9 @@
               "include": "#constant"
             },
             {
+              "include": "#fuzzy-match-expression"
+            },
+            {
               "include": "#string"
             },
             {
@@ -1579,6 +1582,33 @@
               }
             }
           ]
+        }
+      }
+    },
+    "fuzzy-match-expression": {
+      "name": "meta.expression.fuzzy-match.migoto",
+      "match": "(?xi)\n([><]=?|[!=])? # optional operator\n\\s*\n(?:\n  \\b (\\d+) \\b | # number (int)\n  (?:\n    \\b ((?:res_)?(?:width|height)|depth|array) \\b # field name\n    \\s*\n    (?:(\\*)\\s*\\b(\\d+)\\b)? # integer multiplicand\n    \\s*\n    (?:(/)\\s*\\b(\\d+)\\b)? # integer divisor\n  ) # field expression\n)\n\\s*$\n",
+      "captures": {
+        "1": {
+          "name": "keyword.operator.comparison.migoto"
+        },
+        "2": {
+          "name": "constant.numeric.migoto"
+        },
+        "3": {
+          "name": "constant.language.migoto"
+        },
+        "4": {
+          "name": "keyword.operator.math.migoto"
+        },
+        "5": {
+          "name": "constant.numeric.migoto"
+        },
+        "6": {
+          "name": "keyword.operator.math.migoto"
+        },
+        "7": {
+          "name": "constant.numeric.migoto"
         }
       }
     },

@@ -574,6 +574,7 @@ captures.3.patterns = [
     {name = "constant.language.boolean.migoto", match = '\b(?i)(?:yes|no|on|off)\b'},
     {name = "meta.keyword.rhs meta.keyword.resource constant.language.null.migoto", match = '\b(?i)(null)\b'}, # exists because of partner shader keys in custom shader
     {include = "#constant"},
+    {include = "#fuzzy-match-expression"}, # only needed for texture override section keys involved in fuzzy matching which can take a constrained expression instead of just a number
     {include = "#string"},
     {include = "#path-value"},
 ]
@@ -785,6 +786,31 @@ captures.3.patterns = [
     # Resource Offset Statement
     {name = "meta.statement.resource-offset", match = '(?i)([^,\d\r\n]+)\s*,\s*(\d+)', captures.1.patterns = [{include="#resource"}], captures.2.name = "constant.numeric.migoto"}
 ]
+
+[repository.fuzzy-match-expression]
+name = "meta.expression.fuzzy-match.migoto"
+match = '''(?xi)
+([><]=?|[!=])? # optional operator
+\s*
+(?:
+  \b (\d+) \b | # number (int)
+  (?:
+    \b ((?:res_)?(?:width|height)|depth|array) \b # field name
+    \s*
+    (?:(\*)\s*\b(\d+)\b)? # integer multiplicand
+    \s*
+    (?:(/)\s*\b(\d+)\b)? # integer divisor
+  ) # field expression
+)
+\s*$
+'''
+captures.1.name = "keyword.operator.comparison.migoto"
+captures.2.name = "constant.numeric.migoto"
+captures.3.name = "constant.language.migoto"
+captures.4.name = "keyword.operator.math.migoto"
+captures.5.name = "constant.numeric.migoto"
+captures.6.name = "keyword.operator.math.migoto"
+captures.7.name = "constant.numeric.migoto"
 
 [repository.resource-usage-expression]
 patterns = [
