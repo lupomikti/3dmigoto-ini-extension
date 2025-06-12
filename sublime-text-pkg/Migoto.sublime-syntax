@@ -535,6 +535,7 @@ contexts:
             - match: \b(?i)(null)\b
               scope: meta.keyword.rhs meta.keyword.resource constant.language.null.migoto
             - include: constant
+            - include: fuzzy-match-expr
             - include: string
             - include: path-value
             - match: (?:\n|(?<=\n))
@@ -819,15 +820,26 @@ contexts:
                   pop: true
             - match: (?:\n|(?<=\n))
               pop: true
-        - match: "(?xi)(?= \\b (?:
-            draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexed\
-            instancedindirect)? | dispatch(?:indirect)? ) \\b \\s* = \\s*
-            [^\\r\\n]+ )"
+        - match: |-
+            (?xi)
+            (?=
+              \b
+              (?:
+                draw
+                  (?:indexed|instanced|
+                    indexedinstanced|
+                    instancedindirect|
+                    indexedinstancedindirect
+                  )?
+                | dispatch(?:indirect)?
+              )
+              \b
+              \s* = \s*
+              [^\r\n]+
+            )
           push:
             - meta_scope: meta.draw-instrcution
-            - match: (?xi)\b(
-                draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?
-                | dispatch(?:indirect)? )\b
+            - match: (?xi)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b
               scope: meta.keyword.key keyword.other.instruction.draw.migoto
             - match: =
               scope: keyword.operator.execution.migoto
@@ -836,6 +848,7 @@ contexts:
                   scope: constant.numeric.migoto
                 - include: named-variable
                 - match: (?i)\b(auto|from_caller)\b
+                  scope: meta.keyword.rhs constant.language.draw-instruction.migoto
                 - match: (?xi)(?= [^,\d\r\n]+ \s* , \s* \d+ \s* $)
                   scope: meta.statement.resource-offset
                   push:
@@ -854,6 +867,31 @@ contexts:
               pop: true
         - match: (?:\n|(?<=\n))
           pop: true
+  fuzzy-match-expr:
+    - scope: meta.expression.fuzzy-match.migoto
+      match: |
+        (?xi)
+        ([><]=?|[!=])? # optional operator
+        \s*
+        (?:
+          \b (\d+) \b | # number (int)
+          (?:
+            \b ((?:res_)?(?:width|height)|depth|array) \b # field name
+            \s*
+            (?:(\*)\s*\b(\d+)\b)? # integer multiplicand
+            \s*
+            (?:(/)\s*\b(\d+)\b)? # integer divisor
+          ) # field expression
+        )
+        \s*$
+      captures:
+        "1": keyword.operator.comparison.migoto
+        "2": constant.numeric.migoto
+        "3": constant.language.migoto
+        "4": keyword.operator.math.migoto
+        "5": constant.numeric.migoto
+        "6": keyword.operator.math.migoto
+        "7": constant.numeric.migoto
   resource-usage-expr:
     - meta_scope: meta.expression.resource-usage.migoto
     - include: resource-usage-modifier

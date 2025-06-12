@@ -528,6 +528,7 @@ push = [
         {match = '\b(?i)(?:yes|no|on|off)\b', scope = "constant.language.boolean.migoto"},
         {match = '\b(?i)(null)\b', scope = "meta.keyword.rhs meta.keyword.resource constant.language.null.migoto"}, # exists because of partner shader keys in custom shader
         {include = "constant"},
+        {include = "fuzzy-match-expr"}, # only needed for texture override section keys involved in fuzzy matching which can take a constrained expression instead of just a number
         {include = "string"},
         {include = "path-value"},
         {match = '(?:\n|(?<=\n))', pop = true},
@@ -793,14 +794,29 @@ push = [
 ]
 
 [[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b (?: draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)? | dispatch(?:indirect)? ) \b \s* = \s* [^\r\n]+ )'
+match = '''(?xi)
+(?=
+  \b
+  (?:
+    draw
+      (?:indexed|instanced|
+        indexedinstanced|
+        instancedindirect|
+        indexedinstancedindirect
+      )?
+    | dispatch(?:indirect)?
+  )
+  \b
+  \s* = \s*
+  [^\r\n]+
+)'''
 push = [
     {meta_scope = "meta.draw-instrcution"},
-    {match = '''(?xi)\b( draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)? | dispatch(?:indirect)? )\b''', scope = "meta.keyword.key keyword.other.instruction.draw.migoto"},
+    {match = '''(?xi)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b''', scope = "meta.keyword.key keyword.other.instruction.draw.migoto"},
     {match = '=', scope = "keyword.operator.execution.migoto", push = [
         {match = '\d+', scope = "constant.numeric.migoto"},
         {include = "named-variable"},
-        {match = '(?i)\b(auto|from_caller)\b'}, # from_caller only goes with 'draw'
+        {match = '(?i)\b(auto|from_caller)\b', scope = "meta.keyword.rhs constant.language.draw-instruction.migoto"}, # from_caller only goes with 'draw'
         # Resouce Offset Statement
         {match = '(?xi)(?= [^,\d\r\n]+ \s* , \s* \d+ \s* $)', scope = "meta.statement.resource-offset", push = [
             {match = '(?i)\b[^,\d\r\n]+\b', push = [{include = "resource"},{match = ',', pop = true}]},
@@ -815,6 +831,31 @@ push = [
 [[contexts.instruction-statement.push]]
 match = '(?:\n|(?<=\n))'
 pop = true
+
+[[contexts.fuzzy-match-expr]]
+scope = "meta.expression.fuzzy-match.migoto"
+match = '''(?xi)
+([><]=?|[!=])? # optional operator
+\s*
+(?:
+  \b (\d+) \b | # number (int)
+  (?:
+    \b ((?:res_)?(?:width|height)|depth|array) \b # field name
+    \s*
+    (?:(\*)\s*\b(\d+)\b)? # integer multiplicand
+    \s*
+    (?:(/)\s*\b(\d+)\b)? # integer divisor
+  ) # field expression
+)
+\s*$
+'''
+captures.1 = "keyword.operator.comparison.migoto"
+captures.2 = "constant.numeric.migoto"
+captures.3 = "constant.language.migoto"
+captures.4 = "keyword.operator.math.migoto"
+captures.5 = "constant.numeric.migoto"
+captures.6 = "keyword.operator.math.migoto"
+captures.7 = "constant.numeric.migoto"
 
 [[contexts.resource-usage-expr]]
 meta_scope = "meta.expression.resource-usage.migoto"
