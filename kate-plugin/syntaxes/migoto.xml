@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
-<language name="Migoto" alternativenames="3DM-INI" version="8" kateversion="5.94"
+<language name="Migoto" alternativenames="3DM-INI" version="10" kateversion="5.94"
           section="Scripts" extensions="*.ini" casesensitive="0" license="GPL-3.0" priority="2">
   <highlighting>
     <!-- #region @keywords -->
+      <!-- #region Language Constants -->
     <list name="boolean-values">
       <item>true</item>
       <item>false</item>
+      <item>yes</item>
+      <item>no</item>
+      <item>on</item>
+      <item>off</item>
     </list>
-    <list name="modifiers">
-      <item>global</item>
-      <item>local</item>
-      <item>persist</item>
+    <list name="command-flow-keywords">
       <item>pre</item>
       <item>post</item>
     </list>
     <list name="language-constants">
-      <item>null</item>
       <item>inf</item>
       <item>nan</item>
     </list>
-    <!-- Command List instructions, both general and drawcall specific -->
-    <list name="instructions">
-      <item>run</item>
-      <item>checktextureoverride</item>
-      <item>preset</item>
-      <item>exclude_preset</item>
-      <item>handling</item>
-      <item>reset_per_frame_limits</item>
-      <item>clear</item>
-      <item>direct_mode_eye</item>
-      <item>dump</item>
-      <item>special</item>
-      <item>store</item>
-      <!-- Draw Call instructions -->
-      <item>draw</item>
-      <item>drawindexed</item>
-      <item>drawinstanced</item>
-      <item>drawindexedinstanced</item>
-      <item>drawinstancedindirect</item>
-      <item>drawindexedinstancedindirect</item>
-      <item>dispatch</item>
-      <item>dispatchindirect</item>
-    </list>
-    <!-- Resource Identifiers -->
+      <!-- #endregion -->
+
+      <!-- #region Resource-related keywords -->
+    <!-- variable.language.resource-identifier.migoto -->
     <list name="resource-identifiers">
       <item>this</item>
+      <item>null</item>
       <item>iniparams</item>
       <item>stereoparams</item>
       <item>cursor_mask</item>
       <item>cursor_color</item>
     </list>
-    <!-- Override Parameters -->
-     <list name="static-override-parameters">
+
+    <!-- meta.keyword.resource-usage-modifier -->
+    <list name="resource-usage-modifiers">
+      <item>copy</item>
+      <item>copy_desc</item>
+      <item>copy_description</item>
+      <item>ref</item>
+      <item>reference</item>
+      <item>raw</item>
+      <item>stereo</item>
+      <item>mono</item>
+      <item>stereo2mono</item>
+      <item>set_viewport</item>
+      <item>no_view_cache</item>
+      <item>resolve_msaa</item>
+      <item>unless_null</item>
+    </list>
+      <!-- #endregion -->
+
+      <!-- #region Override Parameters -->
+    <list name="static-override-parameters">
       <item>stereo_active</item>
       <item>stereo_available</item>
       <item>sli</item>
@@ -102,35 +103,38 @@
       <item>frame_analysis</item>
       <item>effective_dp</item>
     </list>
-    <!-- Lwords -->
+      <!-- #endregion -->
+
+      <!-- #region Draw Instructions -->
+    <list name="direct-draw-instructions">
+      <item>draw</item>
+      <item>drawindexed</item>
+      <item>drawinstanced</item>
+      <item>drawindexedinstanced</item>
+      <item>dispatch</item>
+    </list>
+    <list name="indirect-draw-instructions">
+      <item>drawinstancedindirect</item>
+      <item>drawindexedinstancedindirect</item>
+      <item>dispatchindirect</item>
+    </list>
+      <!-- #endregion -->
+
+      <!-- #region Keys -->
+      <!-- keyword.other.migoto.multi-section -->
     <list name="multi-section-keywords">
-      <item>separation</item>
-      <item>convergence</item>
       <item>hash</item>
       <item>filter_index</item>
       <item>match_priority</item>
-      <item>condition</item>
       <item>format</item>
       <item>width</item>
       <item>width_multiply</item>
       <item>height</item>
       <item>height_multiply</item>
-      <item>analyse_options</item>
-      <item>type</item>
     </list>
-    <list name="key-section-keywords">
-      <item>key</item>
-      <item>back</item>
-      <item>delay</item>
-      <item>release_delay</item>
-      <item>wrap</item>
-      <item>smart</item>
-      <item>transition</item>
-      <item>transition_type</item>
-      <item>release_transition</item>
-      <item>release_transition_type</item>
-    </list>
+      <!-- keyword.other.migoto.resource -->
     <list name="resource-section-keywords">
+      <item>type</item>
       <item>filename</item>
       <item>data</item>
       <item>max_copies_per_frame</item>
@@ -145,23 +149,25 @@
       <item>byte_width</item>
       <item>stride</item>
     </list>
+      <!-- keyword.other.migoto.texture-override -->
     <list name="texture-override-keywords">
-      <!-- Resource Match -->
+      <!-- .resource-match -->
       <item>stereomode</item>
       <item>expand_region_copy</item>
       <item>deny_cpu_read</item>
       <item>iteration</item>
-      <!-- Vertex Limit -->
+      <!-- .vertex-limit -->
       <item>override_byte_stride</item>
       <item>override_vertex_count</item>
-      <!-- Draw Match -->
+      <item>uav_byte_stride</item>
+      <!-- .draw-match -->
       <item>match_first_vertex</item>
       <item>match_first_index</item>
       <item>match_first_instance</item>
       <item>match_vertex_count</item>
       <item>match_index_count</item>
       <item>match_instance_count</item>
-      <!-- Fuzzy Match -->
+      <!-- .fuzzy-match -->
       <item>match_type</item>
       <item>match_usage</item>
       <item>match_bind_flags</item>
@@ -178,16 +184,25 @@
       <item>match_msaa</item>
       <item>match_msaa_quality</item>
     </list>
+      <!-- keyword.other.migoto.custom-shader -->
     <list name="custom-shader-keywords">
       <item>flags</item>
       <item>max_executions_per_frame</item>
       <item>topology</item>
       <item>sampler</item>
-      <!-- Blend State -->
+      <!-- Partner Shaders -->
+      <item>vs</item>
+      <item>hs</item>
+      <item>ds</item>
+      <item>gs</item>
+      <item>ps</item>
+      <item>cs</item>
+      <!-- .blend-state -->
       <item>alpha_to_coverage</item>
       <item>sample_mask</item>
       <item>blend_state_merge</item>
-      <!-- Depth Stencil State -->
+        <!-- See custom-shader-blend-state-keys for the rest -->
+      <!-- .depth-stencil-state -->
       <item>depth_enable</item>
       <item>depth_write_mask</item>
       <item>depth_func</item>
@@ -198,7 +213,7 @@
       <item>stencil_front</item>
       <item>stencil_back</item>
       <item>stencil_ref</item>
-      <!-- RS State -->
+      <!-- .rs-state -->
       <item>fill</item>
       <item>cull</item>
       <item>front</item>
@@ -206,22 +221,50 @@
       <item>depth_bias_clamp</item>
       <item>depth_clip_enable</item>
       <item>slope_scaled_depth_bias</item>
-      <item>depth_clip_enable</item>
       <item>scissor_enable</item>
       <item>multisample_enable</item>
       <item>antialiased_line_enable</item>
       <item>rasterizer_state_merge</item>
     </list>
-    <list name="custom-shader-blend-state">
+    <list name="custom-shader-blend-state-keys">
       <item>blend</item>
       <item>alpha</item>
       <item>mask</item>
-      <item>blend_factor</item>
+      <item>blend[0]</item>
+      <item>alpha[0]</item>
+      <item>mask[0]</item>
+      <item>blend[1]</item>
+      <item>alpha[1]</item>
+      <item>mask[1]</item>
+      <item>blend[2]</item>
+      <item>alpha[2]</item>
+      <item>mask[2]</item>
+      <item>blend[3]</item>
+      <item>alpha[3]</item>
+      <item>mask[3]</item>
+      <item>blend[4]</item>
+      <item>alpha[4]</item>
+      <item>mask[4]</item>
+      <item>blend[5]</item>
+      <item>alpha[5]</item>
+      <item>mask[5]</item>
+      <item>blend[6]</item>
+      <item>alpha[6]</item>
+      <item>mask[6]</item>
+      <item>blend[7]</item>
+      <item>alpha[7]</item>
+      <item>mask[7]</item>
+      <item>blend_factor[0]</item>
+      <item>blend_factor[1]</item>
+      <item>blend_factor[2]</item>
+      <item>blend_factor[3]</item>
     </list>
+      <!-- keyword.other.migoto.shader-regex -->
     <list name="shader-regex-keywords">
       <item>shader_model</item>
       <item>temps</item>
     </list>
+      <!-- keyword.other.migoto.shader-override -->
     <list name="shader-override-keywords">
       <item>allow_duplicate_hash</item>
       <item>depth_filter</item>
@@ -229,6 +272,7 @@
       <item>model</item>
       <item>disable_scissor</item>
     </list>
+      <!-- keyword.other.migoto.include -->
     <list name="include-section-keywords">
       <item>include</item>
       <item>exclude</item>
@@ -236,7 +280,10 @@
       <item>exclude_recursive</item>
       <item>user_config</item>
     </list>
+      <!-- keyword.other.migoto.logging -->
     <list name="logging-section-keywords">
+      <item>separation</item>
+      <item>convergence</item>
       <item>calls</item>
       <item>input</item>
       <item>debug</item>
@@ -248,6 +295,7 @@
       <item>dump_all_profiles</item>
       <item>show_warnings</item>
     </list>
+      <!-- keyword.other.migoto.hunting -->
     <list name="hunting-section-keywords">
       <item>hunting</item>
       <item>done_hunting</item>
@@ -302,8 +350,10 @@
       <item>tune3_up</item>
       <item>tune3_down</item>
       <item>analyse_frame</item>
+      <item>analyse_options</item>
       <item>kill_deferred</item>
     </list>
+      <!-- keyword.other.migoto.system -->
     <list name="system-section-keywords">
       <item>proxy_d3d9</item>
       <item>proxy_d3d11</item>
@@ -316,7 +366,12 @@
       <item>skip_early_includes_load</item>
       <item>config_initialization_delay</item>
       <item>settings_auto_save_interval</item>
+      <item>dll_initialization_delay</item>
+      <item>screen_width</item>
+      <item>screen_height</item>
+      <item>dump_path</item>
     </list>
+      <!-- keyword.other.migoto.loader -->
     <list name="loader-section-keywords">
       <item>target</item>
       <item>module</item>
@@ -329,6 +384,7 @@
       <item>hook_proc</item>
       <item>wait_for_target</item>
     </list>
+      <!-- keyword.other.migoto.device -->
     <list name="device-section-keywords">
       <item>upscaling</item>
       <item>upscale_mode</item>
@@ -343,6 +399,7 @@
       <item>hide_cursor</item>
       <item>cursor_upscaling_bypass</item>
     </list>
+      <!-- keyword.other.migoto.stereo -->
     <list name="stereo-section-keywords">
       <item>automatic_mode</item>
       <item>unlock_separation</item>
@@ -352,6 +409,7 @@
       <item>suface_square_createmode</item>
       <item>force_no_nvapi</item>
     </list>
+      <!-- keyword.other.migoto.rendering -->
     <list name="rendering-section-keywords">
       <item>shader_hash</item>
       <item>texture_hash</item>
@@ -393,22 +451,9 @@
       <item>fix_MatrixOperand1</item>
       <item>fix_MatrixOperand1Multiplier</item>
     </list>
-    <!-- Functional Keywords a.k.a. Resouce Usage Modifiers -->
-    <list name="resource-usage-modifiers">
-      <item>copy</item>
-      <item>copy_desc</item>
-      <item>copy_description</item>
-      <item>ref</item>
-      <item>reference</item>
-      <item>raw</item>
-      <item>stereo</item>
-      <item>mono</item>
-      <item>stereo2mono</item>
-      <item>set_viewport</item>
-      <item>no_view_cache</item>
-      <item>resolve_msaa</item>
-    </list>
-    <!-- Rwords -->
+      <!-- #endregion -->
+
+      <!-- #region KeyValues -->
     <list name="multi-section-key-values">
       <item>none</item>
       <item>skip</item>
@@ -419,23 +464,13 @@
       <item>depth_stencil</item>
       <item>texturecube</item>
     </list>
-    <list name="command-key-values">
-      <item>from_caller</item>
-      <item>abort</item>
-      <item>upscaling_switch_bb</item>
-      <item>draw_3dmigoto_overlay</item>
-      <item>int</item>
-      <item>depth</item>
-      <item>stencil</item>
-      <item>left</item>
-      <item>right</item>
-    </list>
     <list name="shader-override-key-values">
       <item>overrule</item>
       <item>depth_active</item>
       <item>depth_inactive</item>
     </list>
     <list name="custom-shader-key-values">
+      <item>null</item>
       <item>front</item>
       <item>back</item>
       <item>wireframe</item>
@@ -513,9 +548,6 @@
       <item>warnings_are_errors</item>
       <item>resources_may_alias</item>
       <item>all_resources_bound</item>
-    </list>
-    <list name="unless-null">
-      <item>unless_null</item>
     </list>
     <list name="fuzzy-match-key-values">
       <item>default</item>
@@ -830,14 +862,7 @@
       <item>blend_factor</item>
       <item>inv_blend_factor</item>
     </list>
-    <list name="key-section-key-values">
-      <item>activate</item>
-      <item>toggle</item>
-      <item>cycle</item>
-      <item>linear</item>
-      <item>cosine</item>
-    </list>
-    <list name="key-section-key-modifiers">
+    <list name="key-binding-modifiers">
       <item>ctrl</item>
       <item>alt</item>
       <item>shift</item>
@@ -880,7 +905,7 @@
       <item>stereo_snapshot</item>
       <item>snapshot_if_pink</item>
     </list>
-    <list name="analysis-key-values">
+    <list name="frame-analysis-options">
       <item>dump_rt</item>
       <item>dump_depth</item>
       <item>dump_tex</item>
@@ -918,37 +943,45 @@
       <item>dump_vb_txt</item>
       <item>dump_ib_txt</item>
     </list>
+      <!-- #endregion-->
     <!-- #endregion @keywords -->
     <!-- Contexts -->
     <contexts>
       <context attribute="Normal Text" lineEndContext="#stay" name="INI">
         <DetectSpaces/>
+        <!-- Preamble -->
         <WordDetect attribute="Keyword" context="NamespaceDeclaration" String="namespace" insensitive="true" lookAhead="true"/>
         <WordDetect attribute="Keyword" context="IncludeCondition" String="condition" insensitive="true" lookAhead="true"/>
+        <!-- Sections -->
         <DetectChar attribute="Header" context="SectionTitle" char="[" endRegion="Section"/>
+        <!-- Comments -->
+        <IncludeRules context="DetectComments"/>
+      </context>
+
+      <context attribute="Comment" lineEndContext="#pop" name="DetectComments">
         <Detect2Chars attribute="Comment" context="Comment" char=";" char1="&lt;" firstNonSpace="true" beginRegion="CommentFold"/>
         <RegExpr attribute="Comment" context="Comment" insensitive="true" String=";.*&gt;" firstNonSpace="true" endRegion="CommentFold"/>
         <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
       </context>
-      <!-- Include Condition -->
+
+      <!-- #region Include Condition -->
       <context attribute="Normal Text" lineEndContext="#pop" name="IncludeCondition">
         <WordDetect attribute="Keyword" context="#stay" String="condition" insensitive="true"/>
         <DetectChar attribute="Assignment" context="IncludeConditionValue" char="="/>
         <DetectSpaces/>
       </context>
 
-      <context attribute="Normal Text" lineEndContext="#pop" name="IncludeConditionValue">
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="IncludeConditionValue">
         <DetectSpaces/>
         <!-- Illegal Operators -->
         <RegExpr attribute="Error" context="#stay" insensitive="true" String="(?x) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [&gt;&lt;]={2,} | ! ={3,} | ={4,} | [&gt;&lt;]{2,} | &amp;{3,} | \|{3,} | \^+ "/>
         <!-- Legal Operators -->
         <RegExpr attribute="Operator" context="#stay" insensitive="true" String="(?x) (?: (?: \*\* | \* | \+ | - | % | // | / ) | (?: !== | != | === | == | &gt;= | &lt;= | &gt; | &lt; ) | (?: ! | &amp;&amp; | \|\| ) ) "/>
-        <!-- Override Paramenters that can be statically evaluated -->
+        <!-- Override Parameters that can be statically evaluated -->
         <keyword attribute="LanguageVariable" String="static-override-parameters"/>
         <!-- Constant Values -->
-        <keyword attribute="BooleanValue" String="boolean-values"/>
-        <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
-        <Int attribute="Integer" context="#stay"/>
+        <RegExpr attribute="Float" context="#stay" String="[+\-]?\d+\.\d+"/>
+        <RegExpr attribute="Integer" context="#stay" String="[+\-]?\b\d+\b"/>
         <!-- Nested Expressions -->
         <DetectChar attribute="Symbol" context="NestedExpressionForConditionalInclude" char="("/>
       </context>
@@ -957,24 +990,29 @@
         <DetectChar attribute="Symbol" context="#pop" char=")"/>
         <IncludeRules context="IncludeConditionValue"/>
       </context>
-      <!-- Namespaces -->
+      <!-- #endregion Include Condition -->
+
+      <!-- #region Namespace Declaration -->
       <context attribute="Normal Text" lineEndContext="#pop" name="NamespaceDeclaration">
         <WordDetect attribute="Keyword" context="#stay" String="namespace" insensitive="true"/>
         <DetectChar attribute="Assignment" context="NamespaceValue" char="="/>
         <DetectSpaces/>
       </context>
 
-      <context attribute="Normal Text" lineEndContext="#pop" name="NamespaceValue">
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="NamespaceValue">
         <RegExpr attribute="Namespace" context="#pop" insensitive="true" String="[^&gt;\\|/&lt;?:*=$\r\n]+(?:[\\/][^&gt;\\|/&lt;?:*=$\r\n]+)*"/>
       </context>
-      <!-- Section headers -->
+      <!-- #endregion Namespace Declartion -->
+
+      <!-- #region Section headers -->
       <context attribute="Header" lineEndContext="#pop" fallthroughContext="#pop" name="SectionTitle">
         <DetectChar attribute="Header" context="#pop" char="]" beginRegion="Section"/>
         <IncludeRules context="FindSpecialBodyHeaders"/>
-        <RegExpr attribute="Header" context="KVPHeader" insensitive="true" String="(?:(?:Resource|Preset).+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)"/>
-        <RegExpr attribute="Header" context="FullCommandHeader" insensitive="true" String="(?:(?:(?:Shader|Texture)Override|ShaderRegex|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
+        <RegExpr attribute="Header" context="KVPHeader" insensitive="true" String="(?:Resource.+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)"/>
+        <RegExpr attribute="Header" context="FullCommandHeader" insensitive="true" String="(?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
       </context>
 
+        <!-- Normal Headers -->
       <context attribute="Header" lineEndContext="#pop" name="KVPHeader">
         <DetectChar attribute="Header" context="#pop#pop!KVPBody" char="]" beginRegion="Section"/>
       </context>
@@ -982,13 +1020,16 @@
       <context attribute="Header" lineEndContext="#pop" name="FullCommandHeader">
         <DetectChar attribute="Header" context="#pop#pop!FullCommandBody" char="]" beginRegion="Section"/>
       </context>
-      <!-- Special Headers -->
+
+        <!-- Special Headers -->
       <context attribute="Header" lineEndContext="#pop" name="FindSpecialBodyHeaders">
         <StringDetect attribute="Header" context="ConstantsHeader" insensitive="true" String="Constants"/>
         <RegExpr attribute="Header" context="KeyHeader" insensitive="true" String="Key.+(?=\])"/>
+        <RegExpr attribute="Header" context="PresetHeader" insensitive="true" String="Preset.+(?=\])"/>
         <RegExpr attribute="Header" context="RegexPatternHeader" insensitive="true" String="ShaderRegex.+\.Pattern(?=\])"/>
         <RegExpr attribute="Header" context="RegexReplaceHeader" insensitive="true" String="ShaderRegex.+\.Pattern\.Replace(?=\])"/>
         <RegExpr attribute="Header" context="RegexDeclarationsHeader" insensitive="true" String="ShaderRegex.+\.InsertDeclarations(?=\])"/>
+        <RegExpr attribute="Header" context="RegexCommandListHeader" insensitive="true" String="ShaderRegex.+(?!\.(?:Pattern(\.Replace)?|InsertDeclarations))(?=\])"/>
       </context>
 
       <context attribute="Header" lineEndContext="#pop" name="ConstantsHeader">
@@ -997,6 +1038,10 @@
 
       <context attribute="Header" lineEndContext="#pop" name="KeyHeader">
         <DetectChar attribute="Header" context="#pop#pop!KeyBody" char="]" beginRegion="Section"/>
+      </context>
+
+      <context attribute="Header" lineEndContext="#pop" name="PresetHeader">
+        <DetectChar attribute="Header" context="#pop#pop!PresetBody" char="]" beginRegion="Section"/>
       </context>
 
       <context attribute="Header" lineEndContext="#pop" name="RegexPatternHeader">
@@ -1010,52 +1055,233 @@
       <context attribute="Header" lineEndContext="#pop" name="RegexDeclarationsHeader">
         <DetectChar attribute="Header" context="#pop#pop!RegexDeclarationsBody" char="]" beginRegion="Section"/>
       </context>
-      <!-- Special Bodies -->
+
+      <context attribute="Header" lineEndContext="#pop" name="RegexCommandListHeader">
+        <DetectChar attribute="Header" context="#pop#pop!FullCommandBody" char="]" beginRegion="Section"/>
+      </context>
+      <!-- #endregion -->
+
+      <!-- #region Special Bodies -->
+        <!-- #region Constants Body -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="ConstantsBody">
         <DetectSpaces/>
-        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
-        <!-- Conditional Expressions -->
-        <RegExpr attribute="ControlFlow" context="OperationalExpression" insensitive="true" String="(?:(if|elif|else if)(?= )|(else[ \t]*$|endif[ \t]*$))"/>
-        <!-- Declarations (Left Expressions) -->
-        <IncludeRules context="LeftExpression"/>
+        <IncludeRules context="DetectComments"/>
+        <RegExpr attribute="Normal Text" context="GlobalDeclaration" insensitive="true" lookAhead="true" String="(?:persist\s+)?global\s+(?:persist\s+)?\$\w+\s*(?:=\s*(?:[+\-]?[\d.]+|inf|NaN))?"/>
+        <IncludeRules context="PrimaryStatements"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="GlobalDeclaration">
+        <WordDetect attribute="Modifier" context="#stay" insensitive="true" String="global"/>
+        <WordDetect attribute="Modifier" context="#stay" insensitive="true" String="persist"/>
+        <DetectChar attribute="Variable" context="VariableIdentifier" char="$"/>
+        <DetectChar attribute="Assignment" context="StaticValue" char="="/>
+      </context>
+        <!-- #endregion Constants Body -->
+
+        <!-- #region Key Section Body -->
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="KeyBody">
+        <DetectSpaces/>
+        <IncludeRules context="DetectComments"/>
+        <!-- Key-Value Pairs: type, transition_type, release_transition_type -->
+        <WordDetect attribute="Keyword" context="KeyBindingTypeValue" insensitive="true" String="type"/>
+        <WordDetect attribute="Keyword" context="TransitionTypeValueList" insensitive="true" String="transition_type"/>
+        <WordDetect attribute="Keyword" context="TransitionTypeValueList" insensitive="true" String="release_transition_type"/>
+        <!-- Key Bindings -->
+        <WordDetect attribute="Keyword" context="MatchKeyBinding" insensitive="true" String="key"/>
+        <WordDetect attribute="Keyword" context="MatchKeyBinding" insensitive="true" String="back"/>
+        <!-- Delays: settings that only take numeric values -->
+        <WordDetect attribute="Keyword" context="PureNumberValueStatement" insensitive="true" String="delay"/>
+        <WordDetect attribute="Keyword" context="PureNumberValueStatement" insensitive="true" String="release_delay"/>
+        <!-- Boolean settings -->
+        <WordDetect attribute="Keyword" context="BooleanSettingValueStatement" insensitive="true" String="wrap"/>
+        <WordDetect attribute="Keyword" context="BooleanSettingValueStatement" insensitive="true" String="smart"/>
+        <!-- Integer settings: separation, convergence, transition, release_transition -->
+        <WordDetect attribute="Keyword" context="IntegerSettingValueStatement" insensitive="true" String="separation"/>
+        <WordDetect attribute="Keyword" context="IntegerSettingValueStatement" insensitive="true" String="convergence"/>
+        <WordDetect attribute="Keyword" context="IntegerSettingValueList" insensitive="true" String="transition"/>
+        <WordDetect attribute="Keyword" context="IntegerSettingValueList" insensitive="true" String="release_transition"/>
+        <!-- Condition Statement -->
+        <WordDetect attribute="Keyword" context="ConditionSettingList" insensitive="true" String="condition"/>
+        <!-- Run Instruction Statement -->
+        <WordDetect attribute="Instruction" context="RunInstructionList" insensitive="true" String="run"/>
+        <!-- INI Parameter Static Assignment -->
+        <RegExpr attribute="ShaderParameter" context="StaticValueAssignmentList" insensitive="true" String="\b(?:(?&lt;!$)[xyzw]\d{0,3})\b"/>
+        <!-- Named Variable Static Assignment -->
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariableStaticAssignmentList" lookAhead="true" char="$"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="MatchKeyBinding">
+        <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="KeyBinding" char="="/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="KeyBindingTypeValue">
+        <DetectSpaces/>
         <!-- Assignment Operator -->
         <DetectChar attribute="Assignment" context="#stay" char="="/>
-        <!-- Declarations (Right Words and Values) -->
-        <IncludeRules context="OperationalExpression"/>
+        <WordDetect attribute="RValue" context="#pop" insensitive="true" String="hold"/>
+        <WordDetect attribute="RValue" context="#pop" insensitive="true" String="activate"/>
+        <WordDetect attribute="RValue" context="#pop" insensitive="true" String="toggle"/>
+        <WordDetect attribute="RValue" context="#pop" insensitive="true" String="cycle"/>
       </context>
 
-      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="KeyBody">
-        <WordDetect attribute="Keyword" context="ConditionDeclaration" String="condition" insensitive="true" lookAhead="true"/>
-        <keyword attribute="Instruction" String="instructions"/>
-        <IncludeRules context="FindVariable"/>
-        <IncludeRules context="KVPBody"/>
-      </context>
-
-      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="ConditionDeclaration">
-        <WordDetect attribute="Keyword" context="#stay" String="condition" insensitive="true"/>
-        <DetectChar attribute="Assignment" context="OperationalExpression" char="="/>
+      <context attribute="Normal Text" lineEndContext="#pop" name="TransitionTypeValueList">
         <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <WordDetect attribute="RValue" context="#stay" insensitive="true" String="linear"/>
+        <WordDetect attribute="RValue" context="#stay" insensitive="true" String="cosine"/>
+        <DetectChar String=","/>
       </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="BooleanSettingValueStatement">
+        <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Boolean Values -->
+        <keyword attribute="BooleanValue" context="#pop" String="boolean-values"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="PureNumberValueStatement">
+        <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Float -->
+        <RegExpr attribute="Float" context="#pop" String="[+\-]?\b\d+\.\d+\b"/>
+        <!-- Integer -->
+        <RegExpr attribute="Integer" context="#pop" String="[+\-]?\b\d+\b"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="IntegerSettingValueStatement">
+        <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Integer -->
+        <RegExpr attribute="Integer" context="#pop" String="[+\-]?\b\d+\b"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="IntegerSettingValueList">
+        <IncludeRules context="IntegerSettingValueStatement"/>
+        <DetectChar String=","/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="ConditionSettingList">
+        <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="OperationalExpressionList" char="="/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="OperationalExpressionList">
+        <!-- Can be any operational expression, it just has to evaluate to 0 or 1 -->
+        <IncludeRules context="OperationalExpression"/>
+        <DetectChar String=","/>
+      </context>
+
+          <!-- Run Instruction Statement List for Key Body, supporting cycle -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="RunInstructionList">
+        <!-- RunInstruction already includes the Assignment Operator check; this is IncludeRules, so no context switch happens -->
+        <IncludeRules context="RunInstruction"/>
+        <DetectChar String=","/>
+      </context>
+
+          <!-- INI Parameter Static Assignment for Key Body, supporting cycle -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="StaticValueAssignmentList">
+        <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Number List -->
+        <IncludeRules context="StaticValue"/>
+        <DetectChar String=","/>
+      </context>
+
+          <!-- Named Variable Static Assignment for Key Body, supporting cycle -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="MaybeNamespacedVariableStaticAssignmentList">
+        <DetectSpaces/>
+        <!-- Named Variable with possible namespace resolution -->
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Number List -->
+        <IncludeRules context="StaticValue"/>
+        <DetectChar String=","/>
+      </context>
+        <!-- #endregion Key Body -->
+
+        <!-- #region Preset Section Body -->
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="PresetBody">
+        <DetectSpaces/>
+        <IncludeRules context="DetectComments"/>
+        <!-- Key-Value Pairs: type, transition_type, release_transition_type -->
+        <WordDetect attribute="Keyword" context="TransitionTypeValueStatement" insensitive="true" String="transition_type"/>
+        <WordDetect attribute="Keyword" context="TransitionTypeValueStatement" insensitive="true" String="release_transition_type"/>
+        <!-- Integer settings: separation, convergence, transition, release_transition -->
+        <WordDetect attribute="Keyword" context="IntegerSettingValueStatement" insensitive="true" String="separation"/>
+        <WordDetect attribute="Keyword" context="IntegerSettingValueStatement" insensitive="true" String="convergence"/>
+        <WordDetect attribute="Keyword" context="IntegerSettingValueStatement" insensitive="true" String="transition"/>
+        <WordDetect attribute="Keyword" context="IntegerSettingValueStatement" insensitive="true" String="release_transition"/>
+        <WordDetect attribute="Keyword" context="IntegerSettingValueStatement" insensitive="true" String="unique_triggers_required"/>
+        <!-- Condition Statement -->
+        <WordDetect attribute="Keyword" context="ConditionSettingStatement" insensitive="true" String="condition"/>
+        <!-- Run Instruction Statement -->
+        <WordDetect attribute="Instruction" context="RunInstruction" insensitive="true" String="run"/>
+        <!-- INI Parameter Static Assignment -->
+        <RegExpr attribute="ShaderParameter" context="StaticValueAssignment" insensitive="true" String="\b(?:(?&lt;!$)[xyzw]\d{0,3})\b"/>
+        <!-- Named Variable Static Assignment -->
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariableStaticAssignment" lookAhead="true" char="$"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="TransitionTypeValueStatement">
+        <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <WordDetect attribute="RValue" context="#pop" insensitive="true" String="linear"/>
+        <WordDetect attribute="RValue" context="#pop" insensitive="true" String="cosine"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="ConditionSettingStatement">
+        <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="OperationalExpression" char="="/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="StaticValueAssignment">
+        <DetectSpaces/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="StaticValue" char="="/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="MaybeNamespacedVariableStaticAssignment">
+        <DetectSpaces/>
+        <!-- Named Variable with possible namespace resolution -->
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="StaticValue" char="="/>
+      </context>
+        <!-- #endregion Preset Section Body -->
 
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="(escape embedded language)">
         <StringDetect attribute="Header" context="#pop!ConstantsHeader" insensitive="true" lookAhead="true" String="[Constants]"/>
         <RegExpr attribute="Header" context="#pop!KeyHeader" insensitive="true" lookAhead="true" String="\[Key.+(?=\])"/>
+        <RegExpr attribute="Header" context="#pop!PresetHeader" insensitive="true" lookAhead="true" String="\[Preset.+(?=\])"/>
         <RegExpr attribute="Header" context="#pop!RegexPatternHeader" insensitive="true" lookAhead="true" String="\[ShaderRegex.+\.Pattern(?=\])"/>
         <RegExpr attribute="Header" context="#pop!RegexReplaceHeader" insensitive="true" lookAhead="true" String="\[ShaderRegex.+\.Pattern\.Replace(?=\])"/>
         <RegExpr attribute="Header" context="#pop!RegexDeclarationsHeader" insensitive="true" lookAhead="true" String="\[ShaderRegex.+\.InsertDeclarations(?=\])"/>
-        <RegExpr attribute="Header" context="#pop!KVPHeader" insensitive="true" lookAhead="true" String="\[(?:(?:Resource|Preset).+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)"/>
-        <RegExpr attribute="Header" context="#pop!FullCommandHeader" insensitive="true" lookAhead="true" String="\[(?:(?:(?:Shader|Texture)Override|ShaderRegex|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
+        <RegExpr attribute="Header" context="#pop!RegexCommandListHeader" insensitive="true" String="\[ShaderRegex.+(?!\.(?:Pattern(\.Replace)?|InsertDeclarations))(?=\])"/>
+        <RegExpr attribute="Header" context="#pop!KVPHeader" insensitive="true" lookAhead="true" String="\[(?:Resource.+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)"/>
+        <RegExpr attribute="Header" context="#pop!FullCommandHeader" insensitive="true" lookAhead="true" String="\[(?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
       </context>
 
+        <!-- #region Regex Bodies -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="RegexPatternBody">
-        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <IncludeRules context="DetectComments"/>
         <!-- Need to detect the possible headers to avoid being stuck with the PCRE2 rules always matching -->
         <IncludeRules context="(escape embedded language)"/>
         <IncludeRules context="Patterns##PCRE2" includeAttrib="false"/>
       </context>
 
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="RegexReplaceBody">
-        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <IncludeRules context="DetectComments"/>
         <!-- Need to detect the possible headers to avoid being stuck with the PCRE2 rules always matching -->
         <IncludeRules context="(escape embedded language)"/>
         <IncludeRules context="Replacement##PCRE2" includeAttrib="false"/>
@@ -1063,100 +1289,27 @@
 
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="RegexDeclarationsBody">
         <!-- There is no highlighting for DXBC, probably because it's much older and DXIL is the intermediate language used now. DXBC is around for debugging purposes -->
-        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <IncludeRules context="DetectComments"/>
         <AnyChar String=".,':{}|?!@#%^&amp;*/+=`~"/>
         <DetectIdentifier/>
         <DetectSpaces/>
       </context>
-      <!-- Common Bodies -->
+        <!-- #endregion Regex Bodies -->
+      <!-- #endregion Special Bodies -->
+
+      <!-- #region Common Bodies -->
+        <!-- #region Non-CL Section Bodies -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="KVPBody">
         <DetectSpaces/>
-        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
+        <IncludeRules context="DetectComments"/>
+        <!-- Settings Statement -->
         <IncludeRules context="Keys"/>
-        <DetectChar attribute="Assignment" context="KVPRValues" char="="/>
+        <DetectChar attribute="Assignment" context="KeyValues" char="="/>
       </context>
 
-      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="KVPRValues">
-        <IncludeRules context="KeyValue"/>
-        <IncludeRules context="Value"/>
-      </context>
-
-      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="FullCommandBody">
-        <DetectSpaces/>
-        <DetectChar attribute="Comment" context="Comment" char=";" firstNonSpace="true"/>
-        <!-- Conditional Expressions -->
-        <RegExpr attribute="ControlFlow" context="OperationalExpression" insensitive="true" String="(?:(if|elif|else if)(?= )|(else[ \t]*$|endif[ \t]*$))"/>
-        <!-- Definitions (Left Words) -->
-        <IncludeRules context="Keys"/>
-        <!-- Declarations (Left Expressions) -->
-        <IncludeRules context="LeftExpression"/>
-        <!-- Assignment Operator -->
-        <DetectChar attribute="Assignment" context="#stay" char="="/>
-        <!-- Definitions (Right Words and Values) -->
-        <IncludeRules context="KeyValue"/>
-        <!-- Declarations (Right Words and Values) -->
-        <IncludeRules context="OperationalExpression"/>
-      </context>
-      <!-- Body Contents -->
-      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="OperationalExpression">
-        <DetectSpaces/>
-        <!-- Functional Expression start -->
-        <keyword attribute="Instruction" String="resource-usage-modifiers"/>
-        <!-- Illegal Operators -->
-        <RegExpr attribute="Error" context="#stay" insensitive="true" String="(?x) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [&gt;&lt;]={2,} | ! ={3,} | ={4,} | [&gt;&lt;]{2,} | &amp;{3,} | \|{3,} | \^+ "/>
-        <!-- Legal Operators -->
-        <RegExpr attribute="Operator" context="#stay" insensitive="true" String="(?x) (?: (?: \*\* | \* | \+ | - | % | // | / ) | (?: !== | != | === | == | &gt;= | &lt;= | &gt; | &lt; ) | (?: ! | &amp;&amp; | \|\| ) ) "/>
-        <!-- Variables -->
-        <keyword attribute="LanguageVariable" String="override-parameters"/>
-        <IncludeRules context="FindVariable"/>
-        <!-- unless_null -->
-        <keyword attribute="ControlFlow" String="unless-null"/>
-        <!-- Constants -->
-        <keyword attribute="LanguageVariable" String="language-constants"/>
-        <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
-        <RegExpr attribute="Integer" context="#stay" String="\b\d+\b"/>
-          <!-- 3dm hash value -->
-        <RegExpr attribute="Normal Text" context="#stay" insensitive="true" String="\b[a-z0-9]+\b"/>
-          <!-- Because CustomShader sections can have shader variables take values of Paths/Files -->
-        <RegExpr attribute="Path" context="#stay" insensitive="true" String="(?=.*\\)(?:(?:(?:[a-z]:|\.)\\)?[\w@&amp;'\-.()]+(?:\\[\w@&amp; '\-.()]+)+)"/>
-        <RegExpr attribute="File" context="#stay" insensitive="true" String="[\w@'\-.()]+\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"/>
-          <!-- For lists of numbers in draw calls -->
-        <DetectChar char=","/>
-        <!-- Round Brackets -->
-        <DetectChar attribute="Symbol" context="NestedOperationalExpression" char="("/>
-      </context>
-
-      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="NestedOperationalExpression">
-        <DetectChar attribute="Symbol" context="#pop" char=")"/>
-        <IncludeRules context="OperationalExpression"/>
-      </context>
-
-      <context attribute="Normal Text" lineEndContext="#pop" name="LeftExpression">
-        <keyword attribute="Modifier" String="modifiers"/>
-        <keyword attribute="Instruction" String="instructions"/>
-        <IncludeRules context="FindVariable"/>
-      </context>
-
-      <context attribute="Normal Text" lineEndContext="#pop" name="FindVariable">
-        <RegExpr attribute="LanguageVariable" insensitive="true" String="\b(?&lt;!\.)(?:[vhdgpc]s-cb\d{1,2}|vb\d|ib|(?:[rf]_)?bb)\b"/>
-        <RegExpr attribute="LanguageVariable" insensitive="true" String="\b([pc]s-u\d|s?o\d|od|[vhdgpc]s(?:-t\d{1,3})?)\b"/>
-        <RegExpr attribute="ShaderParameter" insensitive="true" String="\b(?:(?&lt;!$)[xyzw]\d{0,3})\b"/>
-        <keyword attribute="LanguageVariable" String="resource-identifiers"/>
-        <RegExpr attribute="Function" context="NamespacedCallableSection" insensitive="true" lookAhead="true" String="(CommandList|CustomShader|Resource|ShaderRegex)(?=\\)"/>
-        <RegExpr attribute="Function" context="SectionIdentifier" insensitive="true" String="(?:(?:BuiltIn)?(?:CommandList|CustomShader)|Resource|ShaderRegex)(?=.+\b)"/>
-        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
-        <DetectSpaces/>
-      </context>
-
-      <context attribute="Keyword" lineEndContext="#stay" name="Keys">
+      <context attribute="Keyword" lineEndContext="#pop" name="Keys">
         <keyword attribute="Keyword" String="multi-section-keywords"/>
-        <keyword attribute="Keyword" String="key-section-keywords"/>
         <keyword attribute="Keyword" String="resource-section-keywords"/>
-        <keyword attribute="Keyword" String="texture-override-keywords"/>
-        <keyword attribute="Keyword" String="custom-shader-keywords"/>
-        <keyword attribute="Keyword" String="custom-shader-blend-state"/>
-        <keyword attribute="Keyword" String="shader-regex-keywords"/>
-        <keyword attribute="Keyword" String="shader-override-keywords"/>
         <keyword attribute="Keyword" String="include-section-keywords"/>
         <keyword attribute="Keyword" String="logging-section-keywords"/>
         <keyword attribute="Keyword" String="hunting-section-keywords"/>
@@ -1166,82 +1319,441 @@
         <keyword attribute="Keyword" String="stereo-section-keywords"/>
         <keyword attribute="Keyword" String="rendering-section-keywords"/>
       </context>
-        <!-- Namespaced Sections and Variables -->
-      <context attribute="Normal Text" lineEndContext="#pop" name="MaybeNamespacedVariable" fallthroughContext="#pop!Identifier">
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="KeyValues">
+        <keyword attribute="RValue" String="multi-section-key-values"/>
+        <keyword attribute="Type" String="resource-section-key-types"/>
+        <keyword attribute="RValue" String="resource-section-key-values"/>
+        <keyword attribute="Type" String="dxgi-formats"/>
+        <keyword attribute="RValue" String="system-section-key-values"/>
+        <keyword attribute="RValue" String="device-rendering-key-values"/>
+        <keyword attribute="RValue" String="marking-key-values"/>
+        <keyword attribute="RValue" String="frame-analysis-options"/>
+        <keyword attribute="Modifier" String="key-binding-modifiers"/>
+        <!-- Strings, Paths and Files, Numbers -->
+        <IncludeRules context="Value"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="KeyBinding">
+        <DetectSpaces/>
+        <keyword attribute="Modifier" String="key-binding-modifiers"/>
+        <DetectIdentifier/>
+        <AnyChar String="./;'[]=\`"/>
+      </context>
+        <!-- #endregion Non-CL Section Bodies -->
+
+        <!-- #region CL Section Bodies -->
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="FullCommandBody">
+        <DetectSpaces/>
+        <IncludeRules context="DetectComments"/>
+        <!-- Setting Statements -->
+        <RegExpr attribute="Normal Text" context="SettingStatement" insensitive="true" lookAhead="true" String="(?!\b(?:run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|condition|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|vb\d|ib|(?:[rf]_)?bb|s?o\d|od|(?&lt;!$)[xyzw]\d{0,3}|this|(?:ini|stereo)params|cursor_(?:mask|color)|Resource.+)\b)[\w\[\]]+\s*=\s*[^\r\n]+"/>
+        <!-- Primary Statements -->
+          <!-- Detect a Local Declaration (Separated from PrimaryStatements because they are not allowed in Constants section which also includes PrimaryStatements) -->
+        <RegExpr attribute="Normal Text" context="LocalDeclaration" insensitive="true" lookAhead="true" String="local\s+\$\w+\s*(?:=\s*[^\\r\\n]+)?"/>
+        <IncludeRules context="PrimaryStatements"/>
+      </context>
+
+          <!-- #region CL Setting Statement -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="SettingStatement">
+        <IncludeRules context="CL-Section-Keys"/>
+        <DetectChar attribute="Assignment" context="CL-Section-KeyValues" char="="/>
+      </context>
+
+      <context attribute="Keyword" lineEndContext="#stay" name="CL-Section-Keys">
+        <keyword attribute="Keyword" String="multi-section-keywords"/>
+        <keyword attribute="Keyword" String="texture-override-keywords"/>
+        <keyword attribute="Keyword" String="custom-shader-keywords"/>
+        <keyword attribute="Keyword" String="custom-shader-blend-state-keys"/>
+        <keyword attribute="Keyword" String="shader-regex-keywords"/>
+        <keyword attribute="Keyword" String="shader-override-keywords"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="CL-Section-KeyValues">
+        <keyword attribute="RValue" String="multi-section-key-values"/>
+        <keyword attribute="RValue" String="fuzzy-match-key-values"/>
+        <keyword attribute="RValue" String="shader-override-key-values"/>
+        <keyword attribute="RValue" String="custom-shader-key-values"/>
+        <keyword attribute="RValue" String="custom-shader-compile-flags"/>
+        <keyword attribute="Operator" String="blend-operators"/>
+        <keyword attribute="RValue" String="blend-factors"/>
+        <!-- Strings, Paths and Files, Numbers -->
+        <IncludeRules context="Value"/>
+        <!-- Fuzzy Match Expression -->
+        <RegExpr attribute="Normal Text" context="FuzzyMatchExpression" insensitive="true" lookAhead="true" String="(?x) ([&gt;&lt;]=?|[!=])? \s* (?: \b (\d+) \b | (?: \b ((?:res_)?(?:width|height)|depth|array) \b \s* (?:(\*)\s*\b(\d+)\b)? \s* (?:(/)\s*\b(\d+)\b)? ) )"/>
+      </context>
+          <!-- #endregion CL Setting Statement -->
+
+          <!-- #region Primary Statements -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="LocalDeclaration">
+        <WordDetect attribute="Modifier" context="#stay" insensitive="true" String="local"/>
+        <DetectChar attribute="Variable" context="VariableIdentifier" char="$"/>
+        <DetectChar attribute="Assignment" context="OperationalExpression" char="="/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="PrimaryStatements">
+        <!-- Detect a Conditional Statement -->
+        <RegExpr attribute="ControlFlow" context="OperationalExpression" insensitive="true" String="(?:(if|elif|else if)(?= )|(else[ \t]*$|endif[ \t]*$))"/>
+        <!-- Detect an Assignment Statement -->
+        <RegExpr attribute="Normal Text" context="AssignmentStatement" insensitive="true" lookAhead="true" String="(?x) (?:(?:pre|post)\s+)? (?: \$ (?:\\.+\\)? \w+ | \b[xyzw]\d{0,3}\b | \b[vgdhpcsturfibo\-\d_]+\b | this | (?:ini|stereo)params | cursor_(?:mask|color) | Resource.+ ) \s* = \s* [^\\r\\n]+"/>
+        <!-- Detect an Instruction Statement -->
+        <RegExpr attribute="Normal Text" context="InstructionStatement" insensitive="true" lookAhead="true" String="(?x) (?:(?:pre|post)\s+)? (?: run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store| (?:draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?) \s* = \s* [^\\r\\n]+ )"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="AssignmentStatement">
+        <!-- pre/post keywords -->
+        <keyword attribute="ControlFlow" String="command-flow-keywords"/>
+        <!-- ini parameters, resources, named variables (+namespaced) -->
+        <IncludeRules context="Assignables"/>
+        <!-- Assignment Operator -->
+        <DetectChar attribute="Assignment" context="AssignmentExpressions" char="="/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="Assignables">
+        <RegExpr attribute="ShaderParameter" insensitive="true" String="\b(?:(?&lt;!$)[xyzw]\d{0,3})\b"/>
+        <IncludeRules context="Resources"/>
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="AssignmentExpressions">
+        <IncludeRules context="ResourceUsageExpression"/>
+        <IncludeRules context="OperationalExpression"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="InstructionStatement">
+        <DetectSpaces/>
+        <!-- pre/post keywords -->
+        <keyword attribute="ControlFlow" String="command-flow-keywords"/>
+        <!-- CheckTextureOverride Instruction: takes resource as a value -->
+        <WordDetect attribute="Instruction" context="CTOInstruction" insensitive="true" String="checktextureoverride"/>
+        <!-- Run Instruction: takes Explicit CommandList or CustomShader as a value -->
+        <WordDetect attribute="Instruction" context="RunInstruction" insensitive="true" String="run"/>
+        <!-- Preset Instructions: take a Preset section as a value -->
+        <WordDetect attribute="Instruction" context="PresetInstruction" insensitive="true" String="preset"/>
+        <WordDetect attribute="Instruction" context="PresetInstruction" insensitive="true" String="exclude_preset"/>
+        <!-- Handling Instruction: takes a handling keyword as a value -->
+        <WordDetect attribute="Instruction" context="HandlingInstruction" insensitive="true" String="handling"/>
+        <!-- Reset Per-frame Limits Instruction: takes a Custom Resource or a CustomShader as a value -->
+        <WordDetect attribute="Instruction" context="RPFLimitsInstruction" insensitive="true" String="reset_per_frame_limits"/>
+        <!-- Clear Instruction: takes a space-separated list of up to 4 numbers, including hex numbers, specific keywords, and a resource -->
+        <WordDetect attribute="Instruction" context="ClearInstruction" insensitive="true" String="clear"/>
+        <!-- Stereo Instructions: take numeric constants as a value -->
+        <WordDetect attribute="Instruction" context="StereoInstruction" insensitive="true" String="separation"/>
+        <WordDetect attribute="Instruction" context="StereoInstruction" insensitive="true" String="convergence"/>
+        <!-- Direct Mode Eye Instruction: takes a keyword as a value -->
+        <WordDetect attribute="Instruction" context="DMEInstruction" insensitive="true" String="direct_mode_eye"/>
+        <!-- Analyse Instruction: takes a space-separated list of analysis options as a value -->
+        <WordDetect attribute="Instruction" context="AnalysisInstruction" insensitive="true" String="analyse_options"/>
+        <!-- Dump Instruction: takes same as Analyse Instruction + a resource -->
+        <WordDetect attribute="Instruction" context="DumpInstruction" insensitive="true" String="dump"/>
+        <!-- Special Instruction: takes a keyword as a value -->
+        <WordDetect attribute="Instruction" context="SpecialInstruction" insensitive="true" String="special"/>
+        <!-- Store Instruction: takes 3 comma-separated arguments - A named variable, a resource usage expression, an integer -->
+        <WordDetect attribute="Instruction" context="StoreInstruction" insensitive="true" String="store"/>
+        <!-- Draw Instructions, separated only for organization -->
+        <IncludeRules context="DrawInstructions"/>
+      </context>
+          <!-- #endregion Primary Statements -->
+
+          <!-- #region Instruction Statements -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="CTOInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Resource -->
+        <IncludeRules context="Resources"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="RunInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Explicit CommandList, CustomShader -->
+        <RegExpr attribute="Function" context="MaybeNamespacedUseableSection" insensitive="true" String="(?:(?:BuiltIn)?CommandList|CustomShader)(?=.+\b)"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="PresetInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Preset sections, namespaced requires "Preset" prefix, able to be used without prefix -->
+        <RegExpr attribute="Function" context="MaybeNamespacedUseableSection" insensitive="true" String="Preset(?=.+\b)"/>
+        <IncludeRules context="SectionIdentifier"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="HandlingInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Handling Keywords -->
+        <WordDetect attribute="RValue" insensitive="true" String="skip"/>
+        <WordDetect attribute="RValue" insensitive="true" String="abort"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="RPFLimitsInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Custom Resource or CustomShader -->
+        <RegExpr attribute="Variable" context="MaybeNamespacedUseableSection" insensitive="true" String="Resource(?=.+\b)"/>
+        <RegExpr attribute="Function" context="MaybeNamespacedUseableSection" insensitive="true" String="(?:(?:BuiltIn)?CustomShader)(?=.+\b)"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="ClearInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- numeric constants, keywords, Custom Resources -->
+        <RegExpr attribute="Variable" context="MaybeNamespacedUseableSection" insensitive="true" String="Resource(?=.+\b)"/>
+        <IncludeRules context="StaticValue"/>
+          <!-- Hex numbers -->
+        <RegExpr attribute="Hexadecimal" insensitive="true" String="\b0x[a-f0-9]+\b"/>
+        <WordDetect attribute="RValue" insensitive="true" String="int"/>
+        <WordDetect attribute="RValue" insensitive="true" String="depth"/>
+        <WordDetect attribute="RValue" insensitive="true" String="stencil"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="StereoInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Numbers -->
+        <RegExpr attribute="Float" context="#stay" String="[+\-]?\b\d+\.\d+\b"/>
+        <RegExpr attribute="Integer" context="#stay" String="[+\-]?\b\d+\b"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="DMEInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Direct Mode Eye keywords -->
+        <WordDetect attribute="RValue" insensitive="true" String="mono"/>
+        <WordDetect attribute="RValue" insensitive="true" String="left"/>
+        <WordDetect attribute="RValue" insensitive="true" String="right"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="AnalysisInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- keywords: Frame Analysis Options -->
+        <keyword attribute="RValue" String="frame-analysis-options"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="DumpInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- keywords: Frame Analysis Options + Resource -->
+        <keyword attribute="RValue" String="frame-analysis-options"/>
+        <IncludeRules context="Resources"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="SpecialInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <!-- Special keywords -->
+        <WordDetect attribute="RValue" insensitive="true" String="upscaling_switch_bb"/>
+        <WordDetect attribute="RValue" insensitive="true" String="draw_3dmigoto_overlay"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="StoreInstruction">
+        <!-- Execution Operator -->
+        <DetectSpaces/>
+        <DetectChar attribute="Assignment" context="FindStoreExpression" char="="/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="FindStoreExpression">
+        <!-- Ensure everything in the right order before highlighting with no regard for order -->
+        <RegExpr attribute="Normal Text" context="StoreExpression" insensitive="true" lookAhead="true" String="(?:\$[^,\r\n]+\s*,\s*[^,\r\n]+\s*,\s*\d+)"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="StoreExpression">
+        <!-- Named Variable -->
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
+        <!-- Resource Usage Expression -->
+        <IncludeRules context="ResourceUsageExpression"/>
+        <!-- Integer -->
+        <RegExpr attribute="Integer" context="#stay" String="[+\-]?\b\d+\b"/>
+      </context>
+          <!-- #endregion Instruction Statements -->
+
+          <!-- #region Draw Instruction Statements -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="DrawInstructions">
+        <!-- "Direct" Draw Instructions -->
+        <keyword attribute="Instruction" context="DrawExpression" String="direct-draw-instructions"/>
+        <!-- Indirect Draw Instructions -->
+        <keyword attribute="Instruction" context="FindResourceOffsetExpression" String="indirect-draw-instructions"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="DrawExpression">
+        <DetectSpaces/>
+        <!-- Execution Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <DetectChar attribute="Operator" context="#stay" char=","/>
+        <!-- Integer -->
+        <RegExpr attribute="Integer" context="#stay" String="[+\-]?\b\d+\b"/>
+        <WordDetect attribute="Instruction" context="#pop" insensitive="true" String="auto"/>
+        <WordDetect attribute="Instruction" context="#pop" insensitive="true" String="from_caller"/>
+        <!-- Named Variable -->
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="FindResourceOffsetExpression">
+        <DetectSpaces/>
+        <!-- Execution Operator -->
+        <DetectChar attribute="Assignment" context="#stay" char="="/>
+        <RegExpr attribute="Normal Text" context="ResourceOffsetExpression" insensitive="true" lookAhead="true" String="(?x) [^,\d\r\n]+ \s* , \s* \d+ \s*"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="ResourceOffsetExpression">
+        <DetectSpaces/>
+        <DetectChar attribute="Operator" context="#stay" char=","/>
+        <IncludeRules context="Resources"/>
+        <!-- Integer -->
+        <RegExpr attribute="Integer" context="#stay" String="[+\-]?\b\d+\b"/>
+      </context>
+          <!-- #endregion Draw Instruction Statements -->
+        <!-- #endregion CL Section Bodies -->
+      <!-- #endregion Common Bodies -->
+      
+      <!-- #region Expressions -->
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="ResourceUsageExpression">
+        <keyword attribute="Modifier" String="resource-usage-modifiers"/>
+        <IncludeRules context="Resources"/>
+        <DetectSpaces/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="FuzzyMatchExpression">
+        <DetectSpaces/>
+        <RegExpr attribute="Operator" dynamic="true" String="%1"/>
+        <StringDetect attribute="Integer" dynamic="true" String="%2"/>
+        <StringDetect attribute="RValue" dynamic="true" String="%3"/>
+        <DetectChar attribute="Operator" String="4"/>
+        <StringDetect attribute="Integer" dynamic="true" String="%5"/>
+        <DetectChar attribute="Operator" String="6"/>
+        <StringDetect attribute="Integer" dynamic="true" String="%7"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="OperationalExpression">
+        <DetectSpaces/>
+        <!-- Illegal Operators -->
+        <RegExpr attribute="Error" context="#stay" insensitive="true" String="(?x) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [&gt;&lt;]={2,} | ! ={3,} | ={4,} | [&gt;&lt;]{2,} | &amp;{3,} | \|{3,} | \^+ "/>
+        <!-- Legal Operators -->
+        <RegExpr attribute="Operator" context="#stay" insensitive="true" String="(?x) (?: (?: \*\* | \* | \+ | - | % | // | / ) | (?: !== | != | === | == | &gt;= | &lt;= | &gt; | &lt; ) | (?: ! | &amp;&amp; | \|\| ) ) "/>
+        <!-- Operands -->
+          <!-- Constants, numeric -->
+        <IncludeRules context="StaticValue"/>
+          <!-- Named Variable -->
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
+          <!-- INI Parameter -->
+        <RegExpr attribute="ShaderParameter" insensitive="true" String="\b(?:(?&lt;!$)[xyzw]\d{0,3})\b"/>
+          <!-- Resources -->
+        <IncludeRules context="Resources"/>
+          <!-- Shader Identifiers, must match after Resources -->
+        <RegExpr attribute="LanguageVariable" insensitive="true" String="\b[vhdgpc]s\b"/>
+          <!-- Numbered Scissor Rectangle -->
+        <RegExpr attribute="LanguageVariable" insensitive="true" String="\bscissor\d+_(?:left|top|right|bottom)\b"/>
+          <!-- Override Parameters -->
+        <keyword attribute="LanguageVariable" String="override-parameters"/>
+        <!-- Round Brackets -->
+        <DetectChar attribute="Symbol" context="NestedOperationalExpression" char="("/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="NestedOperationalExpression">
+        <DetectChar attribute="Symbol" context="#pop" char=")"/>
+        <IncludeRules context="OperationalExpression"/>
+      </context>
+
+        <!-- #region Namespaced Sections and Variables -->
+          <!-- #region Named Variables -->
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop!VariableIdentifier" name="MaybeNamespacedVariable">
         <DetectChar attribute="Symbol" context="VariableNamespaceValue" char="\"/>
       </context>
 
-      <context attribute="Variable" lineEndContext="#pop" name="Identifier" fallthroughContext="#pop">
-        <DetectChar attribute="Symbol" context="#stay" char="\"/>
-        <DetectIdentifier attribute="Variable" context="#pop"/>
+      <context attribute="Normal Text" lineEndContext="#pop" name="VariableNamespaceValue">
+        <RegExpr attribute="Namespace" context="#pop!NamespacedVariableIdentifier" insensitive="true" String="[^&gt;|/&lt;?:*=$\r\n]+(?:\\[^&gt;\\|/&lt;?:*=$\r\n]+)*(?=\\)"/>
       </context>
 
-      <context attribute="Variable" lineEndContext="#pop" name="SectionIdentifier">
+      <context attribute="Normal Text" lineEndContext="#pop" name="NamespacedVariableIdentifier">
         <DetectChar attribute="Symbol" context="#stay" char="\"/>
-        <RegExpr attribute="Variable" context="#pop" insensitive="true" String="[\w.\-]+"/>
+        <IncludeRules context="VariableIdentifier"/>
+      </context>
+
+      <context attribute="Variable" lineEndContext="#pop" name="VariableIdentifier">
+        <DetectIdentifier attribute="Variable" context="#pop"/>
+      </context>
+          <!-- #endregion Named Variables -->
+          
+          <!-- #region Callable Sections and Custom Resources -->
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop!SectionIdentifier" name="MaybeNamespacedUseableSection">
+        <DetectChar attribute="Symbol" context="SectionNamespaceValue" char="\"/>
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="SectionNamespaceValue">
-        <RegExpr attribute="Namespace" context="#pop!SectionIdentifier" insensitive="true" String="[^&gt;|/&lt;?:*=$\r\n]+(?:\\[^&gt;\\|/&lt;?:*=$\r\n]+)*(?=\\)"/>
+        <RegExpr attribute="Namespace" context="#pop!NamespacedSectionIdentifier" insensitive="true" String="[^&gt;|/&lt;?:*=$\r\n]+(?:\\[^&gt;\\|/&lt;?:*=$\r\n]+)*(?=\\)"/>
       </context>
 
-      <context attribute="Normal Text" lineEndContext="#pop" name="VariableNamespaceValue">
-        <RegExpr attribute="Namespace" context="#pop!Identifier" insensitive="true" String="[^&gt;|/&lt;?:*=$\r\n]+(?:\\[^&gt;\\|/&lt;?:*=$\r\n]+)*(?=\\)"/>
+      <context attribute="Normal Text" lineEndContext="#pop" name="NamespacedSectionIdentifier">
+        <DetectChar attribute="Symbol" context="#stay" char="\"/>
+        <IncludeRules context="SectionIdentifier"/>
       </context>
 
-      <context attribute="Function" lineEndContext="#stay" name="NamespacedCallableSection" fallthroughContext="#pop">
-        <StringDetect insensitive="true" dynamic="true" String="%1"/>
-        <DetectChar attribute="Symbol" context="SectionNamespaceValue" char="\"/>
+      <context attribute="Function" lineEndContext="#pop" name="SectionIdentifier">
+        <RegExpr attribute="Function" context="#pop" insensitive="true" String="[^\-+*/&amp;% !&gt;|&lt;=$\r\n]+"/>
       </context>
-      <!-- Values -->
+          <!-- #endregion Callable Sections and Custom Resources -->
+        <!-- #endregion Namespaced Variables and Sections -->
+      <!-- #endregion Expressions -->
+
+      <!-- #region Values -->
+      <context attribute="Normal Text" lineEndContext="#pop" name="Resources">
+        <!-- Includes ConstantBufferSlot, VertexBufferSlot, IndexBuffer, and BackBuffers -->
+        <RegExpr attribute="LanguageVariable" insensitive="true" String="\b(?:[vhdgpc]s-cb\d{1,2}|vb\d|ib|(?:[rf]_)?bb)\b"/>
+        <!-- TextureSlot, UAVSlot, Render targets -->
+        <RegExpr attribute="LanguageVariable" insensitive="true" String="\b(?:[pc]s-u\d|s?o\d|od|[vhdgpc]s(?:-t\d{1,3}))\b"/>
+        <keyword attribute="LanguageVariable" String="resource-identifiers"/>
+        <!-- Custom Resources -->
+        <RegExpr attribute="Variable" context="MaybeNamespacedUseableSection" insensitive="true" String="Resource(?=.+\b)"/>
+      </context>
+
       <context attribute="Normal Text" lineEndContext="#pop" name="Value">
         <keyword attribute="BooleanValue" String="boolean-values"/>
-        <DetectChar attribute="Operator" context="#stay" char="-"/>
-        <DetectChar attribute="Operator" context="#stay" char="+"/>
-        <RegExpr attribute="Float" context="#stay" String="\d+\.\d+"/>
-        <Int attribute="Integer" context="#stay"/>
         <DetectChar attribute="String" context="String" char="&quot;"/>
-        <RegExpr attribute="Path" context="#stay" insensitive="true" String="(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?\b[^&gt;\\|/&lt;?:*=$]+(?:(?:\\|/)[^&gt;\\|/&lt;?:*=$\r\n]+)+)"/>
-        <RegExpr attribute="File" context="#stay" insensitive="true" String="[^&gt;\\|/&lt;?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"/>
+        <IncludeRules context="FileAndFolderPaths"/>
+        <IncludeRules context="StaticValue"/>
         <DetectIdentifier/>
         <AnyChar String=".,':{}|?!@#%^&amp;*/+=`~;"/>
         <DetectSpaces/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="StaticValue">
+        <keyword attribute="LanguageConstant" String="language-constants"/>
+        <!-- NOTE: cannot use Float and Int because they do not have \b at the end, only the beginning; also Float does too much -->
+        <RegExpr attribute="Float" context="#stay" String="[+\-]?\b\d+\.\d+\b"/>
+        <RegExpr attribute="Integer" context="#stay" String="[+\-]?\b\d+\b"/>
       </context>
 
       <context attribute="String" lineEndContext="#pop" name="String">
         <DetectChar attribute="String" context="#pop" char="&quot;"/>
       </context>
 
-      <context attribute="Normal Text" lineEndContext="#pop" name="KeyValue">
-        <keyword attribute="RValue" String="multi-section-key-values"/>
-        <keyword attribute="RValue" String="command-key-values"/>
-        <keyword attribute="RValue" String="shader-override-key-values"/>
-        <keyword attribute="RValue" String="custom-shader-key-values"/>
-        <keyword attribute="RValue" String="custom-shader-compile-flags"/>
-        <keyword attribute="ControlFlow" String="unless-null"/>
-        <keyword attribute="RValue" String="fuzzy-match-key-values"/>
-        <keyword attribute="Type" String="resource-section-key-types"/>
-        <keyword attribute="RValue" String="resource-section-key-values"/>
-        <keyword attribute="Type" String="dxgi-formats"/>
-        <keyword attribute="Operator" String="blend-operators"/>
-        <keyword attribute="RValue" String="blend-factors"/>
-        <keyword attribute="RValue" String="key-section-key-values"/>
-        <keyword attribute="Keyword" String="key-section-key-modifiers"/>
-        <keyword attribute="RValue" String="system-section-key-values"/>
-        <keyword attribute="RValue" String="device-rendering-key-values"/>
-        <keyword attribute="RValue" String="marking-key-values"/>
-        <keyword attribute="RValue" String="analysis-key-values"/>
+      <context attribute="Normal Text" lineEndContext="#pop" name="FileAndFolderPaths">
+        <RegExpr attribute="Path" context="#stay" insensitive="true" String="(?=.*[\\/])(?:(?:(?:[a-z]:|\.\.?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^&gt;\\|/&lt;?:*=$]+)(?:(?:\\|/)(?:\.\.|[^&gt;\\|/&lt;?:*=$\r\n]+))+)"/>
+        <RegExpr attribute="File" context="#stay" insensitive="true" String="\b[^&gt;\\|/&lt;?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"/>
       </context>
 
       <context attribute="Comment" lineEndContext="#pop" name="Comment">
         <DetectSpaces/>
         <IncludeRules context="##Comments"/>
       </context>
+      <!-- #endregion Values -->
     </contexts>
     <itemDatas>
       <itemData name="Error" defStyleNum="dsError"/>
       <itemData name="Normal Text" defStyleNum="dsNormal" spellchecking="false"/>
-      <itemData name="Header" defStyleNum="dsFunction" italic="true" spellchecking="false"/>
+      <itemData name="Header" defStyleNum="dsAttribute" italic="true" spellchecking="false"/>
       <itemData name="Comment" defStyleNum="dsComment"/>
       <itemData name="ControlFlow" defStyleNum="dsControlFlow" bold="true" spellchecking="false"/>
       <itemData name="BooleanValue" defStyleNum="dsConstant" spellchecking="false"/>
@@ -1249,14 +1761,16 @@
       <itemData name="Modifier" defStyleNum="dsKeyword" bold="true" spellchecking="false"/>
       <itemData name="Assignment" defStyleNum="dsOperator"/>
       <itemData name="Operator" defStyleNum="dsOperator"/>
+      <itemData name="Hexadecimal" defStyleNum="dsBaseN"/>
       <itemData name="Integer" defStyleNum="dsDecVal"/>
       <itemData name="Float" defStyleNum="dsFloat"/>
       <itemData name="Namespace" defStyleNum="dsImport" spellchecking="false"/>
-      <itemData name="Instruction" defStyleNum="dsBuiltIn" bold="true" spellchecking="false"/>
+      <itemData name="Instruction" defStyleNum="dsExtension" bold="true" spellchecking="false"/>
       <itemData name="Function" defStyleNum="dsFunction" spellchecking="false"/>
       <itemData name="Variable" defStyleNum="dsVariable" spellchecking="false"/>
-      <itemData name="LanguageVariable" defStyleNum="dsBuiltIn" spellchecking="false"/>
-      <itemData name="ShaderParameter" defStyleNum="dsBuiltIn" spellchecking="false"/>
+      <itemData name="LanguageVariable" defStyleNum="dsBuiltIn" italic="true" spellchecking="false"/>
+      <itemData name="LanguageConstant" defStyleNum="dsConstant" italic="true" spellchecking="false"/>
+      <itemData name="ShaderParameter" defStyleNum="dsExtension" italic="true" spellchecking="false"/>
       <itemData name="RValue" defStyleNum="dsConstant" spellchecking="false"/>
       <itemData name="Type" defStyleNum="dsDataType" spellchecking="false"/>
       <itemData name="Path" defStyleNum="dsNormal" underline="true" spellchecking="false"/>

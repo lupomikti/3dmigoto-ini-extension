@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
-<language name="PCRE2" version="1" kateversion="5.94" section="Other" extensions="*.re" casesensitive="1" license="GPL-3.0" priority="1" hidden="1">
+<language name="PCRE2" version="2" kateversion="5.94" section="Other" extensions="*.re" casesensitive="1" license="GPL-3.0" priority="1" hidden="1">
     <highlighting>
         <contexts>
             <context attribute="Normal Text" lineEndContext="#stay" name="Patterns">
@@ -168,7 +168,7 @@
             </context>
 
             <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Common Base">
-                <DetectChar attribute="Symbol" context="(charclass caret first check)" char="["/>
+                <DetectChar attribute="Control" context="(charclass caret first check)" char="["/>
                 <!-- Anchors -->
                 <RegExpr attribute="Control" context="#stay" String="(?:\\[GAZzBb]|[\^$])"/>
                 <!-- Switches -->
@@ -192,7 +192,7 @@
                 <RegExpr attribute="Escape Sequence" String="\\[b\[\^\-\]\\]"/>
                 <RegExpr attribute="Separator" String="(?&lt;!\\)-"/>
                 <IncludeRules context="Character Escapes"/>
-                <DetectChar attribute="Symbol" context="#pop#pop" char="]"/>
+                <DetectChar attribute="Control" context="#pop#pop" char="]"/>
             </context>
 
             <context attribute="Escape Sequence" lineEndContext="#stay" fallthroughContext="#pop" name="Character Escapes">
