@@ -12,11 +12,11 @@ For more information about the highlighting of the VSCode extension and how to c
 
 #### Sublime Text
 
-A `.sumblime-package` file is provided on the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) which can be downloaded and added to your installation. The location to add the file to will depend on how and where you installed SublimeText. Generally, user-installed zipped packages should go in `<data_path>/Installed Packages/` where `<data_path>` may look like `C:\Program Files\Sublime Text 3\Data` on a Windows system. This package currently only has highlighting but should have more features in the near future. [See the README](sublime-text-pkg/README.md) for it for more specific details about customization of colors.
+A `.sumblime-package` file is provided on the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) which can be downloaded and added to your installation. The location to add the file to will depend on how and where you installed SublimeText. Generally, user-installed zipped packages should go in `<data_path>/Installed Packages/` where `<data_path>` may look like `C:\Program Files\Sublime Text 4\Data` on a Windows system. This package has more than just highlighting, so you should take a look at [the README](sublime-text-pkg/README.md) for it for more specific details about customization of colors and additional features.
 
 #### Notepad++
 
-To use this highlighting, you download the `3DM-INI.udl.xml` file either from the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) or directly from the `npp-plugin` folder, go to `Language > User Defined Languages > Define your language...` from the top menu, then choose the `Import` button and select the file you downloaded. Please [see the README](npp-plugin/README.md) for this editor for more information including color customization.
+To use this highlighting, you download the `Migoto.udl.xml` file (or `Migoto (dark theme).udl.xml`) either from the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) or directly from the `npp-plugin` folder, go to `Language > User Defined Languages > Define your language...` from the top menu inside Notepad++, then choose the `Import` button and select the file you downloaded. Please [see the README](npp-plugin/README.md) for this editor for more information including color customization.
 
 #### Kate
 There is a .zip of the XML files in the [Releases](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) that you can download or you can grab them from the repo directly. Adding user-defined highlighting to Kate is as simple as adding the XML files to the correct folder on your system. Here is a copy of instructions from KDE Documentation about [working with syntax highlighting](https://docs.kde.org/stable5/en/kate/katepart/highlight.html):
@@ -40,17 +40,15 @@ More info about how to customize things after installing the files can be found 
 
 ## Development Info
 
-The main thing to note about how this project is set up in its current state is that instead of using YAML for the tmLanguage grammars and then converting to JSON, it uses TOML for them and then converts to JSON. The conversion is done with a simple script in the `bin` directory; the `package.json` is set up such that while in the project root, you can type `toml-to-json` in the CLI and it will perform the conversion -- no need for `npm run` (you do need to be sure to link it though by running `npm link`).
-
-There is also a counterpart for converting TOML to YAML for sublime-syntax support.
+The main thing to note about how this project is set up in its current state is that instead of using YAML for the tmLanguage grammars and then converting to JSON, it uses TOML for them and then converts to JSON. The sublime-syntax files are also first written in TOML and then converted to YAML. The conversions are done with two simple scripts in the `bin` directory; the `package.json` is set up such that while in the project root, you can type `toml-to-json` or `toml-to-yaml` in the CLI and it will perform the intended conversion with no need for `npm run` (you do need to be sure to link them first though by running `npm link` in the project root; this only needs to be done once).
 
 #### VS Code Extension
 
-To build the VS Code Extension VSIX package while in its directory (vscode-ext), do one of the following:
+To build the VS Code Extension VSIX package while in its directory (vscode-ext), you will need to have installed `vsce` and then should do one of the following:
 
-1. `npm run build-vsce <version>`
+1. `cd vscode-ext && npm run build-vsce <version>`
 
-2. `vsce package <version> [--pre-release] --follow-symlinks --ignoreFile "..\.vscodeignore" --no-git-tag-version`
+2. `cd vscode-ext && vsce package <version> [--pre-release] --follow-symlinks --ignoreFile "..\.vscodeignore" --no-git-tag-version`
 
 `<version>` can be like "0.4.3" or "minor" to increment only the minor number from the previous value in `package.json`.
 
