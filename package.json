@@ -25,7 +25,7 @@
     "url": "https://github.com/lupomikti/3dmigoto-ini-extension.git"
   },
   "publisher": "AGMG",
-  "version": "0.9.6",
+  "version": "0.10.0",
   "pricing": "Free",
   "engines": {
     "vscode": "^1.90.0"
