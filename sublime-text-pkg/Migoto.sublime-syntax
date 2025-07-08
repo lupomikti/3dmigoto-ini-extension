@@ -37,14 +37,14 @@ contexts:
     - scope: keyword.other.migoto.custom-shader
       match: (?i)\b([vhdgpc]s|flags|max_executions_per_frame|topology|sampler)\b
     - scope: keyword.other.migoto.custom-shader.blend-state
-      match: (?i)\b((?:blend|alpha|mask)(?:\[([0-7])\])?|blend_factor\[([0-3])\]|alpha_to_coverage|sample_mask|blend_state_merge)\b
+      match: (?i)\b(?:blend_factor\[([0-3])\]|(?:blend|alpha|mask)\b(?:\[([0-7])\])?|alpha_to_coverage\b|sample_mask\b|blend_state_merge\b)
       captures:
+        "1": constant.numeric.migoto
         "2": constant.numeric.migoto
-        "3": constant.numeric.migoto
     - scope: keyword.other.migoto.custom-shader.depth-stencil-state
       match: (?i)\b(depth_(?:enable|write_mask|func|stencil_state_merge)|stencil_(?:enable|(?:read|write)_mask|front|back|ref))\b
     - scope: keyword.other.migoto.custom-shader.rs-state
-      match: (?i)\b(fill|cull|front|depth_(?:bias(?:_clamp)?|clip_enable)|slope_scaled_depth_bias|(?:depth_clip|scissor|multisample|antialiased_line)_enable|rasterizer_state_merge)\b
+      match: (?i)\b(fill|cull|front|depth_(?:bias(?:_clamp)?|clip_enable)|slope_scaled_depth_bias|(?:scissor|multisample|antialiased_line)_enable|rasterizer_state_merge)\b
     - scope: keyword.other.migoto.shader-regex
       match: (?i)\b(shader_model|temps)\b
     - scope: keyword.other.migoto.shader-override
@@ -56,7 +56,7 @@ contexts:
     - scope: keyword.other.migoto.hunting
       match: (?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking_mode|marking_actions|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune[123]_(?:up|down)|analyse_frame|analyse_options|kill_deferred)\b
     - scope: keyword.other.migoto.system
-      match: (?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval|dll_initialization_delay)\b
+      match: (?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval|dll_initialization_delay|screen_(?:width|height)|dump_path)\b
     - scope: keyword.other.migoto.loader
       match: (?i)\b(target|module|require_admin|launch|delay|loader|check_version|entry_point|hook_proc|wait_for_target)\b
     - scope: keyword.other.migoto.device
@@ -149,13 +149,13 @@ contexts:
         - match: \n
           pop: true
   preamble:
-    - match: (?i)^{{ws}}*(namespace)\b{{ws}}*(=){{ws}}*\b
+    - match: (?i)^{{ws}}*(namespace)\b{{ws}}*(=){{ws}}*
       captures:
         "1": keyword.other.namespace.definition.migoto
         "2": keyword.operator.namespace.migoto
       push:
         - meta_scope: meta.head.namespace.migoto
-        - match: (?i){{namespace_path}}
+        - match: (?i)\b{{namespace_path}}
           scope: entity.name.namespace.migoto
           pop: true
         - match: \n
@@ -170,9 +170,7 @@ contexts:
         - include: operator
         - match: \b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b
           scope: constant.language.override-parameters.migoto
-        - match: \b(?i)(?:true|false)\b
-          scope: constant.language.boolean.migoto
-        - match: \b(?i)(?:null|inf|NaN)\b
+        - match: \b(?i)(?:inf|NaN)\b
           scope: constant.language.numeric.migoto
         - match: "[+-]?\\b\\d+(?:\\.\\d+)?\\b"
           scope: constant.numeric.migoto
@@ -509,19 +507,23 @@ contexts:
         - match: "{{line_end_context}}"
           pop: true
   setting-statement:
-    - match: |
+    - match: >
         (?xi)
-        (?!run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|store|condition|
+
+        (?!\b(?:
+          run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|condition|
           draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|
           vb\d|ib|(?:[rf]_)?bb|s?o\d|od|
-          (?<!$)\b[xyzw]\d{0,3}\b|
+          (?<!$)[xyzw]\d{0,3}|
           this|(?:ini|stereo)params|cursor_(?:mask|color)|
           Resource.+
-        ) # keywords and variables that are not keys and should only be matched by general-statement
-        \b
-        (?= \w+ # optional whitespace followed by a word-like that is not in the preceding list
-            \s* = \s* # kvp separator surrounded by optional whitespace
-            [^\r\n]+ # match anything on the right-hand-side
+        )\b) # keywords and variables that are not keys and should only be
+        matched by general-statement
+
+        (?=
+          [\w\[\]]+ # optional whitespace followed by a word-like that is not in the preceding list and includes brackets for blend[N]/blend_factor[N] keys
+          \s* = \s* # kvp separator surrounded by optional whitespace
+          [^\r\n]+ # match anything on the right-hand-side
         )
       push:
         - meta_scope: meta.statement.setting.migoto
@@ -532,14 +534,14 @@ contexts:
             - include: literal-list
             - include: key-value
             - include: frame-analysis-opt
-            - match: \b(?i)(?:yes|no|on|off)\b
+            - match: \b(?i)(?:true|false|yes|no|on|off)\b
               scope: constant.language.boolean.migoto
             - match: \b(?i)(null)\b
               scope: meta.keyword.rhs meta.keyword.resource constant.language.null.migoto
-            - include: constant
-            - include: fuzzy-match-expr
             - include: string
             - include: path-value
+            - include: constant
+            - include: fuzzy-match-expr
             - match: "{{line_end_context}}"
               pop: true
         - match: "{{line_end_context}}"
@@ -559,7 +561,7 @@ contexts:
         \s*
           (?:
             = \s* # assignment operator, surrounded by optional whitespace
-            (?:[+\-]?[\d.]+|true|false|inf|NaN) # RHS value, only Numbers allowed
+            (?:[+\-]?[\d.]+|inf|NaN) # RHS value, only Numbers allowed
           )? # Assignment operator and RHS-value are optional, e.g. `global $variable` on a line by itself
         )
       push:
@@ -734,7 +736,7 @@ contexts:
               scope: keyword.operator.execution.migoto
               push:
                 - include: resource
-                - match: (?i)0x[a-f0-9]{1,}
+                - match: (?i)\b0x[a-f0-9]+\b
                   scope: constant.numeric.migoto
                 - include: constant
                 - match: (?i)\b(int|depth|stencil)\b
@@ -1060,15 +1062,13 @@ contexts:
         - match: \n
           pop: true
   constant:
-    - scope: constant.language.boolean.migoto
-      match: \b(?i)(?:true|false)\b
     - scope: constant.language.numeric.migoto
       match: \b(?i)(?:inf|NaN)\b
     - scope: constant.numeric.migoto
       match: "[+-]?\\b\\d+(?:\\.\\d+)?\\b"
   path-value:
     - scope: constant.other.path.migoto
-      match: (?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.)[\\/])?(?![\s\\/]+)\b[^>\\|/<?:*=$]+(?:(?:\\|/)[^>\\|/<?:*=$\r\n]+)+)
+      match: (?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.\.?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)
     - scope: constant.other.file.migoto
       match: (?i)\b[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+
   frame-analysis-opt:
