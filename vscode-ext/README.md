@@ -3,19 +3,19 @@ Inspired by the work done in the [GIMI_ini_extension](https://github.com/lewis25
 
 ## Current Features
 
-Currently this extension only provides syntax highlighting. It will include programmatic language features in the future once an LSP language server is in place.
+Currently this extension only provides syntax highlighting and some very rudimentary language configuration. It will include programmatic language features in the future once an LSP language server is in place.
 
 #### Some things to note:
 Not all scopes are commonly styled by themes. For example, a lot of themes do not provide styling for the broad scope `variable.language`, opting to style things that are more specific like `variable.language.this.cpp`. Here are some scopes that I have personally created styling for in my `settings.json` for my current theme.
 
 - `variable.other.readwrite`
 - `punctuation.definition.variable`
-- `variable.language.shader-slot.migoto`, `variable.language.buffer.migoto`, `variable.language.resource-identifier.migoto`, `variable.language.shader-identifier.migoto`
+- `variable.language.shader-slot.migoto`, `variable.language.buffer.migoto`, `variable.language.resource-identifier.migoto`, `variable.language.shader-identifier.migoto`, `constant.language.override-parameter.migoto`, `variable.parameter.migoto`
 - `punctuation.section.embedded`
 - `constant.other.path.migoto`, `constant.other.file.migoto` (I don't color these, but I do underline them)
 - `entity.name.namespace.migoto` (themes usually style this one, I just don't like the color chosen with my theme next to the variable color, so I changed it)
 - `entity.name.section.group-title.migoto` (after the change from `.ini.3dm` to `.migoto`, section titles no longer piggy-backed off of the default INI file coloring, so I needed to make a rule for it)
-- `keyword.other.instruction` (this was to make them bold)
+- `keyword.other.instruction` (originally just to make them bold, now they are colored quite differently too)
 
 Here's how to edit a theme via your `settings.json`:
 
@@ -60,6 +60,19 @@ Open up your `settings.json` file; you can do this by opening the command palett
                 },
                 {
                     "scope": [
+                        "variable.language.shader-slot.migoto",
+                        "variable.language.buffer.migoto",
+                        "variable.language.resource-identifier.migoto",
+                        "variable.language.shader-identifier.migoto",
+                        "constant.language.override-parameter.migoto",
+                        "variable.parameter.migoto"
+                    ],
+                    "settings": {
+                        "fontStyle": "italic"
+                    }
+                },
+                {
+                    "scope": [
                         "entity.name.function.section-type.migoto",
                         "support.type.dxgi-format.migoto"
                     ],
@@ -98,6 +111,7 @@ Open up your `settings.json` file; you can do this by opening the command palett
                         "keyword.other.instruction"
                     ],
                     "settings": {
+                        "foreground": "#74c7ec",
                         "fontStyle": "bold"
                     }
                 }

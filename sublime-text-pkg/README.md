@@ -21,12 +21,6 @@ You can customize the colors of the highlighting by going to `Preferences > Cust
 
 ```jsonc
 {
-	"variables":
-	{
-	},
-	"globals":
-	{
-	},
 	"rules":
 	[
 		{
@@ -39,13 +33,13 @@ You can customize the colors of the highlighting by going to `Preferences > Cust
 			"font_style": "italic"
 		},
 		{
-			"scope": "constant.language.migoto",
+			"scope": "source.migoto constant.language",
 			"foreground": "var(red)",
 			"font_style": ""
 		},
 		{
-			"scope": "entity.name.function.migoto",
-			"foreground": "var(pink)"
+			"scope": "meta.variable.custom-resource variable.other.readwrite.migoto",
+			"font_style": "italic"
 		},
 		{
 			"scope": "keyword.control.flow.migoto",
@@ -65,12 +59,17 @@ You can customize the colors of the highlighting by going to `Preferences > Cust
 		},
 		{
 			"scope": "keyword.other.instruction",
-			"foreground": "var(maroon)",
+			"foreground": "var(sapphire)",
 			"font_style": "bold"
 		},
 		{
 			"scope": "constant.other.path, constant.other.file",
 			"font_style": "underline"
+		},
+		{
+			"scope": "punctuation.parenthesis",
+			"foreground": "var(overlay2)",
+			"font_style": "italic"
 		}
 	]
 }
