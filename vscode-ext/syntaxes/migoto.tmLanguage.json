@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "scopeName": "source.migoto",
   "name": "migoto",
   "fileTypes": [
@@ -25,7 +25,7 @@
       "patterns": [
         {
           "name": "meta.head.namespace.migoto",
-          "begin": "(?i)^[ \\t]*(namespace)\\b\\s*(=)\\s*\\b",
+          "begin": "(?i)^[ \\t]*(namespace)\\b\\s*(=)\\s*",
           "end": "$|\\n",
           "beginCaptures": {
             "1": {
@@ -38,7 +38,7 @@
           "patterns": [
             {
               "name": "entity.name.namespace.migoto",
-              "match": "(?i)[^>\\\\|/<?:*=$\\r\\n]+(?:[\\\\/][^>\\\\|/<?:*=$\\r\\n]+)*"
+              "match": "(?i)\\b[^>\\\\|/<?:*=$\\r\\n]+(?:[\\\\/][^>\\\\|/<?:*=$\\r\\n]+)*"
             }
           ]
         },
@@ -64,10 +64,6 @@
             {
               "name": "constant.language.override-parameters.migoto",
               "match": "\\b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\\b"
-            },
-            {
-              "name": "constant.language.boolean.migoto",
-              "match": "\\b(?i)(?:true|false)\\b"
             },
             {
               "name": "constant.language.numeric.migoto",
@@ -149,12 +145,12 @@
         },
         {
           "name": "meta.keyword.key keyword.other.migoto.custom-shader.blend-state",
-          "match": "(?i)\\b((?:blend|alpha|mask)(?:\\[([0-7])\\])?|blend_factor\\[([0-3])\\]|alpha_to_coverage|sample_mask|blend_state_merge)\\b",
+          "match": "(?i)\\b(?:blend_factor\\[([0-3])\\]|(?:blend|alpha|mask)\\b(?:\\[([0-7])\\])?|alpha_to_coverage\\b|sample_mask\\b|blend_state_merge\\b)",
           "captures": {
-            "2": {
+            "1": {
               "name": "constant.numeric.migoto"
             },
-            "3": {
+            "2": {
               "name": "constant.numeric.migoto"
             }
           }
@@ -165,7 +161,7 @@
         },
         {
           "name": "meta.keyword.key keyword.other.migoto.custom-shader.rs-state",
-          "match": "(?i)\\b(fill|cull|front|depth_(?:bias(?:_clamp)?|clip_enable)|slope_scaled_depth_bias|(?:depth_clip|scissor|multisample|antialiased_line)_enable|rasterizer_state_merge)\\b"
+          "match": "(?i)\\b(fill|cull|front|depth_(?:bias(?:_clamp)?|clip_enable)|slope_scaled_depth_bias|(?:scissor|multisample|antialiased_line)_enable|rasterizer_state_merge)\\b"
         },
         {
           "name": "meta.keyword.key keyword.other.migoto.shader-regex",
@@ -189,7 +185,7 @@
         },
         {
           "name": "meta.keyword.key keyword.other.migoto.system",
-          "match": "(?i)\\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval|dll_initialization_delay)\\b"
+          "match": "(?i)\\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval|dll_initialization_delay|screen_(?:width|height)|dump_path)\\b"
         },
         {
           "name": "meta.keyword.key keyword.other.migoto.loader",
@@ -1100,7 +1096,7 @@
     },
     "setting-statement": {
       "name": "meta.statement.setting.migoto",
-      "match": "(?xi)\n^[ \\t]*\n(?!run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|store|condition|\n  draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|\n  vb\\d|ib|(?:[rf]_)?bb|s?o\\d|od|\n  (?<!$)\\b[xyzw]\\d{0,3}\\b|\n  this|(?:ini|stereo)params|cursor_(?:mask|color)|\n  Resource.+\n) # keywords and variables that are not keys and should only be matched by general-statement\n\\b(\\w+) # optional whitespace followed by a word-like that is not in the preceding list\n\\s* (=) \\s* # kvp separator surrounded by optional whitespace\n([^\\r\\n]+) # match anything on the right-hand-side\n(?:$|\\n)",
+      "match": "(?xi)\n^[ \\t]*\n(?!\\b(?:\n  run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|condition|\n  draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|\n  vb\\d|ib|(?:[rf]_)?bb|s?o\\d|od|\n  (?<!$)[xyzw]\\d{0,3}|\n  this|(?:ini|stereo)params|cursor_(?:mask|color)|\n  Resource.+\n)\\b) # keywords and variables that are not keys and should only be matched by general-statement\n([\\w\\[\\]]+) # optional whitespace followed by a word-like that is not in the preceding list and includes brackets for blend[N]/blend_factor[N] keys\n\\s* (=) \\s* # kvp separator surrounded by optional whitespace\n([^\\r\\n]+) # match anything on the right-hand-side\n(?:$|\\n)",
       "captures": {
         "1": {
           "patterns": [
@@ -1125,23 +1121,23 @@
             },
             {
               "name": "constant.language.boolean.migoto",
-              "match": "\\b(?i)(?:yes|no|on|off)\\b"
+              "match": "\\b(?i)(?:true|false|yes|no|on|off)\\b"
             },
             {
               "name": "meta.keyword.rhs meta.keyword.resource constant.language.null.migoto",
               "match": "\\b(?i)(null)\\b"
             },
             {
-              "include": "#constant"
-            },
-            {
-              "include": "#fuzzy-match-expression"
-            },
-            {
               "include": "#string"
             },
             {
               "include": "#path-value"
+            },
+            {
+              "include": "#constant"
+            },
+            {
+              "include": "#fuzzy-match-expression"
             }
           ]
         }
@@ -1162,7 +1158,7 @@
     },
     "global-declaration": {
       "name": "meta.statement.declaration.global.migoto",
-      "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(?:(persist)\\s+)? # the persist keyword, which can only pair with global, and which apparently can come before global\n(global)\\s+ # the global keyword which must be followed by at least one whitespace character\n(?:(persist)\\s+)? # the persist keyword, which can only pair with global, and which is usually in this position\n(\\$\\w+) # a $ variable\n\\s*\n(?:\n  (=) \\s* # assignment operator, surrounded by optional whitespace\n  ([+\\-]?[\\d.]+|true|false|inf|NaN) # RHS value, only Numbers allowed\n)? # Assignment operator and RHS-value are optional, e.g. `global $variable` on a line by itself\n\\s*\n(?:$|\\n)",
+      "match": "(?xi)\n^[ \\t]* # optional leading whitespace\n(?:(persist)\\s+)? # the persist keyword, which can only pair with global, and which apparently can come before global\n(global)\\s+ # the global keyword which must be followed by at least one whitespace character\n(?:(persist)\\s+)? # the persist keyword, which can only pair with global, and which is usually in this position\n(\\$\\w+) # a $ variable\n\\s*\n(?:\n  (=) \\s* # assignment operator, surrounded by optional whitespace\n  ([+\\-]?[\\d.]+|inf|NaN) # RHS value, only Numbers allowed\n)? # Assignment operator and RHS-value are optional, e.g. `global $variable` on a line by itself\n\\s*\n(?:$|\\n)",
       "captures": {
         "1": {
           "name": "storage.modifier.migoto"
@@ -1406,7 +1402,7 @@
                     },
                     {
                       "name": "constant.numeric.migoto",
-                      "match": "(?i)0x[a-f0-9]{1,}"
+                      "match": "(?i)\\b0x[a-f0-9]+\\b"
                     },
                     {
                       "include": "#constant"
@@ -1918,10 +1914,6 @@
     "constant": {
       "patterns": [
         {
-          "name": "constant.language.boolean.migoto",
-          "match": "\\b(?i)(?:true|false)\\b"
-        },
-        {
           "name": "constant.language.numeric.migoto",
           "match": "\\b(?i)(?:inf|NaN)\\b"
         },
@@ -1935,7 +1927,7 @@
       "patterns": [
         {
           "name": "constant.other.path.migoto",
-          "match": "(?i)(?=.*[\\\\/])(?:(?:(?:[a-z]:|\\.)[\\\\/])?(?![\\s\\\\/]+)\\b[^>\\\\|/<?:*=$]+(?:(?:\\\\|/)[^>\\\\|/<?:*=$\\r\\n]+)+)"
+          "match": "(?i)(?=.*[\\\\/])(?:(?:(?:[a-z]:|\\.\\.?)[\\\\/])?(?![\\s\\\\/]+)(?:\\.\\.|\\b[^>\\\\|/<?:*=$]+)(?:(?:\\\\|/)(?:\\.\\.|[^>\\\\|/<?:*=$\\r\\n]+))+)"
         },
         {
           "name": "constant.other.file.migoto",
