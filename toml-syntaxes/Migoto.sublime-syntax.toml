@@ -125,7 +125,7 @@ captures.2 = "keyword.operator.namespace.migoto"
 push = [
     {meta_scope = "meta.head.namespace.migoto"},
     {match = '(?i)\b{{namespace_path}}', scope = "entity.name.namespace.migoto", pop = true},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 [[contexts.preamble]]
@@ -136,11 +136,11 @@ push = [
     {meta_scope = "meta.head.include-condition.migoto"},
     {include = "illegal-operator"},
     {include = "operator"},
-    {match = '\b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b', scope = "constant.language.override-parameters.migoto"},
+    {match = '\b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b', scope = "constant.language.override-parameter.migoto"},
     {match = '\b(?i)(?:inf|NaN)\b', scope = "constant.language.numeric.migoto"},
     {match = '[+-]?\b\d+(?:\.\d+)?\b', scope = "constant.numeric.migoto"},
     {include = "round-braces"},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 # Sections contexts
@@ -161,7 +161,7 @@ scope = "entity.name.section.group-title.migoto.constants"
 push = [
     # pop anonymous context and pop section-title, then push body
     {match = '\]', scope = "punctuation.definition.entity.end.migoto", pop = 2, set = "constants-body"},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 [[contexts.section-title]]
@@ -170,7 +170,7 @@ scope = "entity.name.section.group-title.migoto.key"
 push = [
     # pop anonymous context and pop section-title, then push body
     {match = '\]', scope = "punctuation.definition.entity.end.migoto", pop = 2, set = "key-body"},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 [[contexts.section-title]]
@@ -179,7 +179,7 @@ scope = "entity.name.section.group-title.migoto.preset"
 push = [
     # pop anonymous context and pop section-title, then push body
     {match = '\]', scope = "punctuation.definition.entity.end.migoto", pop = 2, set = "preset-body"},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 [[contexts.section-title]]
@@ -193,7 +193,7 @@ push = [
         {match = '(?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\])', pop = true},
         {include = "scope:source.regexp.pcre2"},
     ]},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 [[contexts.section-title]]
@@ -207,7 +207,7 @@ push = [
         {match = '(?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\])', pop = true},
         {include = "scope:source.regexp-replace.pcre2"},
     ]},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 [[contexts.section-title]]
@@ -216,7 +216,7 @@ scope = "entity.name.section.group-title.migoto.shader-regex-declarations"
 push = [
     # pop anonymous context and pop section-title, then push body
     {match = '\]', scope = "punctuation.definition.entity.end.migoto", pop = 2, set = "regex-declarations-body"},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 # Normal Headers
@@ -227,7 +227,7 @@ scope = "entity.name.section.group-title.migoto.kvp-section"
 push = [
     # pop anonymous context and pop section-title, then push body
     {match = '\]', scope = "punctuation.definition.entity.end.migoto", pop = 2, set = "kvp-body"},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 [[contexts.section-title]]
@@ -236,7 +236,7 @@ scope = "entity.name.section.group-title.migoto.cl-section"
 push = [
     # pop anonymous context and pop section-title, then push body
     {match = '\]', scope = "punctuation.definition.entity.end.migoto", pop = 2, set = "cl-body"},
-    {match = '\n', pop = true}, # lineEndContext = "#pop"
+    {match = '\n', pop = true},
 ]
 
 # Special Bodies

@@ -169,7 +169,7 @@ contexts:
         - include: illegal-operator
         - include: operator
         - match: \b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b
-          scope: constant.language.override-parameters.migoto
+          scope: constant.language.override-parameter.migoto
         - match: \b(?i)(?:inf|NaN)\b
           scope: constant.language.numeric.migoto
         - match: "[+-]?\\b\\d+(?:\\.\\d+)?\\b"
