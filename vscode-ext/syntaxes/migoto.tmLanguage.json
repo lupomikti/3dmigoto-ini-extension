@@ -62,7 +62,7 @@
               "include": "#operator"
             },
             {
-              "name": "constant.language.override-parameters.migoto",
+              "name": "constant.language.override-parameter.migoto",
               "match": "\\b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\\b"
             },
             {

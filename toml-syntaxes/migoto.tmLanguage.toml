@@ -31,7 +31,7 @@ beginCaptures.2.name = "keyword.operator.assignment.migoto"
 patterns = [
     {include = "#illegal-operator"},
     {include = "#operator"},
-    {name = "constant.language.override-parameters.migoto", match = '\b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b'},
+    {name = "constant.language.override-parameter.migoto", match = '\b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b'},
     {name = "constant.language.numeric.migoto", match = '\b(?i)(?:inf|NaN)\b'},
     {name = "constant.numeric.migoto", match = '[+-]?\b\d+(?:\.\d+)?\b'},
     {include = "#round-braces"},
