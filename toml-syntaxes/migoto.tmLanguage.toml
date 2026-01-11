@@ -112,25 +112,27 @@ name = "meta.structure.section.migoto"
 # The insanity below is necessary for the ShaderRegex Pattern matching section to not break the whole file
 # Without this, character class sets that would match a more broad section regex would be treated as section titles
 # So we must explicitly define the allowed section names in the begin and end matches
-begin = '''(?xi)
-(?:^[ \t]*(\[) # capture group 1
-    ((?:
-        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |
-        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |
-        Include.*
-     )
-    )    # capture group 2
-    (\]) # capture group 3
+begin = '''(?xi)(?:
+^[ \t]*
+  (\[) # capture group 1
+  [ \t]*
+  (
+    (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |
+     (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |
+     Include.*
+  )    # capture group 2
+  [ \t]*
+  (\]) # capture group 3
 [ \t]*$)
-(?<=^[ \t]*\[\2\][ \t]*$)'''
+(?<=^[ \t]*\[\s*\2\s*\][ \t]*$)'''
 end = '''(?xi)
-(?=^[ \t]*\[
+(?=^[ \t]*\[\s*
 (?:
   (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |
   (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |
   Include.*
 )
-\][ \t]*$|\z)''' # \z is there to match the end of the file
+\s*\][ \t]*$|\z)''' # \z is there to match the end of the file
 beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
 beginCaptures.2.name = "meta.tag.section-header.migoto entity.name.section.group-title.migoto"
 beginCaptures.2.patterns = [
@@ -163,7 +165,7 @@ beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
 # Constants Section
 [[repository.section.patterns]]
 name = "meta.structure.section.constants.migoto"
-begin = '(?i)(?<=^[ \t]*\[Constants\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Constants\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -174,7 +176,7 @@ patterns = [
 # Present Section
 [[repository.section.patterns]]
 name = "meta.structure.section.present.migoto"
-begin = '(?i)(?<=^[ \t]*\[Present\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Present\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -184,7 +186,7 @@ patterns = [
 # Key Section
 [[repository.section.patterns]]
 name = "meta.structure.section.key.migoto"
-begin = '(?i)(?<=^[ \t]*\[Key.+\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Key.+\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 
 [[repository.section.patterns.patterns]]
@@ -277,7 +279,7 @@ include = "#comment"
 # Texture Override Section
 [[repository.section.patterns]]
 name = "meta.structure.section.texture-override.migoto"
-begin = '(?i)(?<=^[ \t]*\[TextureOverride.+\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*TextureOverride.+\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -288,7 +290,7 @@ patterns = [
 # Shader Override Section
 [[repository.section.patterns]]
 name = "meta.structure.section.shader-override.migoto"
-begin = '(?i)(?<=^[ \t]*\[ShaderOverride.+\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*ShaderOverride.+\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -299,7 +301,7 @@ patterns = [
 # Custom Shader Section
 [[repository.section.patterns]]
 name = "meta.structure.section.custom-shader.migoto"
-begin = '(?i)(?<=^[ \t]*\[(?:BuiltIn)?CustomShader.+\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*(?:BuiltIn)?CustomShader.+\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -310,7 +312,7 @@ patterns = [
 # Explicit Command List Section
 [[repository.section.patterns]]
 name = "meta.structure.section.command-list.migoto"
-begin = '(?i)(?<=^[ \t]*\[(?:BuiltIn)?CommandList.+\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*(?:BuiltIn)?CommandList.+\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -321,7 +323,7 @@ patterns = [
 # Custom Resource Section
 [[repository.section.patterns]]
 name = "meta.structure.section.resource.migoto"
-begin = '(?i)(?<=^[ \t]*\[Resource.+\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Resource.+\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -331,7 +333,7 @@ patterns = [
 # Shader Regex (Pattern Matching)
 [[repository.section.patterns]]
 name = "meta.structure.section.shader-regex-pattern.migoto"
-begin = '(?i)(?<=^[ \t]*\[ShaderRegex.+\.Pattern\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*ShaderRegex.+\.Pattern\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 contentName = "meta.embedded.block.regexp"
 patterns = [
@@ -342,7 +344,7 @@ patterns = [
 # Shader Regex (Replacement)
 [[repository.section.patterns]]
 name = "meta.structure.section.shader-regex-replace.migoto"
-begin = '(?i)(?<=^[ \t]*\[ShaderRegex.+\.Pattern\.Replace\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*ShaderRegex.+\.Pattern\.Replace\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 # contentName = "meta.embedded.block.regexp-replace"
 patterns = [
@@ -353,7 +355,7 @@ patterns = [
 # Shader Regex (CommandList)
 [[repository.section.patterns]]
 name = "meta.structure.section.shader-regex.migoto"
-begin = '(?i)(?<!^[ \t]*\[ShaderRegex.+\.Pattern.*\][ \t]*$)(?<=[ \t]*^\[ShaderRegex.+\][ \t]*$)'
+begin = '(?i)(?<!^[ \t]*\[\s*ShaderRegex.+\.Pattern.*\][ \t]*$)(?<=[ \t]*^\[ShaderRegex.+\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -364,7 +366,7 @@ patterns = [
 # Include Section
 [[repository.section.patterns]]
 name = "meta.structure.section.include.migoto"
-begin = '(?i)(?<=^[ \t]*\[Include.*\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Include.*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -374,7 +376,7 @@ patterns = [
 # Preset Section
 [[repository.section.patterns]]
 name = "meta.structure.section.preset.migoto"
-begin = '(?i)(?<=^[ \t]*\[Preset.+\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Preset.+\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 
 [[repository.section.patterns.patterns]]
@@ -397,7 +399,7 @@ captures.2.name = "punctuation.separator.key-value.migoto"
 captures.3.patterns = [{name = "meta.keyword.rhs meta.keyword.key-binding constant.language.transition-type.migoto", match = '\b(?i)(linear|cosine)\b'},]
 
 [[repository.section.patterns.patterns]]
-name = "meta.run-instruction"
+name = "meta.statement.instruction.migoto"
 match = '(?i)^[ \t]*(run)\s*(=)\s*([^\r\n]+)(?:$|\n)'
 captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
@@ -441,7 +443,7 @@ captures.3.patterns = [{include = "#constant"}]
 # Logging Section
 [[repository.section.patterns]]
 name = "meta.structure.section.logging.migoto"
-begin = '(?i)(?<=^[ \t]*\[Logging\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Logging\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -451,7 +453,7 @@ patterns = [
 # Hunting Section
 [[repository.section.patterns]]
 name = "meta.structure.section.hunting.migoto"
-begin = '(?i)(?<=^[ \t]*\[Hunting\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Hunting\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     # Same as with the Key* section, comment is last to allow for ; to not be treated as an invalid comment for the hotkeys
@@ -462,7 +464,7 @@ patterns = [
 # System Section
 [[repository.section.patterns]]
 name = "meta.structure.section.system.migoto"
-begin = '(?i)(?<=^[ \t]*\[System\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*System\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -472,7 +474,7 @@ patterns = [
 # Device Section
 [[repository.section.patterns]]
 name = "meta.structure.section.device.migoto"
-begin = '(?i)(?<=^[ \t]*\[Device\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Device\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -482,7 +484,7 @@ patterns = [
 # Stereo Section
 [[repository.section.patterns]]
 name = "meta.structure.section.stereo.migoto"
-begin = '(?i)(?<=^[ \t]*\[Stereo\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Stereo\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -492,7 +494,7 @@ patterns = [
 # Rendering Section
 [[repository.section.patterns]]
 name = "meta.structure.section.rendering.migoto"
-begin = '(?i)(?<=^[ \t]*\[Rendering\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Rendering\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -502,7 +504,7 @@ patterns = [
 # Profile Section
 [[repository.section.patterns]]
 name = "meta.structure.section.profile.migoto"
-begin = '(?i)(?<=^[ \t]*\[Profile\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Profile\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -512,7 +514,7 @@ patterns = [
 # ConvergenceMap Section
 [[repository.section.patterns]]
 name = "meta.structure.section.convergence-map.migoto"
-begin = '(?i)(?<=^[ \t]*\[ConvergenceMap\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*ConvergenceMap\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -522,7 +524,7 @@ patterns = [
 # Loader Section
 [[repository.section.patterns]]
 name = "meta.structure.section.loader.migoto"
-begin = '(?i)(?<=^[ \t]*\[Loader\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*Loader\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -532,7 +534,7 @@ patterns = [
 # ClearRenderTargetView Section
 [[repository.section.patterns]]
 name = "meta.structure.section.clear-render-target-view.migoto"
-begin = '(?i)(?<=^[ \t]*\[ClearRenderTargetView\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*ClearRenderTargetView\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -543,7 +545,7 @@ patterns = [
 # ClearDepthStencilView Section
 [[repository.section.patterns]]
 name = "meta.structure.section.clear-depth-stencil-view.migoto"
-begin = '(?i)(?<=^[ \t]*\[ClearDepthStencilView\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*ClearDepthStencilView\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -554,7 +556,7 @@ patterns = [
 # ClearUnorderedAccessView Section
 [[repository.section.patterns]]
 name = "meta.structure.section.clear-unordered-access-view.migoto"
-begin = '(?i)(?<=^[ \t]*\[ClearUnorderedAccessView(?:Uint|Float)\][ \t]*$)'
+begin = '(?i)(?<=^[ \t]*\[\s*ClearUnorderedAccessView(?:Uint|Float)\s*\][ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
 patterns = [
     {include = "#comment"},
@@ -591,12 +593,12 @@ captures.1.patterns = [{include = "#key"}]
 captures.2.name = "punctuation.separator.key-value.migoto"
 captures.3.patterns = [
     {include = "#literal-list"},
-    {include = "#key-value"},
     {include = "#frame-analysis-opt"}, # only here due to analyse_options also being a Hunting section key, instead of only being an instruction
     {name = "constant.language.boolean.migoto", match = '\b(?i)(?:true|false|yes|no|on|off)\b'},
     {name = "meta.keyword.rhs meta.keyword.resource constant.language.null.migoto", match = '\b(?i)(null)\b'}, # exists because of partner shader keys in custom shader
     {include = "#string"},
     {include = "#path-value"},
+    {include = "#key-value"},
     {include = "#constant"},
     {include = "#fuzzy-match-expression"}, # only needed for texture override section keys involved in fuzzy matching which can take a constrained expression instead of just a number
 ]
@@ -802,8 +804,7 @@ match = '(?i)(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexe
 captures.1.name = "meta.keyword.key keyword.other.instruction.draw.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [
-    {name = "constant.numeric.migoto", match = '\d+'},
-    {include = "#named-variable"},
+    {include = "#operational-expression"},
     {name = "meta.keyword.rhs constant.language.draw.migoto", match = '(?i)\b(auto|from_caller)\b'}, # from_caller only goes with 'draw'
     # Resource Offset Statement
     {name = "meta.statement.resource-offset", match = '(?i)([^,\d\r\n]+)\s*,\s*(\d+)', captures.1.patterns = [{include="#resource"}], captures.2.name = "constant.numeric.migoto"}
@@ -1021,7 +1022,7 @@ patterns = [
 
 [repository.path-value]
 patterns = [ 
-    {name = "constant.other.path.migoto", match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.\.?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)'''},
+    {name = "constant.other.path.migoto", match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)'''},
     {name = "constant.other.file.migoto", match = '''(?i)[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
 ]
 

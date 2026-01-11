@@ -1008,8 +1008,8 @@
       <context attribute="Header" lineEndContext="#pop" fallthroughContext="#pop" name="SectionTitle">
         <DetectChar attribute="Header" context="#pop" char="]" beginRegion="Section"/>
         <IncludeRules context="FindSpecialBodyHeaders"/>
-        <RegExpr attribute="Header" context="KVPHeader" insensitive="true" String="(?:Resource.+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)"/>
-        <RegExpr attribute="Header" context="FullCommandHeader" insensitive="true" String="(?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
+        <RegExpr attribute="Header" context="KVPHeader" insensitive="true" String="[ \t]*(?:Resource.+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)"/>
+        <RegExpr attribute="Header" context="FullCommandHeader" insensitive="true" String="[ \t]*(?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
       </context>
 
         <!-- Normal Headers -->
@@ -1023,13 +1023,13 @@
 
         <!-- Special Headers -->
       <context attribute="Header" lineEndContext="#pop" name="FindSpecialBodyHeaders">
-        <StringDetect attribute="Header" context="ConstantsHeader" insensitive="true" String="Constants"/>
-        <RegExpr attribute="Header" context="KeyHeader" insensitive="true" String="Key.+(?=\])"/>
-        <RegExpr attribute="Header" context="PresetHeader" insensitive="true" String="Preset.+(?=\])"/>
-        <RegExpr attribute="Header" context="RegexPatternHeader" insensitive="true" String="ShaderRegex.+\.Pattern(?=\])"/>
-        <RegExpr attribute="Header" context="RegexReplaceHeader" insensitive="true" String="ShaderRegex.+\.Pattern\.Replace(?=\])"/>
-        <RegExpr attribute="Header" context="RegexDeclarationsHeader" insensitive="true" String="ShaderRegex.+\.InsertDeclarations(?=\])"/>
-        <RegExpr attribute="Header" context="RegexCommandListHeader" insensitive="true" String="ShaderRegex.+(?!\.(?:Pattern(\.Replace)?|InsertDeclarations))(?=\])"/>
+        <StringDetect attribute="Header" context="ConstantsHeader" insensitive="true" String="[ \t]*Constants"/>
+        <RegExpr attribute="Header" context="KeyHeader" insensitive="true" String="[ \t]*Key.+(?=\])"/>
+        <RegExpr attribute="Header" context="PresetHeader" insensitive="true" String="[ \t]*Preset.+(?=\])"/>
+        <RegExpr attribute="Header" context="RegexPatternHeader" insensitive="true" String="[ \t]*ShaderRegex.+\.Pattern(?=\])"/>
+        <RegExpr attribute="Header" context="RegexReplaceHeader" insensitive="true" String="[ \t]*ShaderRegex.+\.Pattern\.Replace(?=\])"/>
+        <RegExpr attribute="Header" context="RegexDeclarationsHeader" insensitive="true" String="[ \t]*ShaderRegex.+\.InsertDeclarations(?=\])"/>
+        <RegExpr attribute="Header" context="RegexCommandListHeader" insensitive="true" String="[ \t]*ShaderRegex.+(?!\.(?:Pattern(\.Replace)?|InsertDeclarations))(?=\])"/>
       </context>
 
       <context attribute="Header" lineEndContext="#pop" name="ConstantsHeader">
@@ -1592,12 +1592,9 @@
         <!-- Execution Operator -->
         <DetectChar attribute="Assignment" context="#stay" char="="/>
         <DetectChar attribute="Operator" context="#stay" char=","/>
-        <!-- Integer -->
-        <RegExpr attribute="Integer" context="#stay" String="[+\-]?\b\d+\b"/>
         <WordDetect attribute="Instruction" context="#pop" insensitive="true" String="auto"/>
         <WordDetect attribute="Instruction" context="#pop" insensitive="true" String="from_caller"/>
-        <!-- Named Variable -->
-        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
+        <IncludeRules context="OperationalExpression"/>
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="FindResourceOffsetExpression">
@@ -1681,7 +1678,7 @@
         <IncludeRules context="VariableIdentifier"/>
       </context>
 
-      <context attribute="Variable" lineEndContext="#pop" name="VariableIdentifier">
+      <context attribute="Variable" lineEndContext="#pop" fallthroughContext="#pop" name="VariableIdentifier">
         <DetectIdentifier attribute="Variable" context="#pop"/>
       </context>
           <!-- #endregion Named Variables -->
@@ -1700,7 +1697,7 @@
         <IncludeRules context="SectionIdentifier"/>
       </context>
 
-      <context attribute="Function" lineEndContext="#pop" name="SectionIdentifier">
+      <context attribute="Function" lineEndContext="#pop" fallthroughContext="#pop" name="SectionIdentifier">
         <RegExpr attribute="Function" context="#pop" insensitive="true" String="[^\-+*/&amp;% !&gt;|&lt;=$\r\n]+"/>
       </context>
           <!-- #endregion Callable Sections and Custom Resources -->
@@ -1740,7 +1737,7 @@
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="FileAndFolderPaths">
-        <RegExpr attribute="Path" context="#stay" insensitive="true" String="(?=.*[\\/])(?:(?:(?:[a-z]:|\.\.?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^&gt;\\|/&lt;?:*=$]+)(?:(?:\\|/)(?:\.\.|[^&gt;\\|/&lt;?:*=$\r\n]+))+)"/>
+        <RegExpr attribute="Path" context="#stay" insensitive="true" String="(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^&gt;\\|/&lt;?:*=$]+)(?:(?:\\|/)(?:\.\.|[^&gt;\\|/&lt;?:*=$\r\n]+))+)"/>
         <RegExpr attribute="File" context="#stay" insensitive="true" String="\b[^&gt;\\|/&lt;?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+"/>
       </context>
 

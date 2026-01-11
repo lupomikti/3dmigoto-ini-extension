@@ -287,8 +287,8 @@
     },
     "section": {
       "name": "meta.structure.section.migoto",
-      "begin": "(?xi)\n(?:^[ \\t]*(\\[) # capture group 1\n    ((?:\n        (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\n        (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\n        Include.*\n     )\n    )    # capture group 2\n    (\\]) # capture group 3\n[ \\t]*$)\n(?<=^[ \\t]*\\[\\2\\][ \\t]*$)",
-      "end": "(?xi)\n(?=^[ \\t]*\\[\n(?:\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\n  Include.*\n)\n\\][ \\t]*$|\\z)",
+      "begin": "(?xi)(?:\n^[ \\t]*\n  (\\[) # capture group 1\n  [ \\t]*\n  (\n    (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\n     (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\n     Include.*\n  )    # capture group 2\n  [ \\t]*\n  (\\]) # capture group 3\n[ \\t]*$)\n(?<=^[ \\t]*\\[\\s*\\2\\s*\\][ \\t]*$)",
+      "end": "(?xi)\n(?=^[ \\t]*\\[\\s*\n(?:\n  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |\n  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |\n  Include.*\n)\n\\s*\\][ \\t]*$|\\z)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.entity.begin.migoto"
@@ -397,7 +397,7 @@
       "patterns": [
         {
           "name": "meta.structure.section.constants.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Constants\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Constants\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -413,7 +413,7 @@
         },
         {
           "name": "meta.structure.section.present.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Present\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Present\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -426,7 +426,7 @@
         },
         {
           "name": "meta.structure.section.key.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Key.+\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Key.+\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -643,7 +643,7 @@
         },
         {
           "name": "meta.structure.section.texture-override.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[TextureOverride.+\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*TextureOverride.+\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -659,7 +659,7 @@
         },
         {
           "name": "meta.structure.section.shader-override.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[ShaderOverride.+\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*ShaderOverride.+\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -675,7 +675,7 @@
         },
         {
           "name": "meta.structure.section.custom-shader.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[(?:BuiltIn)?CustomShader.+\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*(?:BuiltIn)?CustomShader.+\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -691,7 +691,7 @@
         },
         {
           "name": "meta.structure.section.command-list.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[(?:BuiltIn)?CommandList.+\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*(?:BuiltIn)?CommandList.+\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -707,7 +707,7 @@
         },
         {
           "name": "meta.structure.section.resource.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Resource.+\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Resource.+\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -720,7 +720,7 @@
         },
         {
           "name": "meta.structure.section.shader-regex-pattern.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[ShaderRegex.+\\.Pattern\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*ShaderRegex.+\\.Pattern\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "contentName": "meta.embedded.block.regexp",
           "patterns": [
@@ -734,7 +734,7 @@
         },
         {
           "name": "meta.structure.section.shader-regex-replace.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[ShaderRegex.+\\.Pattern\\.Replace\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*ShaderRegex.+\\.Pattern\\.Replace\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -747,7 +747,7 @@
         },
         {
           "name": "meta.structure.section.shader-regex.migoto",
-          "begin": "(?i)(?<!^[ \\t]*\\[ShaderRegex.+\\.Pattern.*\\][ \\t]*$)(?<=[ \\t]*^\\[ShaderRegex.+\\][ \\t]*$)",
+          "begin": "(?i)(?<!^[ \\t]*\\[\\s*ShaderRegex.+\\.Pattern.*\\][ \\t]*$)(?<=[ \\t]*^\\[ShaderRegex.+\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -763,7 +763,7 @@
         },
         {
           "name": "meta.structure.section.include.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Include.*\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Include.*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -776,7 +776,7 @@
         },
         {
           "name": "meta.structure.section.preset.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Preset.+\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Preset.+\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -823,7 +823,7 @@
               }
             },
             {
-              "name": "meta.run-instruction",
+              "name": "meta.statement.instruction.migoto",
               "match": "(?i)^[ \\t]*(run)\\s*(=)\\s*([^\\r\\n]+)(?:$|\\n)",
               "captures": {
                 "1": {
@@ -910,7 +910,7 @@
         },
         {
           "name": "meta.structure.section.logging.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Logging\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Logging\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -923,7 +923,7 @@
         },
         {
           "name": "meta.structure.section.hunting.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Hunting\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Hunting\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -936,7 +936,7 @@
         },
         {
           "name": "meta.structure.section.system.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[System\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*System\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -949,7 +949,7 @@
         },
         {
           "name": "meta.structure.section.device.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Device\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Device\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -962,7 +962,7 @@
         },
         {
           "name": "meta.structure.section.stereo.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Stereo\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Stereo\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -975,7 +975,7 @@
         },
         {
           "name": "meta.structure.section.rendering.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Rendering\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Rendering\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -988,7 +988,7 @@
         },
         {
           "name": "meta.structure.section.profile.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Profile\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Profile\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -1001,7 +1001,7 @@
         },
         {
           "name": "meta.structure.section.convergence-map.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[ConvergenceMap\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*ConvergenceMap\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -1014,7 +1014,7 @@
         },
         {
           "name": "meta.structure.section.loader.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[Loader\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*Loader\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -1027,7 +1027,7 @@
         },
         {
           "name": "meta.structure.section.clear-render-target-view.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[ClearRenderTargetView\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*ClearRenderTargetView\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -1043,7 +1043,7 @@
         },
         {
           "name": "meta.structure.section.clear-depth-stencil-view.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[ClearDepthStencilView\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*ClearDepthStencilView\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -1059,7 +1059,7 @@
         },
         {
           "name": "meta.structure.section.clear-unordered-access-view.migoto",
-          "begin": "(?i)(?<=^[ \\t]*\\[ClearUnorderedAccessView(?:Uint|Float)\\][ \\t]*$)",
+          "begin": "(?i)(?<=^[ \\t]*\\[\\s*ClearUnorderedAccessView(?:Uint|Float)\\s*\\][ \\t]*$)",
           "end": "(?i)(?=^[ \\t]*\\[.+\\][ \\t]*$|\\z)",
           "patterns": [
             {
@@ -1114,9 +1114,6 @@
               "include": "#literal-list"
             },
             {
-              "include": "#key-value"
-            },
-            {
               "include": "#frame-analysis-opt"
             },
             {
@@ -1132,6 +1129,9 @@
             },
             {
               "include": "#path-value"
+            },
+            {
+              "include": "#key-value"
             },
             {
               "include": "#constant"
@@ -1547,11 +1547,7 @@
                 "3": {
                   "patterns": [
                     {
-                      "name": "constant.numeric.migoto",
-                      "match": "\\d+"
-                    },
-                    {
-                      "include": "#named-variable"
+                      "include": "#operational-expression"
                     },
                     {
                       "name": "meta.keyword.rhs constant.language.draw.migoto",
@@ -1927,7 +1923,7 @@
       "patterns": [
         {
           "name": "constant.other.path.migoto",
-          "match": "(?i)(?=.*[\\\\/])(?:(?:(?:[a-z]:|\\.\\.?)[\\\\/])?(?![\\s\\\\/]+)(?:\\.\\.|\\b[^>\\\\|/<?:*=$]+)(?:(?:\\\\|/)(?:\\.\\.|[^>\\\\|/<?:*=$\\r\\n]+))+)"
+          "match": "(?i)(?=.*[\\\\/])(?:(?:(?:[a-z]:|\\.[.]?)[\\\\/])?(?![\\s\\\\/]+)(?:\\.\\.|\\b[^>\\\\|/<?:*=$]+)(?:(?:\\\\|/)(?:\\.\\.|[^>\\\\|/<?:*=$\\r\\n]+))+)"
         },
         {
           "name": "constant.other.file.migoto",

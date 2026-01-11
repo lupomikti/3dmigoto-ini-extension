@@ -6,8 +6,8 @@ file_extensions:
 scope: source.migoto
 version: 2
 variables:
-  cl_section_names: (?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))
-  kvp_section_names: (?:Resource.+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)
+  cl_section_names: \s*(?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))
+  kvp_section_names: \s*(?:Resource.+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)
   special_section_names: (?:Constants|(?:Key|Preset|ShaderRegex).+(?=\]))
   ws: "[ \\t]"
   namespace_path: "[^>\\\\|/<?:*=$\\r\\n]+(?:[\\\\/][^>\\\\|/<?:*=$\\r\\n]+)*"
@@ -183,7 +183,7 @@ contexts:
       push: section-title
   section-title:
     - meta_scope: meta.tag.section-header.migoto entity.name.section.group-title.migoto
-    - match: (?i)Constants
+    - match: (?i){{ws}}*Constants
       scope: entity.name.section.group-title.migoto.constants
       push:
         - match: \]
@@ -192,7 +192,7 @@ contexts:
           set: constants-body
         - match: \n
           pop: true
-    - match: (?i)Key.+(?=\])
+    - match: (?i){{ws}}*Key.+(?=\])
       scope: entity.name.section.group-title.migoto.key
       push:
         - match: \]
@@ -201,7 +201,7 @@ contexts:
           set: key-body
         - match: \n
           pop: true
-    - match: (?i)Preset.+(?=\])
+    - match: (?i){{ws}}*Preset.+(?=\])
       scope: entity.name.section.group-title.migoto.preset
       push:
         - match: \]
@@ -210,7 +210,7 @@ contexts:
           set: preset-body
         - match: \n
           pop: true
-    - match: (?i)ShaderRegex.+\.Pattern(?=\])
+    - match: (?i){{ws}}*ShaderRegex.+\.Pattern(?=\])
       scope: entity.name.section.group-title.migoto.shader-regex-pattern
       push:
         - meta_content_scope: meta.tag.section-header.migoto entity.name.section.group-title.migoto
@@ -225,7 +225,7 @@ contexts:
             - include: scope:source.regexp.pcre2
         - match: \n
           pop: true
-    - match: (?i)ShaderRegex.+\.Pattern\.Replace(?=\])
+    - match: (?i){{ws}}*ShaderRegex.+\.Pattern\.Replace(?=\])
       scope: entity.name.section.group-title.migoto.shader-regex-replace
       push:
         - meta_content_scope: meta.tag.section-header.migoto entity.name.section.group-title.migoto
@@ -240,7 +240,7 @@ contexts:
             - include: scope:source.regexp-replace.pcre2
         - match: \n
           pop: true
-    - match: (?i)ShaderRegex.+\.InsertDeclarations(?=\])
+    - match: (?i){{ws}}*ShaderRegex.+\.InsertDeclarations(?=\])
       scope: entity.name.section.group-title.migoto.shader-regex-declarations
       push:
         - match: \]
@@ -249,7 +249,7 @@ contexts:
           set: regex-declarations-body
         - match: \n
           pop: true
-    - match: "{{kvp_section_names}}"
+    - match: (?i){{ws}}*{{kvp_section_names}}
       scope: entity.name.section.group-title.migoto.kvp-section
       push:
         - match: \]
@@ -258,7 +258,7 @@ contexts:
           set: kvp-body
         - match: \n
           pop: true
-    - match: (?:{{cl_section_names}}|ShaderRegex.+(?!\.(?:Pattern(\.Replace)?|InsertDeclarations))(?=\]))
+    - match: (?i){{ws}}*(?:{{cl_section_names}}|{{ws}}*ShaderRegex.+(?!\.(?:Pattern(\.Replace)?|InsertDeclarations))(?=\]))
       scope: entity.name.section.group-title.migoto.cl-section
       push:
         - match: \]
@@ -532,7 +532,6 @@ contexts:
           scope: punctuation.separator.key-value.migoto
           push:
             - include: literal-list
-            - include: key-value
             - include: frame-analysis-opt
             - match: \b(?i)(?:true|false|yes|no|on|off)\b
               scope: constant.language.boolean.migoto
@@ -540,6 +539,7 @@ contexts:
               scope: meta.keyword.rhs meta.keyword.resource constant.language.null.migoto
             - include: string
             - include: path-value
+            - include: key-value
             - include: constant
             - include: fuzzy-match-expr
             - match: "{{line_end_context}}"
@@ -848,9 +848,7 @@ contexts:
             - match: =
               scope: keyword.operator.execution.migoto
               push:
-                - match: \d+
-                  scope: constant.numeric.migoto
-                - include: named-variable
+                - include: operational-expr
                 - match: (?i)\b(auto|from_caller)\b
                   scope: meta.keyword.rhs constant.language.draw-instruction.migoto
                 - match: (?xi)(?= [^,\d\r\n]+ \s* , \s* \d+ \s* $)
@@ -1068,7 +1066,7 @@ contexts:
       match: "[+-]?\\b\\d+(?:\\.\\d+)?\\b"
   path-value:
     - scope: constant.other.path.migoto
-      match: (?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.\.?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)
+      match: (?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)
     - scope: constant.other.file.migoto
       match: (?i)\b[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+
   frame-analysis-opt:

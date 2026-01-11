@@ -4,8 +4,8 @@ scope = "source.migoto"
 version = 2
 
 [variables]
-cl_section_names = '(?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))'
-kvp_section_names = '(?:Resource.+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)'
+cl_section_names = '\s*(?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\])|Present|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))'
+kvp_section_names = '\s*(?:Resource.+(?=\])|Include.*(?=\])|Logging|System|Device|Stereo|Rendering|Hunting|Profile|ConvergenceMap|Loader)'
 special_section_names = '(?:Constants|(?:Key|Preset|ShaderRegex).+(?=\]))' # ShaderRegex sections w/o final .Pattern(.Replace)? or .InsertDeclarations are actually non-special commandlist sections
 ws = '[ \t]'
 namespace_path = '[^>\\|/<?:*=$\r\n]+(?:[\\/][^>\\|/<?:*=$\r\n]+)*'
@@ -156,7 +156,7 @@ meta_scope = "meta.tag.section-header.migoto entity.name.section.group-title.mig
 # Special Headers
 
 [[contexts.section-title]]
-match = '(?i)Constants'
+match = '(?i){{ws}}*Constants'
 scope = "entity.name.section.group-title.migoto.constants"
 push = [
     # pop anonymous context and pop section-title, then push body
@@ -165,7 +165,7 @@ push = [
 ]
 
 [[contexts.section-title]]
-match = '(?i)Key.+(?=\])'
+match = '(?i){{ws}}*Key.+(?=\])'
 scope = "entity.name.section.group-title.migoto.key"
 push = [
     # pop anonymous context and pop section-title, then push body
@@ -174,7 +174,7 @@ push = [
 ]
 
 [[contexts.section-title]]
-match = '(?i)Preset.+(?=\])'
+match = '(?i){{ws}}*Preset.+(?=\])'
 scope = "entity.name.section.group-title.migoto.preset"
 push = [
     # pop anonymous context and pop section-title, then push body
@@ -183,7 +183,7 @@ push = [
 ]
 
 [[contexts.section-title]]
-match = '(?i)ShaderRegex.+\.Pattern(?=\])'
+match = '(?i){{ws}}*ShaderRegex.+\.Pattern(?=\])'
 scope = "entity.name.section.group-title.migoto.shader-regex-pattern"
 push = [
     {meta_content_scope = "meta.tag.section-header.migoto entity.name.section.group-title.migoto"},
@@ -197,7 +197,7 @@ push = [
 ]
 
 [[contexts.section-title]]
-match = '(?i)ShaderRegex.+\.Pattern\.Replace(?=\])'
+match = '(?i){{ws}}*ShaderRegex.+\.Pattern\.Replace(?=\])'
 scope = "entity.name.section.group-title.migoto.shader-regex-replace"
 push = [
     {meta_content_scope = "meta.tag.section-header.migoto entity.name.section.group-title.migoto"},
@@ -211,7 +211,7 @@ push = [
 ]
 
 [[contexts.section-title]]
-match = '(?i)ShaderRegex.+\.InsertDeclarations(?=\])'
+match = '(?i){{ws}}*ShaderRegex.+\.InsertDeclarations(?=\])'
 scope = "entity.name.section.group-title.migoto.shader-regex-declarations"
 push = [
     # pop anonymous context and pop section-title, then push body
@@ -222,7 +222,7 @@ push = [
 # Normal Headers
 
 [[contexts.section-title]]
-match = '{{kvp_section_names}}'
+match = '(?i){{ws}}*{{kvp_section_names}}'
 scope = "entity.name.section.group-title.migoto.kvp-section"
 push = [
     # pop anonymous context and pop section-title, then push body
@@ -231,7 +231,7 @@ push = [
 ]
 
 [[contexts.section-title]]
-match = '(?:{{cl_section_names}}|ShaderRegex.+(?!\.(?:Pattern(\.Replace)?|InsertDeclarations))(?=\]))'
+match = '(?i){{ws}}*(?:{{cl_section_names}}|{{ws}}*ShaderRegex.+(?!\.(?:Pattern(\.Replace)?|InsertDeclarations))(?=\]))'
 scope = "entity.name.section.group-title.migoto.cl-section"
 push = [
     # pop anonymous context and pop section-title, then push body
@@ -531,12 +531,12 @@ push = [
     # once the separator is found, only allow certain values on the right
     {match = '=', scope = "punctuation.separator.key-value.migoto", push = [
         {include = "literal-list"},
-        {include = "key-value"},
         {include = "frame-analysis-opt"}, # only here due to analyse_options also being a Hunting section key, instead of only being an instruction
         {match = '\b(?i)(?:true|false|yes|no|on|off)\b', scope = "constant.language.boolean.migoto"},
         {match = '\b(?i)(null)\b', scope = "meta.keyword.rhs meta.keyword.resource constant.language.null.migoto"}, # exists because of partner shader keys in custom shader
         {include = "string"},
         {include = "path-value"},
+        {include = "key-value"},
         {include = "constant"},
         {include = "fuzzy-match-expr"}, # only needed for texture override section keys involved in fuzzy matching which can take a constrained expression instead of just a number
         {match = '{{line_end_context}}', pop = true},
@@ -822,8 +822,7 @@ push = [
     {meta_scope = "meta.draw-instrcution"},
     {match = '''(?xi)\b(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\b''', scope = "meta.keyword.key keyword.other.instruction.draw.migoto"},
     {match = '=', scope = "keyword.operator.execution.migoto", push = [
-        {match = '\d+', scope = "constant.numeric.migoto"},
-        {include = "named-variable"},
+        {include = "operational-expr"},
         {match = '(?i)\b(auto|from_caller)\b', scope = "meta.keyword.rhs constant.language.draw-instruction.migoto"}, # from_caller only goes with 'draw'
         # Resouce Offset Statement
         {match = '(?xi)(?= [^,\d\r\n]+ \s* , \s* \d+ \s* $)', scope = "meta.statement.resource-offset", push = [
@@ -1067,7 +1066,7 @@ match = '[+-]?\b\d+(?:\.\d+)?\b'
 
 [[contexts.path-value]]
 scope = "constant.other.path.migoto"
-match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.\.?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)'''
+match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)'''
 
 [[contexts.path-value]]
 scope = "constant.other.file.migoto"
