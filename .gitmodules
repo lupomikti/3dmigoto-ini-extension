@@ -1,0 +1,3 @@
+[submodule "zed-ext"]
+	path = zed-ext
+	url = https://codeberg.org/lupomikti/migoto-ini-zed.git
