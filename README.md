@@ -1,24 +1,30 @@
 ## What is this project?
 Inspired by the work done in the [GIMI_ini_extension](https://github.com/lewis252310/GIMI_ini_Extension) repo, this project provides multi-editor syntax highlighting for .ini files used by the program 3DMigoto which have much more extensive syntax than the typical header + key-value pair structure of normal .ini files. The reason for this project's existence is then to improve upon that work by using more standardized scope names such that the highlighting will work with more themes out-of-the-box and will not need to provide its own theme; it also creates a grammar structure much more conducive to additions and modifications. While that original repo also provides additional functionality beyond the highlighting, this one currently only provides said highlighting with plans to reproduce those programmatic features in the future via an LSP language server and Tree Sitter parsing.
 
+The Tree-sitter parser project is live and can be found at [tree-sitter-migoto](https://github.com/lupomikti/tree-sitter-migoto).
+
 ## Installation and Use
 
-#### VSCode
+### VSCode
 To install you can head over to the [Releases tab](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) and grab the `.vsix` file, then in VSCode go to the extensions tab/page, click on 'More Actions', and choose 'Install from VSIX'.
 
 Alternatively you can create the extension folder yourself after grabbing a .zip of the repo.
 
 For more information about the highlighting of the VSCode extension and how to customize the colors, you can [see the README](vscode-ext/README.md) in its folder.
 
-#### Sublime Text
+### Sublime Text
 
-A `.sumblime-package` file is provided on the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) which can be downloaded and added to your installation. The location to add the file to will depend on how and where you installed SublimeText. Generally, user-installed zipped packages should go in `<data_path>/Installed Packages/` where `<data_path>` may look like `C:\Program Files\Sublime Text 4\Data` on a Windows system. This package has more than just highlighting, so you should take a look at [the README](sublime-text-pkg/README.md) for it for more specific details about customization of colors and additional features.
+A `.sumblime-package` file is provided on the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) which can be downloaded and added to your installation. The location to add the file to will depend on how and where you installed SublimeText. Generally, user-installed zipped packages should go in `<data_path>/Installed Packages/` where `<data_path>` may look like `C:\Program Files\Sublime Text 4\Data` on a Windows system.
 
-#### Notepad++
+This package has more than just highlighting, so you should take a look at [the README](sublime-text-pkg/README.md) for it for more specific details about customization of colors and additional features.
 
-To use this highlighting, you download the `Migoto.udl.xml` file (or `Migoto (dark theme).udl.xml`) either from the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) or directly from the `npp-plugin` folder, go to `Language > User Defined Languages > Define your language...` from the top menu inside Notepad++, then choose the `Import` button and select the file you downloaded. Please [see the README](npp-plugin/README.md) for this editor for more information including color customization.
+### Notepad++
 
-#### Kate
+To use this highlighting, you download and extract the `Migoto-<version>.udl.zip` file from the [Releases page](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) or directly grab the light or dark theme UDL file from the `npp-plugin` folder, go to `Language > User Defined Languages > Define your language...` from the top menu inside Notepad++, then choose the `Import` button and select the file you downloaded.
+
+Please [see the README](npp-plugin/README.md) for this editor for more information including color customization.
+
+### Kate
 There is a .zip of the XML files in the [Releases](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) that you can download or you can grab them from the repo directly. Adding user-defined highlighting to Kate is as simple as adding the XML files to the correct folder on your system. Here is a copy of instructions from KDE Documentation about [working with syntax highlighting](https://docs.kde.org/stable5/en/kate/katepart/highlight.html):
 
 > Custom `.xml` highlight definition files are located in `org.kde.syntax-highlighting/syntax/` in your user folder found with **`qtpaths --paths GenericDataLocation`** which usually are `$HOME/.local/share/` and `/usr/share/`.
@@ -38,19 +44,32 @@ There is a .zip of the XML files in the [Releases](https://github.com/lupomikti/
 
 More info about how to customize things after installing the files can be found in the [README for Kate](kate-plugin/README.md).
 
+### Zed Editor
+
+There is now support for the Zed Editor thanks to the [Tree Sitter](https://github.com/lupomikti/tree-sitter-migoto) implementation of the Migoto DSL. The extension has been added as a submodule to this repo to keep things in a cohesive place.
+
+To install the extension for Zed, you will need to follow the instructions for [Installing a Dev Extension](https://zed.dev/docs/extensions/developing-extensions#developing-an-extension-locally) using the [migoto-ini-zed](https://codeberg.org/lupomikti/migoto-ini-zed) repo (not this one, as the `extension.toml` is not configured for it).
+
+> [!warning]
+> Please be advised that Zed will clone the repo and build the tree-sitter-migoto parser with WebAssembly as the target. This can take a while to build because the DSL is far from simple and produces a large lexing function which WebAssembly is poorly optimized to handle. On my machine with a Ryzen 9 5900X and 32GB RAM, the WebAssembly takes 1 minute to build and can use upward of 16GB RAM on its own.
+
 ## Development Info
 
 The main thing to note about how this project is set up in its current state is that instead of using YAML for the tmLanguage grammars and then converting to JSON, it uses TOML for them and then converts to JSON. The sublime-syntax files are also first written in TOML and then converted to YAML. The conversions are done with two simple scripts in the `bin` directory; the `package.json` is set up such that while in the project root, you can type `toml-to-json` or `toml-to-yaml` in the CLI and it will perform the intended conversion with no need for `npm run` (you do need to be sure to link them first though by running `npm link` in the project root; this only needs to be done once).
 
+After cloning this repo, the first thing to do is `npm install` so that the necessary packages are added.
+
 #### VS Code Extension
 
-To build the VS Code Extension VSIX package while in its directory (vscode-ext), you will need to have installed `vsce` and then should do one of the following:
+To build the VS Code Extension VSIX package, you will need to have installed `vsce` and then should do one of the following:
 
 1. `cd vscode-ext && npm run build-vsce <version>`
 
 2. `cd vscode-ext && vsce package <version> [--pre-release] --follow-symlinks --ignoreFile "..\.vscodeignore" --no-git-tag-version`
 
 `<version>` can be like "0.4.3" or "minor" to increment only the minor number from the previous value in `package.json`.
+
+You can navigate to the `vscode-ext` directory first and run the above commands without the `cd` as well.
 
 Because this will change the `package.json` version, you should always run it before building the other editor packages.
 
