@@ -6,5 +6,4 @@ vsc-extension-quickstart.md
 **/tsconfig.json
 bin/**
 src/**
-syntaxes/*.toml
 **/*.vsix

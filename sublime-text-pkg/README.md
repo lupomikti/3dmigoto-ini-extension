@@ -1,6 +1,8 @@
 ## What is this project?
 Inspired by the work done in the [GIMI_ini_extension](https://github.com/lewis252310/GIMI_ini_Extension) repo, this project provides multi-editor syntax highlighting for .ini files used by the program 3DMigoto which have much more extensive syntax than the typical header + key-value pair structure of normal .ini files. The reason for this project's existence is then to improve upon that work by using more standardized scope names such that the highlighting will work with more themes out-of-the-box and will not need to provide its own theme; it also creates a grammar structure much more conducive to additions and modifications. While that original repo also provides additional functionality beyond the highlighting, this one currently only provides said highlighting with plans to reproduce those programmatic features in the future via an LSP language server and Tree Sitter parsing.
 
+The Tree-sitter parser project is live and can be found at [tree-sitter-migoto](https://github.com/lupomikti/tree-sitter-migoto).
+
 ## Current Features
 
 * Provides syntax highlighting for the Migoto INI file language including the PCRE2 Regular Expressions used in ShaderRegex sections
@@ -10,7 +12,7 @@ Inspired by the work done in the [GIMI_ini_extension](https://github.com/lewis25
 * Defines variables and callable sections as symbols for easier symbol navigation
 * Adds automatic indentation for conditional blocks
 
-Programmatic language features are planned to come soon once an LSP language server is made.
+Programmatic language features are planned to come once an LSP language server is made.
 
 #### Customization
 

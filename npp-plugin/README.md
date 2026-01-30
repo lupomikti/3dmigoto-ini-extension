@@ -1,6 +1,8 @@
 ## What is this project?
 Inspired by the work done in the [GIMI_ini_extension](https://github.com/lewis252310/GIMI_ini_Extension) repo, this project provides multi-editor syntax highlighting for .ini files used by the program 3DMigoto which have much more extensive syntax than the typical header + key-value pair structure of normal .ini files. The reason for this project's existence is then to improve upon that work by using more standardized scope names such that the highlighting will work with more themes out-of-the-box and will not need to provide its own theme; it also creates a grammar structure much more conducive to additions and modifications. While that original repo also provides additional functionality beyond the highlighting, this one currently only provides said highlighting with plans to reproduce those programmatic features in the future via an LSP language server and Tree Sitter parsing.
 
+The Tree-sitter parser project is live and can be found at [tree-sitter-migoto](https://github.com/lupomikti/tree-sitter-migoto).
+
 ## Current and Future Features
 
 Currently this folder only provides syntax highlighting. Notepad++ does not employ a grammar for it's syntax highlighting system. This means we are very limited in what we can do. Notepad++ also does not have support for LSP language servers, although there is someone out there working on a plugin for that; however, even if that plugin reaches stable state, we will still be limited on what we can do by the XML files Notepad++ needs to work.

@@ -55,27 +55,27 @@ To install the extension for Zed, you will need to follow the instructions for [
 
 ## Development Info
 
-The main thing to note about how this project is set up in its current state is that instead of using YAML for the tmLanguage grammars and then converting to JSON, it uses TOML for them and then converts to JSON. The sublime-syntax files are also first written in TOML and then converted to YAML. The conversions are done with two simple scripts in the `bin` directory; the `package.json` is set up such that while in the project root, you can type `toml-to-json` or `toml-to-yaml` in the CLI and it will perform the intended conversion with no need for `npm run` (you do need to be sure to link them first though by running `npm link` in the project root; this only needs to be done once).
+A key difference between this project and its predecesor is that instead of using YAML for the tmLanguage grammars and then coverting to JSON, it uses TOML for them and then converts to JSON. The sublime-syntax files are also first written in TOML and then converted to YAML. These conversions are done with two scripts, appropriately in the `scripts` directory. To run these scripts, you make use of the deno tasks set up in the project. `deno task toml-to-json` or `deno task toml-to-yaml`.
 
-After cloning this repo, the first thing to do is `npm install` so that the necessary packages are added.
+### VS Code Extension
 
-#### VS Code Extension
+First you will need to `npm install` while inside the extension subdirectory.
 
-To build the VS Code Extension VSIX package, you will need to have installed `vsce` and then should do one of the following:
+To build the VS Code Extension VSIX package, you will need to have installed `vsce` (`npm install -g @vscode/vsce`) and then should do one of the following:
 
-1. `cd vscode-ext && npm run build-vsce <version>`
+1. `cd vscode-ext && npm run package <version>`
 
-2. `cd vscode-ext && vsce package <version> [--pre-release] --follow-symlinks --ignoreFile "..\.vscodeignore" --no-git-tag-version`
+2. `cd vscode-ext && vsce package <version> [--pre-release] --no-git-tag-version`
 
 `<version>` can be like "0.4.3" or "minor" to increment only the minor number from the previous value in `package.json`.
 
 You can navigate to the `vscode-ext` directory first and run the above commands without the `cd` as well.
 
-Because this will change the `package.json` version, you should always run it before building the other editor packages.
+This will change the `package.json` version, so it is a good idea to make a version bump commit at this point too.
 
-#### Sublime Text Package, Kate, Notepad++
+### Sublime Text Package, Kate, Notepad++
 
-There are npm build scripts for each of these individually, or you can do `npm run build` to build all 3 at one time. Requires 7-zip to be installed on your system and in your PATH.
+There are build tasks for each of these individually, or you can do `deno task build` to build all 3 at one time. __Requires 7-zip to be installed on your system and in your PATH.__
 
 ## Acknowledgement
 As this project was inspired by the GIMI INI extension, I feel I should explain why this is a new repo and extension rather than a direct fork. Put simply, the changes I envisioned making were not as iterative as would fit the forking process. I have ditched many of the files, renamed and modified others and the grammar is quite different. I also did not want to inherit the way that repo was set up. That being said, since the original is licensed under GPLv3, I do still need to maintain the same license and state changes made.
