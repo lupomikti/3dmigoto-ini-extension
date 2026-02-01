@@ -1,7 +1,7 @@
 {
     "tasks": {
         "toml-to-json": "deno run --allow-read=toml-syntaxes --allow-write=vscode-ext scripts/tomltojson.ts",
-        "toml-to-yaml": "deno run --allow-read=toml-syntaxes --allow-write=sublime-text-pkg scripts/tomltoyaml.ts",
+        "toml-to-yaml": "deno run --allow-sys --allow-env --allow-read=toml-syntaxes --allow-write=sublime-text-pkg scripts/tomltoyaml.ts",
         "build-sublime": "7z a -tzip Migoto.sublime-package ./sublime-text-pkg/*  && mv *.sublime-package ./dist",
         "build-npp": "7z a Migoto.udl.zip ./npp-plugin/* && mv *.udl.zip ./dist",
         "build-kate": "7z a migoto.kate.zip ./kate-plugin/* && mv *.kate.zip ./dist",
