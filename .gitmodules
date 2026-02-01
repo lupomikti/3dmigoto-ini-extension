@@ -1,3 +1,6 @@
 [submodule "zed-ext"]
 	path = zed-ext
 	url = https://codeberg.org/lupomikti/migoto-ini-zed.git
+[submodule "vscode-ext"]
+	path = vscode-ext
+	url = https://github.com/lupomikti/migoto-vscode.git
