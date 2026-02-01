@@ -2,7 +2,7 @@
 import TOML from 'smol-toml'
 import YAML from 'yaml'
 import * as prettier from 'prettier'
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 
 const inputFiles = ["Migoto.sublime-syntax.toml"]
 

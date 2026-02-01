@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run
 import TOML from 'smol-toml'
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 
 const inputFiles = ["migoto.tmLanguage.toml", "regexp.tmLanguage.toml", "regexp-replace.tmLanguage.toml"]
 
