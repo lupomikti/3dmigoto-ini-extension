@@ -1,5 +1,5 @@
 name = "Migoto"
-file_extensions = ["ini"]
+file_extensions = ["ini", "3dm", "migoto"]
 scope = "source.migoto"
 version = 2
 
@@ -1007,7 +1007,7 @@ match = '''(?xi)
   \b (?!\\)
 )'''
 push = [
-    {meta_scope = "meta.function-call.shader"},
+    {meta_content_scope = "meta.function-call.shader"},
     {match = '(?i)\b(?:BuiltIn)?CustomShader', scope = "entity.name.function.section-type.migoto"},
     {match = '(?=\\)', push = [{include = "namespace"}]},
     {include = "section-identifier"},
@@ -1023,7 +1023,7 @@ match = '''(?xi)
   \b (?!\\)
 )'''
 push = [
-    {meta_scope = "meta.variable.custom-resource"},
+    {meta_content_scope = "meta.variable.custom-resource"},
     {match = '(?i)\bResource', scope = "variable.other.readwrite.migoto"},
     {match = '(?=\\)', push = [{include = "namespace"}]},
     {include = "section-identifier"},
