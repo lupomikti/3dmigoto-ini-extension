@@ -4,14 +4,12 @@
 <dict>
 	<key>scope</key>
 	<string>
-		meta.function-call.migoto,
-		meta.variable.migoto
+		meta.tag.section-header,
+		meta.variable.custom-resource
 	</string>
 	<key>settings</key>
 	<dict>
 		<key>showInSymbolList</key>
-		<string>1</string>
-		<key>showInIndexedSymbolList</key>
 		<string>1</string>
 	</dict>
 </dict>
