@@ -805,9 +805,7 @@ captures.1.name = "meta.keyword.key keyword.other.instruction.draw.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [
     {include = "#operational-expression"},
-    {name = "meta.keyword.rhs constant.language.draw.migoto", match = '(?i)\b(auto|from_caller)\b'}, # from_caller only goes with 'draw'
-    # Resource Offset Statement
-    {name = "meta.statement.resource-offset", match = '(?i)([^,\d\r\n]+)\s*,\s*(\d+)', captures.1.patterns = [{include="#resource"}], captures.2.name = "constant.numeric.migoto"}
+    {name = "meta.keyword.rhs constant.language.draw.migoto", match = '(?i)\b(auto|from_caller)\b'}, # from_caller only goes with 'draw ='
 ]
 
 [repository.fuzzy-match-expression]
@@ -1022,8 +1020,8 @@ patterns = [
 
 [repository.path-value]
 patterns = [ 
-    {name = "constant.other.path.migoto", match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)'''},
-    {name = "constant.other.file.migoto", match = '''(?i)[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
+    {name = "constant.other.path.migoto", match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+)'''},
+    {name = "constant.other.file.migoto", match = '''(?i)[^>\\|/<?:*$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
 ]
 
 [repository.frame-analysis-opt]
