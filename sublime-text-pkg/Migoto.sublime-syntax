@@ -1068,9 +1068,9 @@ contexts:
       match: "[+-]?\\b\\d+(?:\\.\\d+)?\\b"
   path-value:
     - scope: constant.other.path.migoto
-      match: (?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)
+      match: (?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+)
     - scope: constant.other.file.migoto
-      match: (?i)\b[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+
+      match: (?i)\b[^>\\|/<?:*$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+
   frame-analysis-opt:
     - scope: meta.keyword.rhs constant.language.analysis-option.migoto
       match: >-

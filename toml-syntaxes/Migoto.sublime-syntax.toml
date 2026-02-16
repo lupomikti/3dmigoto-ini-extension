@@ -1066,11 +1066,11 @@ match = '[+-]?\b\d+(?:\.\d+)?\b'
 
 [[contexts.path-value]]
 scope = "constant.other.path.migoto"
-match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*=$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*=$\r\n]+))+)'''
+match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+)'''
 
 [[contexts.path-value]]
 scope = "constant.other.file.migoto"
-match = '''(?i)\b[^>\\|/<?:*=$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
+match = '''(?i)\b[^>\\|/<?:*$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
 
 [[contexts.frame-analysis-opt]]
 scope = "meta.keyword.rhs constant.language.analysis-option.migoto"
