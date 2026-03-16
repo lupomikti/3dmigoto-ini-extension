@@ -1338,7 +1338,7 @@
         <DetectSpaces/>
         <keyword attribute="Modifier" String="key-binding-modifiers"/>
         <DetectIdentifier/>
-        <AnyChar String="./;'[]=\`"/>
+        <AnyChar String="./;'[]=\`0123456789"/>
       </context>
         <!-- #endregion Non-CL Section Bodies -->
 
