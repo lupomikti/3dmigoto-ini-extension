@@ -1,0 +1,22 @@
+[format.rules]
+inline-table-brace-space-width = 0
+line-width = 120
+string-quote-style = "preserve"
+
+[lsp.hover]
+enabled = false
+
+[lsp.completion]
+enabled = false
+
+[[schemas]]
+path = "https://www.schemastore.org/sublime-syntax.json"
+include = ["*.sublime-syntax.toml"]
+format.rules.array-values-order.enabled = false
+format.rules.table-keys-order.enabled = false
+
+[[schemas]]
+path = "https://www.schemastore.org/tmlanguage.json"
+include = ["*.tmLanguage.toml"]
+format.rules.array-values-order.enabled = false
+format.rules.table-keys-order.enabled = false
