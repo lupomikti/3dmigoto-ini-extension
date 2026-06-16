@@ -28,11 +28,11 @@ To use this highlighting, you download and extract the `*.udl.zip` file from the
 Please [see the README](npp-plugin/README.md) for this editor for more information including color customization.
 
 ### Kate
-There is a .zip of the XML files in the [Releases](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) that you can download or you can grab them from the repo directly. Adding user-defined highlighting to Kate is as simple as adding the XML files to the correct folder on your system. Here is a copy of instructions from KDE Documentation about [working with syntax highlighting](https://docs.kde.org/stable5/en/kate/katepart/highlight.html):
+There is a .zip of the XML files in the [Releases](https://github.com/lupomikti/3dmigoto-ini-extension/releases/latest) that you can download or you can grab them from the repo directly. Adding user-defined highlighting to Kate is as simple as adding the XML files to the correct folder on your system. Here is a copy of instructions from KDE Documentation about [working with syntax highlighting](https://docs.kde.org/stable_kf6/en/kate/katepart/highlight.html):
 
 > Custom `.xml` highlight definition files are located in `org.kde.syntax-highlighting/syntax/` in your user folder found with **`qtpaths --paths GenericDataLocation`** which usually are `$HOME/.local/share/` and `/usr/share/`.
 > 
-> In Flatpak and Snap packages, the above directory will not work as the data location is different for each application. In a Flatpak application, the location of custom <acronym class="acronym">XML</acronym> files is usually `$HOME/.var/app/flatpak-package-name/data/org.kde.syntax-highlighting/syntax/` and in a Snap application that location is `$HOME/snap/snap-package-name/current/.local/share/org.kde.syntax-highlighting/syntax/`.
+> In Flatpak and Snap packages, the above directory will not work as the data location is different for each application. In a Flatpak application, the location of custom XML files is usually `$HOME/.var/app/flatpak-package-name/data/org.kde.syntax-highlighting/syntax/` and in a Snap application that location is `$HOME/snap/snap-package-name/current/.local/share/org.kde.syntax-highlighting/syntax/`.
 > 
 > On Windows® these files are located `%USERPROFILE%\AppData\Local\org.kde.syntax-highlighting\syntax`. *`%USERPROFILE%`* usually expands to `C:\Users\user`.
 > 

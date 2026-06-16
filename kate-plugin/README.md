@@ -9,7 +9,7 @@ Currently this folder only provides syntax highlighting. Programmatic language f
 
 #### Customization
 
-You can customize the colors of the highlighting by going to `Settings > Configure Kate > Color Themes > Theme Editor` then make a copy of your current theme, select the `Highlighting Text Styles` tab and then find the 3DM highlighting as `Scripts/3DM INI Files`. Now you can see all the colors and the names associated with them and can change them as needed. For example, I change the color of the "Type" attribute.
+You can customize the colors of the highlighting by going to `Settings > Configure Kate > Color Themes > Theme Editor` then make a copy of your current theme, select the `Highlighting Text Styles` tab and then find the 3DM highlighting as `Scripts/Migoto`. Now you can see all the colors and the names associated with them and can change them as needed. For example, I change the color of the "Type" attribute.
 
 ## Acknowledgement
 As this project was inspired by the GIMI INI extension, I feel I should explain why this is a new repo and extension rather than a direct fork. Put simply, the changes I envisioned making were not as iterative as would fit the forking process. I have ditched many of the files, renamed and modified others and the grammar is quite different. I also did not want to inherit the way that repo was set up. That being said, since the original is licensed under GPLv3, I do still need to maintain the same license and state changes made.
