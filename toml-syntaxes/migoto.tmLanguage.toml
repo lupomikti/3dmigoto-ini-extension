@@ -1,12 +1,14 @@
-"$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
-version = "1.1.4"
+#:tombi toml-version = "v1.1.0"
+
+"$schema" = "https://www.schemastore.org/tmlanguage.json"
+version = "2.0.0"
 scopeName = "source.migoto"
 name = "migoto"
 fileTypes = ["ini", "3dm", "migoto"]
 patterns = [
-    {include = "#preamble"},
-    {include = "#comment"},
-    {include = "#section"},
+  {include = "#preamble"},
+  {include = "#comment"},
+  {include = "#section"},
 ]
 
 [repository.preamble]
@@ -18,23 +20,26 @@ end = '$|\n'
 name = "meta.head.namespace.migoto"
 begin = '(?i)^[ \t]*(namespace)\b\s*(=)\s*'
 end = '$|\n'
-beginCaptures.1.name = "meta.keyword.key keyword.other.namespace.migoto"
+beginCaptures.1.name = "meta.fixed-value.key keyword.other.migoto"
 beginCaptures.2.name = "punctuation.separator.key-value.migoto"
-patterns = [{name = "entity.name.namespace.migoto", match = '(?i)\b[^>\\|/<?:*=$\r\n]+(?:[\\/][^>\\|/<?:*=$\r\n]+)*'}]
+patterns = [
+  {
+    name = "entity.name.namespace.migoto",
+    match = '(?i)\b[^\s>\\|\/<?:*="$][^>\\|\/<?:*=$\r\n]+(?:[\\\/][^>\\|\/<?:*=$\r\n]+)*'
+  }
+]
 
 [[repository.preamble.patterns]]
 name = "meta.head.include-condition.migoto"
 begin = '(?i)^[ \t]*(condition)\b\s*(=)\s*\b'
 end = '$|\n'
-beginCaptures.1.name = "meta.keyword.key keyword.other.condition.migoto"
+beginCaptures.1.name = "meta.fixed-value.key keyword.other.migoto"
 beginCaptures.2.name = "keyword.operator.assignment.migoto"
 patterns = [
-    {include = "#illegal-operator"},
-    {include = "#operator"},
-    {name = "constant.language.override-parameter.migoto", match = '\b(?i)(hunting|sli|frame_analysis|stereo_(?:active|available))\b'},
-    {name = "constant.language.numeric.migoto", match = '\b(?i)(?:inf|NaN)\b'},
-    {name = "constant.numeric.migoto", match = '[+-]?\b\d+(?:\.\d+)?\b'},
-    {include = "#round-braces"},
+  {include = "#illegal-operator"},
+  {include = "#operator"},
+  {include = "#static-value"},
+  {include = "#round-braces"},
 ]
 
 [repository.comment]
@@ -42,8 +47,15 @@ begin = '(?i)(?=^.*?;)'
 end = '$|\n'
 
 [[repository.comment.patterns]]
+name = "comment.line.documentation.migoto"
+match = '(?i)^([ \t]+)?(;;!)(.*)$'
+captures.1.name = "punctuation.whitespace.comment.leading.migoto"
+captures.2.name = "punctuation.definition.comment.migoto"
+captures.3.name = "comment.line.documentation.content.migoto"
+
+[[repository.comment.patterns]]
 name = "comment.line.semicolon.migoto"
-match = '(?i)^([ \t]+)?(;)(.*)$'
+match = '(?i)^([ \t]+)?(;)((?<!;!).*)$'
 captures.1.name = "punctuation.whitespace.comment.leading.migoto"
 captures.2.name = "punctuation.definition.comment.migoto"
 captures.3.name = "comment.line.semicolon.content.migoto"
@@ -54,198 +66,120 @@ match = '(?i)^(.+)(;)([\S ]+)$'
 captures.2.name = "punctuation.definition.comment.migoto"
 captures.3.name = "comment.line.semicolon.content.migoto"
 
-[repository.key]
-patterns = [
-    {name = "meta.keyword.key keyword.other.migoto.multi-section", match = '(?i)\b(hash|filter_index|match_priority|format|(?:width|height)(?:_multiply)?)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.resource", match = '(?i)\b(type|filename|data|max_copies_per_frame|mode|(?:bind|misc)_flags|depth|mips|array|msaa(?:_quality)?|byte_width|stride)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.texture-override.resource-match", match = '(?i)\b(stereomode|expand_region_copy|deny_cpu_read|iteration)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.texture-override.vertex-limit", match = '(?i)\b((?:override_|uav_)?byte_stride|override_vertex_count)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.texture-override.draw-match", match = '(?i)\b(match_(?:first_(?:vertex|index|instance)|(?:vertex_|index_|instance_)count))\b'},
-    {name = "meta.keyword.key keyword.other.migoto.texture-override.fuzzy-match", match = '(?i)\b(match_(?:type|usage|(?:bind|cpu_access|misc)_flags|(?:byte_)?width|height|stride|mips|format|depth|array|msaa(?:_quality)?))\b'},
-    {name = "meta.keyword.key keyword.other.migoto.custom-shader", match = '(?i)\b([vhdgpc]s|flags|max_executions_per_frame|topology|sampler)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.custom-shader.blend-state", match = '(?i)\b(?:blend_factor\[([0-3])\]|(?:blend|alpha|mask)\b(?:\[([0-7])\])?|alpha_to_coverage\b|sample_mask\b|blend_state_merge\b)', captures.1.name = "constant.numeric.migoto", captures.2.name = "constant.numeric.migoto"},
-    {name = "meta.keyword.key keyword.other.migoto.custom-shader.depth-stencil-state", match = '(?i)\b(depth_(?:enable|write_mask|func|stencil_state_merge)|stencil_(?:enable|(?:read|write)_mask|front|back|ref))\b'},
-    {name = "meta.keyword.key keyword.other.migoto.custom-shader.rs-state", match = '(?i)\b(fill|cull|front|depth_(?:bias(?:_clamp)?|clip_enable)|slope_scaled_depth_bias|(?:scissor|multisample|antialiased_line)_enable|rasterizer_state_merge)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.shader-regex", match = '(?i)\b(shader_model|temps)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.shader-override", match = '(?i)\b(allow_duplicate_hash|depth_filter|partner|model|disable_scissor)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.include", match = '(?i)\b((?:in|ex)clude(?:_recursive)?|user_config)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.logging", match = '(?i)\b(separation|convergence|calls|input|debug(?:_locks)?|unbuffered|force_cpu_affinity|wait_for_debugger|crash|dump_all_profiles|show_warnings)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.hunting", match = '(?i)\b((?:done_|toggle_)?hunting|(?:next_)?marking_mode|marking_actions|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance(?:_interval)?|repeat_rate|freeze_performance_monitor|verbose_overlay|tune_(?:enable|step)|tune[123]_(?:up|down)|analyse_frame|analyse_options|kill_deferred)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.system", match = '(?i)\b(proxy_d3d(?:9|11)|load_library_redirect|check_foreground_window|hook|allow_(?:check_interface|create_device|platform_update)|skip_early_includes_load|config_initialization_delay|settings_auto_save_interval|dll_initialization_delay|screen_(?:width|height)|dump_path)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.loader", match = '(?i)\b(target|module|require_admin|launch|delay|loader|check_version|entry_point|hook_proc|wait_for_target)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.device", match = '(?i)\b(upscaling|upscale_mode|(?:filter_)?refresh_rate|(?:toggle_)?full_screen|force_full_screen_on_key|force_stereo|allow_windowcommands|get_resolution_from|hide_cursor|cursor_upscaling_bypass)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.stereo", match = '(?i)\b(automatic_mode|unlock_(?:separation|convergence)|create_profile|surface(?:_square)?_createmode|force_no_nvapi)\b'},
-    {name = "meta.keyword.key keyword.other.migoto.rendering", match = '(?i)\b(shader_hash|texture_hash|(?:override|cache|storage)_directory|cache_shaders|rasterizer_disable_scissor|track_texture_updates|(?:stereo|ini)_params|assemble_signature_comments|disassemble_undecipherable_custom_data|patch_assembly_cb_offsets|recursive_include|export_(?:fixed|shaders|hlsl|binary)|dump_usage|fix_(?:sv_position|ZRepair_.+|BackProjectionTransform\d|ObjectPosition\d(?:Multiplier)?|MatrixOperand\d(?:Multiplier)?)|recompile_all_vs)\b'},
-]
-
-[repository.key-value]
-patterns = [
-    {name = "meta.keyword.rhs meta.keyword.override constant.language.override.migoto", match = '\b(?i)(none|overrule|depth_(?:(?:in)?active))\b'},
-    {name = "meta.keyword.rhs meta.keyword.custom-shader constant.language.cull.migoto", match = '\b(?i)(front|back)\b'},
-    {name = "meta.keyword.rhs meta.keyword.custom-shader constant.language.fill.migoto", match = '\b(?i)(wireframe|solid)\b'},
-    {name = "meta.keyword.rhs meta.keyword.custom-shader constant.language.topology.migoto", match = '\b(?i)(undefined|(point|line|triangle)_list|(line|triangle)_strip|(line|triangle)_(list|strip)_adj|[123]?\d_control_point_patch_list)\b'},
-    {name = "meta.keyword.rhs meta.keyword.custom-shader constant.language.compile-flag.migoto", match = '\b(?i)(debug|skip_(validation|optimization)|pack_matrix_(row_major|column_major)|partial_precision|force_[vp]s_software_no_opt|no_preshader|(avoid|prefer)_flow_control|enable_(strictness|backwards_compatibility|unbounded_descriptor_tables)|ieee_strictness|optimization_level[0123]|warnings_are_errors|resources_may_alias|all_resources_bound)\b'},
-    {name = "meta.keyword.rhs meta.keyword.fuzzy-match constant.language.match-usage.migoto", match = '\b(?i)(default|immutable|dynamic|staging)\b'},
-    {name = "meta.keyword.rhs meta.keyword.resource constant.language.resource-mode.migoto", match = '\b(?i)(auto|mono|stereo)\b'},
-    {name = "meta.keyword.rhs meta.keyword.resource constant.language.resource-type.migoto", match = '\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|TextureCube)\b'},
-    {name = "meta.keyword.rhs meta.keyword.resource constant.language.bind-flag.migoto", match = '\b(?i)((?:vertex|index|constant)_buffer|shader_resource|stream_output|render_target|unordered_access|decoder|video_encoder)\b'},
-    {name = "meta.keyword.rhs meta.keyword.resource constant.language.misc-flag.migoto", match = '\b(?i)(texturecube|generate_mips|shared|drawindirect_args|buffer_(?:allow_raw_views|structured)|resource_clamp|shared_(?:keymutex|nthandle)|gdi_compatible|restricted_content|restrict_shared_resource(?:_driver)?|guarded|tile_pool|tiled|hw_protected)\b'},
-    # I know this is an absurdly long line, but it is genuinely not worth the headache to figure out how to condense this regex
-    {name = "meta.keyword.rhs meta.keyword.resource support.type.dxgi-format.migoto", match = '''\b(?xi)(?:DXGI_FORMAT_)?(UNKNOWN|R32G32B32A32_TYPELESS|R32G32B32A32_FLOAT|R32G32B32A32_UINT|R32G32B32A32_SINT|R32G32B32_TYPELESS|R32G32B32_FLOAT|R32G32B32_UINT|R32G32B32_SINT|R16G16B16A16_TYPELESS|R16G16B16A16_FLOAT|R16G16B16A16_UNORM|R16G16B16A16_UINT|R16G16B16A16_SNORM|R16G16B16A16_SINT
-|R32G32_TYPELESS|R32G32_FLOAT|R32G32_UINT|R32G32_SINT|R32G8X24_TYPELESS|D32_FLOAT_S8X24_UINT|R32_FLOAT_X8X24_TYPELESS|X32_TYPELESS_G8X24_UINT|R10G10B10A2_TYPELESS|R10G10B10A2_UNORM|R10G10B10A2_UINT|R11G11B10_FLOAT|R8G8B8A8_TYPELESS|R8G8B8A8_UNORM|R8G8B8A8_UNORM_SRGB
-|R8G8B8A8_UINT|R8G8B8A8_SNORM|R8G8B8A8_SINT|R16G16_TYPELESS|R16G16_FLOAT|R16G16_UNORM|R16G16_UINT|R16G16_SNORM|R16G16_SINT|R32_TYPELESS|D32_FLOAT|R32_FLOAT|R32_UINT|R32_SINT|R24G8_TYPELESS|D24_UNORM_S8_UINT|R24_UNORM_X8_TYPELESS|X24_TYPELESS_G8_UINT|R8G8_TYPELESS
-|R8G8_UNORM|R8G8_UINT|R8G8_SNORM|R8G8_SINT|R16_TYPELESS|R16_FLOAT|D16_UNORM|R16_UNORM|R16_UINT|R16_SNORM|R16_SINT|R8_TYPELESS|R8_UNORM|R8_UINT|R8_SNORM|R8_SINT|A8_UNORM|R1_UNORM|R9G9B9E5_SHAREDEXP|R8G8_B8G8_UNORM|G8R8_G8B8_UNORM|BC1_TYPELESS|BC1_UNORM|BC1_UNORM_SRGB
-|BC2_TYPELESS|BC2_UNORM|BC2_UNORM_SRGB|BC3_TYPELESS|BC3_UNORM|BC3_UNORM_SRGB|BC4_TYPELESS|BC4_UNORM|BC4_SNORM|BC5_TYPELESS|BC5_UNORM|BC5_SNORM|B5G6R5_UNORM|B5G5R5A1_UNORM|B8G8R8A8_UNORM|B8G8R8X8_UNORM|R10G10B10_XR_BIAS_A2_UNORM|B8G8R8A8_TYPELESS|B8G8R8A8_UNORM_SRGB
-|B8G8R8X8_TYPELESS|B8G8R8X8_UNORM_SRGB|BC6H_TYPELESS|BC6H_UF16|BC6H_SF16|BC7_TYPELESS|BC7_UNORM|BC7_UNORM_SRGB|AYUV|Y410|Y416|NV12|P010|P016|420_OPAQUE|YUY2|Y210|Y216|NV11|AI44|IA44|P8|A8P8|B4G4R4A4_UNORM)\b'''},
-    {name = "meta.keyword.rhs meta.keyword.blend-state keyword.operator.migoto.blend-operator", match = '\b(?i)(add|(?:rev_)?subtract|min|max|disable)\b'}, #adding `disable` here even though it's not a blend op
-    {name = "meta.keyword.rhs meta.keyword.blend-state constant.language.blend-factor.migoto", match = '\b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\b'},
-    {name = "meta.keyword.rhs meta.keyword.system constant.language.hook-option.migoto", match = '\b(?i)(deferred_contexts|(?:immediate_)?context|device|all|recommended|except_set_(?:shader_resources|sampler|rasterizer_state)|skip_dxgi_(?:factory|device))\b'},
-    {name = "meta.keyword.rhs meta.keyword.device constant.language.resolution-source.migoto", match = '\b(?i)(depth_stencil|swap_chain)\b'},
-    {name = "meta.keyword.rhs meta.keyword.rendering constant.language.shader-hash-type.migoto", match = '\b(?i)(3dmigoto|embedded|bytecode)\b'},
-    {name = "meta.keyword.rhs meta.keyword.marking constant.language.marking-mode.migoto", match = '\b(?i)(skip|mono|original|pink)\b'},
-    {name = "meta.keyword.rhs meta.keyword.marking constant.language.marking-action.migoto", match = '\b(?i)(hlsl|asm|assembly|regex|ShaderRegex|clipboard|mono_snapshot|stereo_snapshot|snapshot_if_pink)\b'},
-    {name = "meta.keyword.rhs meta.keyword.key-binding constant.language.modifier-key.migoto", match = '\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)\b'}, # only really here for Hunting section, as Key* section is handled separately
-]
-
 [repository.section]
-name = "meta.structure.section.migoto"
-# The insanity below is necessary for the ShaderRegex Pattern matching section to not break the whole file
-# Without this, character class sets that would match a more broad section regex would be treated as section titles
-# So we must explicitly define the allowed section names in the begin and end matches
-begin = '''(?xi)(?:
-^[ \t]*
-  (\[) # capture group 1
-  [ \t]*
-  (
-    (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |
-     (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |
-     Include.*
-  )    # capture group 2
-  [ \t]*
-  (\]) # capture group 3
-[ \t]*$)
-(?<=^[ \t]*\[\s*\2\s*\][ \t]*$)'''
-end = '''(?xi)
-(?=^[ \t]*\[\s*
-(?:
-  (?:Constants|Present|Logging|Hunting|System|Device|Profile|Stereo|Rendering|ConvergenceMap|Loader|ClearRenderTargetView|ClearDepthStencilView|ClearUnorderedAccessView(?:Uint|Float)) |
-  (?:Key|TextureOverride|ShaderOverride|(?:BuiltIn)?(?:CustomShader|CommandList)|Resource|ShaderRegex|Preset).+ |
-  Include.*
-)
-\s*\][ \t]*$|\z)''' # \z is there to match the end of the file
-beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
-beginCaptures.2.name = "meta.tag.section-header.migoto entity.name.section.group-title.migoto"
-beginCaptures.2.patterns = [
-    {match = '(?i)Constants', name = "entity.name.section.group-title.migoto.constants"},
-    {match = '(?i)Present', name = "entity.name.section.group-title.migoto.present"},
-    {match = '(?i)Key.+', name = "entity.name.section.group-title.migoto.key"},
-    {match = '(?i)TextureOverride.+', name = "entity.name.section.group-title.migoto.texture-override"},
-    {match = '(?i)ShaderOverride.+', name = "entity.name.section.group-title.migoto.shader-override"},
-    {match = '(?i)(?:BuiltIn)?CustomShader.+', name = "entity.name.section.group-title.migoto.custom-shader"},
-    {match = '(?i)(?:BuiltIn)?CommandList.+', name = "entity.name.section.group-title.migoto.command-list"},
-    {match = '(?i)Resource.+', name = "entity.name.section.group-title.migoto.resource"},
-    {match = '(?i)ShaderRegex.+', name = "entity.name.section.group-title.migoto.shader-regex"},
-    {match = '(?i)Include.*', name = "entity.name.section.group-title.migoto.include"},
-    {match = '(?i)Logging', name = "entity.name.section.group-title.migoto.logging"},
-    {match = '(?i)Hunting', name = "entity.name.section.group-title.migoto.hunting"},
-    {match = '(?i)System', name = "entity.name.section.group-title.migoto.system"},
-    {match = '(?i)Device', name = "entity.name.section.group-title.migoto.device"},
-    {match = '(?i)Profile', name = "entity.name.section.group-title.migoto.profile"},
-    {match = '(?i)Stereo', name = "entity.name.section.group-title.migoto.stereo"},
-    {match = '(?i)Rendering', name = "entity.name.section.group-title.migoto.rendering"},
-    {match = '(?i)ConvergenceMap', name = "entity.name.section.group-title.migoto.convergence-map"},
-    {match = '(?i)Preset.+', name = "entity.name.section.group-title.migoto.preset"},
-    {match = '(?i)Loader', name = "entity.name.section.group-title.migoto.loader"},
-    {match = '(?i)ClearRenderTargetView', name = "entity.name.section.group-title.migoto.clear-render-target-view"},
-    {match = '(?i)ClearDepthStencilView', name = "entity.name.section.group-title.migoto.clear-depth-stencil-view"},
-    {match = '(?i)ClearUnorderedAccessView(?:Uint|Float)', name = "entity.name.section.group-title.migoto.clear-unordered-access-view"},
+patterns = [
+  {include = "#special-section"},
+  {include = "#setting-section"},
+  {include = "#commandlist-section"},
 ]
-beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
+
+[repository.special-section]
+patterns = [
+  {include = "#constants-section"},
+  {include = "#present-section"},
+  {include = "#hunting-section"},
+  {include = "#key-section"},
+  {include = "#preset-section"},
+  {include = "#shader-regex-section"},
+]
 
 # Constants Section
-[[repository.section.patterns]]
-name = "meta.structure.section.constants.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Constants\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
+[repository.constants-section]
+name = "meta.section.constants.migoto"
+begin = '(?i)(?:^[ \t]*(\[)\s*(Constants)\s*(\])[ \t]*$)'
+end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
 patterns = [
-    {include = "#comment"},
-	{include = "#global-declaration"},
-    {include = "#primary-statement"},
+  {include = "#comment"},
+  {include = "#global-declaration"},
+  {include = "#primary-statement"},
 ]
 
 # Present Section
-[[repository.section.patterns]]
-name = "meta.structure.section.present.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Present\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
+[repository.present-section]
+name = "meta.section.present.migoto"
+begin = '(?i)(?:^[ \t]*(\[)\s*(Present)\s*(\])[ \t]*$)'
+end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
 patterns = [
-    {include = "#comment"},
-	{include = "#primary-statement"},
+  {include = "#comment"},
+  {include = "#primary-statement"},
+]
+
+# Hunting Section
+[repository.hunting-section]
+name = "meta.section.hunting.migoto"
+begin = '(?i)(?:^[ \t]*(\[)\s*(Hunting)\s*(\])[ \t]*$)'
+end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
+patterns = [
+  {include = "#setting-statement"},
+  {include = "#comment"},  # moved to second spot to allow `;` as key-binding character
 ]
 
 # Key Section
-[[repository.section.patterns]]
-name = "meta.structure.section.key.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Key.+\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
+[repository.key-section]
+name = "meta.section.key.migoto"
+begin = '(?i)(?:^[ \t]*(\[)\s*(Key.+)\s*(\])[ \t]*$)'
+end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
 
-[[repository.section.patterns.patterns]]
+# Key Setting Statement
+[[repository.key-section.patterns]]
 name = "meta.statement.setting.migoto"
-match = '(?i)^[ \t]*(type)\s*(=)\s*([^\r\n]+)'
+match = '''(?xi)
+^[ \t]*
+(?!\b(?:
+  run|condition|key|back|
+  vb\d|ib|(?:[rf]_)?bb|s?o\d|od|
+  (?<!$)[xyzw]\d{0,3}|
+  this|(?:ini|stereo)params|cursor_(?:mask|color)
+)\b)                 # keywords and variables that are not keys, defined in-lieu of lexical precedence
+([a-z0-9]\w+)        # fixed_value
+\s*(=)\s*([^\r\n]+)  # = fixed_value | boolean_value | static_value ; can be a list of each, or mixed. LSP will handle correctness
+'''
 captures.1.name = "meta.keyword.key keyword.other.migoto"
 captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [{name = "meta.keyword.rhs meta.keyword.key-binding constant.language.key-type.migoto", match = '\b(?i)(hold|activate|toggle|cycle)\b'}]
+captures.3.patterns = [
+  {include = "#fixed-value"},
+  {include = "#boolean-value"},
+  {include = "#static-value"},
+]
 
-[[repository.section.patterns.patterns]]
+## Key Setting Statement - Keybinding Value Key
+[[repository.key-section.patterns]]
 name = "meta.statement.setting.migoto"
 match = '(?i)^[ \t]*(key|back)\s*(=)\s*([^\r\n]+)'
 captures.1.name = "meta.keyword.key keyword.other.migoto"
 captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [{name = "meta.keyword.rhs meta.keyword.key-binding constant.language.modifier-key.migoto", match = '\b(?i)(?:(?:no_)?(?:ctrl|alt|shift|windows)|no_modifiers)\b'}]
+captures.3.patterns = [{include = "#keybinding-modifier"}]
 
-[[repository.section.patterns.patterns]]
-name = "meta.statement.setting.migoto"
-match = '(?i)^[ \t]*((?:release_)?delay)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.migoto"
-captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [{include = "#constant"}]
-
-[[repository.section.patterns.patterns]]
-name = "meta.statement.setting.migoto"
-match = '(?i)^[ \t]*(wrap|smart)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.migoto"
-captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [{name = "constant.language.boolean.migoto", match = '\b(?i)(?:true|false|yes|no|on|off)\b'},{name = "constant.numeric.migoto", match = '[01]'}]
-
-[[repository.section.patterns.patterns]]
-name = "meta.statement.setting.migoto"
-match = '(?i)^[ \t]*(separation|convergence|(?:release_)?transition)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.migoto"
-captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [{name = "constant.numeric.migoto", match = '\d+'}]
-
-[[repository.section.patterns.patterns]]
-name = "meta.statement.setting.migoto"
-match = '(?i)^[ \t]*((?:release_)?transition_type)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.migoto"
-captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [{name = "meta.keyword.rhs meta.keyword.key-binding constant.language.transition-type.migoto", match = '\b(?i)(linear|cosine)\b'},]
-
-[[repository.section.patterns.patterns]]
+# Key Run Instruction | run = list of callable_commandlist
+[[repository.key-section.patterns]]
 name = "meta.statement.instruction.migoto"
 match = '(?i)^[ \t]*(run)\s*(=)\s*([^\r\n]+)(?:$|\n)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [{include = "#callable-commandlist"}]
 
-[[repository.section.patterns.patterns]]
+# Key Condition Statement | condition = list of operational_expression
+[[repository.key-section.patterns]]
 name = "meta.statement.condition.migoto"
 match = '(?i)^[ \t]*(condition)\s*(=)\s*([^\r\n]+)(?:$|\n)'
 captures.1.name = "meta.keyword.key keyword.other.condition.migoto"
 captures.2.name = "keyword.operator.assignment.migoto"
 captures.3.patterns = [{include = "#operational-expression"}]
 
-[[repository.section.patterns.patterns]]
+# Key Assignment Statement | assignments, but listable values
+[[repository.key-section.patterns]]
 name = "meta.statement.assignment.migoto"
 match = '''(?xi)
 ^[ \t]* # optional leading whitespace
@@ -253,13 +187,13 @@ match = '''(?xi)
 \s*
 (=) # assignment operator, surrounded by optional whitespace
 \s*
-([^\r\n]+) # RHS value, here must be parsed to float
+([^\r\n]+) # RHS value, here must be a static value
 (?:$|\n)'''
 captures.1.patterns = [{include = "#ini-parameter"}]
 captures.2.name = "keyword.operator.assignment.migoto"
-captures.3.patterns = [{include = "#constant"}]
+captures.3.patterns = [{include = "#static-value"}]
 
-[[repository.section.patterns.patterns]]
+[[repository.key-section.patterns]]
 name = "meta.statement.assignment.migoto"
 match = '''(?xi)
 ^[ \t]* # optional leading whitespace
@@ -267,152 +201,64 @@ match = '''(?xi)
 \s*
 (=) # assignment operator, surrounded by optional whitespace
 \s*
-([^\r\n]+) # RHS value, here must be parsed to float
+([^\r\n]+) # RHS value, here must be a static value
 (?:$|\n)'''
 captures.1.patterns = [{include = "#named-variable"}]
 captures.2.name = "keyword.operator.assignment.migoto"
-captures.3.patterns = [{include = "#constant"}]
+captures.3.patterns = [{include = "#static-value"}]
 
-[[repository.section.patterns.patterns]]
+[[repository.key-section.patterns]]
 include = "#comment"
-
-# Texture Override Section
-[[repository.section.patterns]]
-name = "meta.structure.section.texture-override.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*TextureOverride.+\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-    {include = "#setting-statement"},
-    {include = "#primary-statement"},
-]
-
-# Shader Override Section
-[[repository.section.patterns]]
-name = "meta.structure.section.shader-override.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*ShaderOverride.+\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-    {include = "#setting-statement"},
-    {include = "#primary-statement"},
-]
-
-# Custom Shader Section
-[[repository.section.patterns]]
-name = "meta.structure.section.custom-shader.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*(?:BuiltIn)?CustomShader.+\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-    {include = "#setting-statement"},
-    {include = "#primary-statement"},
-]
-
-# Explicit Command List Section
-[[repository.section.patterns]]
-name = "meta.structure.section.command-list.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*(?:BuiltIn)?CommandList.+\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-    {include = "#setting-statement"},
-    {include = "#primary-statement"},
-]
-
-# Custom Resource Section
-[[repository.section.patterns]]
-name = "meta.structure.section.resource.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Resource.+\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-    {include = "#setting-statement"},
-]
-
-# Shader Regex (Pattern Matching)
-[[repository.section.patterns]]
-name = "meta.structure.section.shader-regex-pattern.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*ShaderRegex.+\.Pattern\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-contentName = "meta.embedded.block.regexp"
-patterns = [
-    {include = "#comment"},
-	{include = "source.regexp.pcre2"},
-]
-
-# Shader Regex (Replacement)
-[[repository.section.patterns]]
-name = "meta.structure.section.shader-regex-replace.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*ShaderRegex.+\.Pattern\.Replace\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-# contentName = "meta.embedded.block.regexp-replace"
-patterns = [
-    {include = "#comment"},
-	{include = "source.regexp-replace.pcre2"},
-]
-
-# Shader Regex (CommandList)
-[[repository.section.patterns]]
-name = "meta.structure.section.shader-regex.migoto"
-begin = '(?i)(?<!^[ \t]*\[\s*ShaderRegex.+\.Pattern.*\][ \t]*$)(?<=[ \t]*^\[ShaderRegex.+\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-    {include = "#setting-statement"},
-    {include = "#primary-statement"},
-]
-
-# Include Section
-[[repository.section.patterns]]
-name = "meta.structure.section.include.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Include.*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-	{include = "#setting-statement"},
-]
 
 # Preset Section
-[[repository.section.patterns]]
-name = "meta.structure.section.preset.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Preset.+\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
+[repository.preset-section]
+name = "meta.section.preset.migoto"
+begin = '(?i)(?:^[ \t]*(\[)\s*(Preset.+)\s*(\])[ \t]*$)'
+end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
 
-[[repository.section.patterns.patterns]]
-include = "#comment"
-
-# TODO: refactor the below which are shared with Key* section into own repository value
-
-[[repository.section.patterns.patterns]]
+# Preset Setting Statement
+[[repository.preset-section.patterns]]
 name = "meta.statement.setting.migoto"
-match = '(?i)^[ \t]*(separation|convergence|(?:release_)?transition|unique_triggers_required)\s*(=)\s*([^\r\n]+)'
+match = '''(?xi)
+^[ \t]*
+(?!\b(?:
+  run|condition|
+  vb\d|ib|(?:[rf]_)?bb|s?o\d|od|
+  (?<!$)[xyzw]\d{0,3}|
+  this|(?:ini|stereo)params|cursor_(?:mask|color)
+)\b)                 # keywords and variables that are not keys, defined in-lieu of lexical precedence
+([a-z0-9]\w+)        # fixed_value
+\s*(=)\s*([^,\r\n]+)  # = fixed_value | boolean_value | static_value
+'''
 captures.1.name = "meta.keyword.key keyword.other.migoto"
 captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [{name = "constant.numeric.migoto", match = '\d+'}]
+captures.3.patterns = [
+  {include = "#fixed-value"},
+  {include = "#boolean-value"},
+  {include = "#static-value"},
+]
 
-[[repository.section.patterns.patterns]]
-name = "meta.statement.setting.migoto"
-match = '(?i)^[ \t]*((?:release_)?transition_type)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.migoto"
-captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [{name = "meta.keyword.rhs meta.keyword.key-binding constant.language.transition-type.migoto", match = '\b(?i)(linear|cosine)\b'},]
-
-[[repository.section.patterns.patterns]]
+# Preset Run Instruction
+[[repository.preset-section.patterns]]
 name = "meta.statement.instruction.migoto"
-match = '(?i)^[ \t]*(run)\s*(=)\s*([^\r\n]+)(?:$|\n)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+match = '(?i)^[ \t]*(run)\s*(=)\s*([^,\r\n]+)(?:$|\n)'
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [{include = "#callable-commandlist"}]
 
-[[repository.section.patterns.patterns]]
+# Preset Condition Statement
+[[repository.preset-section.patterns]]
 name = "meta.statement.condition.migoto"
-match = '(?i)^[ \t]*(condition)\s*(=)\s*([^\r\n]+)(?:$|\n)'
+match = '(?i)^[ \t]*(condition)\s*(=)\s*([^,\r\n]+)(?:$|\n)'
 captures.1.name = "meta.keyword.key keyword.other.condition.migoto"
 captures.2.name = "keyword.operator.assignment.migoto"
 captures.3.patterns = [{include = "#operational-expression"}]
 
-[[repository.section.patterns.patterns]]
+# Preset Assignment Statement
+[[repository.preset-section.patterns]]
 name = "meta.statement.assignment.migoto"
 match = '''(?xi)
 ^[ \t]* # optional leading whitespace
@@ -420,148 +266,262 @@ match = '''(?xi)
 \s*
 (=) # assignment operator, surrounded by optional whitespace
 \s*
-([^\r\n]+) # RHS value, here must be parsed to float
+([^,\r\n]+) # RHS value, here must be a static value
 (?:$|\n)'''
 captures.1.patterns = [{include = "#ini-parameter"}]
 captures.2.name = "keyword.operator.assignment.migoto"
-captures.3.patterns = [{include = "#constant"}]
+captures.3.patterns = [{include = "#static-value"}]
 
-[[repository.section.patterns.patterns]]
+[[repository.preset-section.patterns]]
 name = "meta.statement.assignment.migoto"
 match = '''(?xi)
 ^[ \t]* # optional leading whitespace
-(\$(?:\\.+\\)?\w+) # a $ variable
+(\$(?:\\.+\\)?\w+\b) # a $ variable
 \s*
 (=) # assignment operator, surrounded by optional whitespace
 \s*
-([^\r\n]+) # RHS value, here must be parsed to float
+([^,\r\n]+) # RHS value, here must be a static value
 (?:$|\n)'''
 captures.1.patterns = [{include = "#named-variable"}]
 captures.2.name = "keyword.operator.assignment.migoto"
+captures.3.patterns = [{include = "#static-value"}]
+
+[[repository.preset-section.patterns]]
+include = "#comment"
+
+# Shader Regex Sections
+
+# Shader Regex (Pattern Matching)
+[[repository.shader-regex-section.patterns]]
+name = "meta.section.shader-regex.pattern.migoto"
+begin = '(?i)(?:^[ \t]*(\[)\s*(ShaderRegex.+\.Pattern)\s*(\])[ \t]*$)'
+end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
+contentName = "meta.embedded.block.regexp"
+patterns = [
+  {include = "#comment"},
+  {include = "source.regexp.pcre2"},
+]
+
+# Shader Regex (Replacement)
+[[repository.shader-regex-section.patterns]]
+name = "meta.section.shader-regex.replace.migoto"
+begin = '(?i)(?:^[ \t]*(\[)\s*(ShaderRegex.+\.Pattern\.Replace)\s*(\])[ \t]*$)'
+end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
+patterns = [
+  {include = "#comment"},
+  {include = "source.regexp-replace.pcre2"},
+]
+
+# Shader Regex (Insert Declarations)
+[[repository.shader-regex-section.patterns]]
+name = "meta.section.shader-regex.declarations.migoto"
+begin = '(?i)(?:^[ \t]*(\[)\s*(ShaderRegex.+\.InsertDeclarations)\s*(\])[ \t]*$)'
+end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
+patterns = [{include = "#comment"}]  # everything not a comment is free_text unil source.dxbc is made
+
+# Shader Regex (CommandList)
+[[repository.shader-regex-section.patterns]]
+name = "meta.section.shader-regex.migoto"
+begin = '''(?xi)
+(?<!^[ \t]*\[\s*ShaderRegex.+(?:\.Pattern.*|\.InsertDeclarations)\s*\][ \t]*$) # Ensure this is not one of the other 3
+(?:^[ \t]*(\[)\s*(ShaderRegex.+)\s*(\])[ \t]*$)'''
+end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
+patterns = [
+  {include = "#comment"},
+  {include = "#shader-regex-setting-statement"},
+  {include = "#primary-statement"},
+]
+
+[[repository.shader-regex-setting-statement.patterns]]
+name = "meta.statement.setting.migoto"
+match = '(?i)^[ \t]*(filter_index)\s*(=)\s*([^\r\n]+)'
+captures.1.name = "meta.keyword.key keyword.other.migoto"
+captures.2.name = "punctuation.separator.key-value.migoto"
 captures.3.patterns = [{include = "#constant"}]
 
-# Logging Section
-[[repository.section.patterns]]
-name = "meta.structure.section.logging.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Logging\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
+[[repository.shader-regex-setting-statement.patterns]]
+name = "meta.statement.setting.migoto"
+match = '(?i)^[ \t]*(shader_model|temps)\s*(=)\s*[^\r\n]+'
+captures.1.name = "meta.keyword.key keyword.other.migoto"
+captures.2.name = "punctuation.separator.key-value.migoto"
+
+[repository.setting-section]
+name = "meta.section.settings.migoto"
+begin = '''(?xi)(?:
+^[ \t]*
+  (\[) # capture group 1, opening bracket
+  [ \t]*
+  (Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader|Resource.+|Include.*) # capture group 2, section header
+  [ \t]*
+  (\]) # capture group 3, closing bracket
+[ \t]*$
+)'''
+end = '''(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'''  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
 patterns = [
-    {include = "#comment"},
-	{include = "#setting-statement"},
+  {include = "#comment"},
+  {include = "#setting-statement"},
 ]
 
-# Hunting Section
-[[repository.section.patterns]]
-name = "meta.structure.section.hunting.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Hunting\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
+[repository.commandlist-section]
+name = "meta.section.commandlists.migoto"
+begin = '''(?xi)(?:
+^[ \t]*
+  (\[) # capture group 1, opening bracket
+  [ \t]*
+  (
+   Clear(?:RenderTarget|DepthStencil)View | ClearUnorderedAccessView(?:Uint|Float) |
+   (?: TextureOverride | ShaderOverride | (?:BuiltIn)?(?:CustomShader|CommandList) ).+
+  )    # capture group 2, section header
+  [ \t]*
+  (\]) # capture group 3, closing bracket
+[ \t]*$
+)'''
+end = '''(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'''  # \z is there to match the end of the file
+beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
+beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
 patterns = [
-    # Same as with the Key* section, comment is last to allow for ; to not be treated as an invalid comment for the hotkeys
-	{include = "#setting-statement"},
-    {include = "#comment"},
+  {include = "#comment"},
+  {include = "#setting-statement"},
+  {include = "#primary-statement"},
 ]
 
-# System Section
-[[repository.section.patterns]]
-name = "meta.structure.section.system.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*System\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-	{include = "#setting-statement"},
+[[repository.setting-statement.patterns]]
+name = "meta.statement.setting.migoto"
+match = '''(?xi)
+^[ \t]*
+(?!\b(?:
+  hash|[vhdgpc]s|
+  (?:override|cache|storage)_directory|include(?:_recursive)?|exclude_recursive|
+  (?:done_|toggle_)hunting | next_marking_mode | mark_snapshot|
+  (?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|
+  (?:previous|next|mark)_(?:index|vertex)buffer | (?:previous|next)_(?:index|vertex)buffer_slot|
+  (?:previous|next|mark)_rendertarget|
+  take_screenshot | reload_fixes | (?:reload|wipe_user)_config | show_original|
+  monitor_performance | freeze_performance_monitor | tune[123]_(?:up|down)|
+  analyse_frame | toggle_full_screen | force_full_screen_on_key|
+  run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|
+  draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|
+  vb\d|ib|(?:[rf]_)?bb|s?o\d|od|
+  (?<!$)[xyzw]\d{0,3}|
+  this|(?:ini|stereo)params|cursor_(?:mask|color)|
+  Resource.+
+)\b)        # ^ exclusions to resolve conflicts or handle special cases
+([\w\[\]]+) # a word-like that is not in the preceding list and includes brackets for blend[N]/blend_factor[N] keys
+\s* (=) \s* # kvp separator surrounded by optional whitespace
+(?: ([^"\\/\s\r\n]+) | ([^\s\r\n]+) | ([^\r\n]+) )  # match anything on the right-hand-side
+(?:$|\n)'''
+captures.1.patterns = [{include = "#key"}]
+captures.2.name = "punctuation.separator.key-value.migoto"
+captures.3.patterns = [
+  {include = "#resource-type"},  # DXGI types + Resource types
+  {include = "#constant"},
+  {include = "#boolean-value"},
+  {include = "#path-value"},
+  {include = "#fixed-value"},
+]
+captures.4.patterns = [
+  {include = "#string"},
+  {include = "#path-value"},
+  {include = "#fixed-value"},
+]
+captures.5.patterns = [
+  {include = "#string"},
+  {include = "#path-value"},
+  {include = "#list-expression"},
+  {include = "#fuzzy-match-expression"},
+  {include = "#fixed-value"},
 ]
 
-# Device Section
-[[repository.section.patterns]]
-name = "meta.structure.section.device.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Device\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-	{include = "#setting-statement"},
+# Hash statement
+[[repository.setting-statement.patterns]]
+name = "meta.statement.setting.migoto"
+match = '''(?xi)
+^[ \t]*
+\b(hash)\b
+\s* (=) \s*
+(?:[a-z0-9]+)
+[ \t]*
+(?:$|\n)'''
+captures.1.name = "meta.keyword.hash.key keyword.other.migoto"
+captures.2.name = "punctuation.separator.key-value.migoto"
+
+# Custom Shader - Shader Name Keys
+[[repository.setting-statement.patterns]]
+name = "meta.statement.setting.migoto"
+match = '''(?xi)
+^[ \t]*
+\b([vhdgpc]s)\b
+\s* (=) \s*
+([^\r\n]+)
+[ \t]*
+(?:$|\n)'''
+captures.1.name = "meta.keyword.shader.key keyword.other.migoto"
+captures.2.name = "punctuation.separator.key-value.migoto"
+captures.3.patterns = [
+  {name = "constant.language.null.migoto", match = '\b(?i)(null)\b'},
+  {include = "#path-value"}
 ]
 
-# Stereo Section
-[[repository.section.patterns]]
-name = "meta.structure.section.stereo.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Stereo\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-	{include = "#setting-statement"},
+# KeyBinding Keys
+[[repository.setting-statement.patterns]]
+name = "meta.statement.setting.migoto"
+match = '''(?xi)
+^[ \t]*
+\b(
+  (?:done_|toggle_)hunting | next_marking_mode | mark_snapshot |
+  (?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader |
+  (?:previous|next|mark)_(?:index|vertex)buffer | (?:previous|next)_(?:index|vertex)buffer_slot |
+  (?:previous|next|mark)_rendertarget|
+  take_screenshot | reload_fixes | (?:reload|wipe_user)_config | show_original |
+  monitor_performance | freeze_performance_monitor | tune[123]_(?:up|down) |
+  analyse_frame | toggle_full_screen | force_full_screen_on_key
+)\b         # ^^^ keys that take KeyBinding as a value
+\s* (=) \s* # kvp separator surrounded by optional whitespace
+([^\r\n]+)  # RHS value, open to accommodate symbols
+[ \t]*
+(?:$|\n)'''
+captures.1.name = "meta.keyword.binding.key keyword.other.migoto"
+captures.2.name = "punctuation.separator.key-value.migoto"
+captures.3.patterns = [{include = "#keybinding-modifier"}]
+
+# Directory and File Keys
+[[repository.setting-statement.patterns]]
+name = "meta.statement.setting.migoto"
+match = '''(?xi)
+^[ \t]*
+\b((?:override|cache|storage)_directory|include(?:_recursive)?|exclude_recursive)\b
+\s* (=) \s* # kvp separator surrounded by optional whitespace
+([^\r\n]+)  # match anything on the right-hand-side
+[ \t]*
+(?:$|\n)'''
+captures.1.name = "meta.keyword.path-value.key keyword.other.migoto"
+captures.2.name = "punctuation.separator.key-value.migoto"
+captures.3.patterns = [
+  {include = "#path-value"},
+  {match = '(.+?)[ \t]*$', captures.1.name = "constant.other.path.migoto"},
 ]
 
-# Rendering Section
-[[repository.section.patterns]]
-name = "meta.structure.section.rendering.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Rendering\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
+[repository.primary-statement]
 patterns = [
-    {include = "#comment"},
-	{include = "#setting-statement"},
-]
-
-# Profile Section
-[[repository.section.patterns]]
-name = "meta.structure.section.profile.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Profile\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-	{include = "#setting-statement"},
-]
-
-# ConvergenceMap Section
-[[repository.section.patterns]]
-name = "meta.structure.section.convergence-map.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*ConvergenceMap\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-	{include = "#setting-statement"},
-]
-
-# Loader Section
-[[repository.section.patterns]]
-name = "meta.structure.section.loader.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*Loader\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-	{include = "#setting-statement"},
-]
-
-# ClearRenderTargetView Section
-[[repository.section.patterns]]
-name = "meta.structure.section.clear-render-target-view.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*ClearRenderTargetView\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-    {include = "#setting-statement"},
-    {include = "#primary-statement"},
-]
-
-# ClearDepthStencilView Section
-[[repository.section.patterns]]
-name = "meta.structure.section.clear-depth-stencil-view.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*ClearDepthStencilView\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-    {include = "#setting-statement"},
-    {include = "#primary-statement"},
-]
-
-# ClearUnorderedAccessView Section
-[[repository.section.patterns]]
-name = "meta.structure.section.clear-unordered-access-view.migoto"
-begin = '(?i)(?<=^[ \t]*\[\s*ClearUnorderedAccessView(?:Uint|Float)\s*\][ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'
-patterns = [
-    {include = "#comment"},
-    {include = "#setting-statement"},
-    {include = "#primary-statement"},
+  {include = "#local-declaration"},
+  {include = "#general-statement"},
+  {include = "#conditional-statement"},
 ]
 
 [repository.conditional-statement]
@@ -572,43 +532,6 @@ beginCaptures.2.name = "keyword.control.flow.migoto"
 end = '$|\n'
 contentName = "meta.expression.operational.migoto"
 patterns = [{include = "#operational-expression"}]
-
-[repository.setting-statement]
-name = "meta.statement.setting.migoto"
-match = '''(?xi)
-^[ \t]*
-(?!\b(?:
-  run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|condition|
-  draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|
-  vb\d|ib|(?:[rf]_)?bb|s?o\d|od|
-  (?<!$)[xyzw]\d{0,3}|
-  this|(?:ini|stereo)params|cursor_(?:mask|color)|
-  Resource.+
-)\b) # keywords and variables that are not keys and should only be matched by general-statement
-([\w\[\]]+) # optional whitespace followed by a word-like that is not in the preceding list and includes brackets for blend[N]/blend_factor[N] keys
-\s* (=) \s* # kvp separator surrounded by optional whitespace
-([^\r\n]+) # match anything on the right-hand-side
-(?:$|\n)'''
-captures.1.patterns = [{include = "#key"}]
-captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [
-    {include = "#literal-list"},
-    {include = "#frame-analysis-opt"}, # only here due to analyse_options also being a Hunting section key, instead of only being an instruction
-    {name = "constant.language.boolean.migoto", match = '\b(?i)(?:true|false|yes|no|on|off)\b'},
-    {name = "meta.keyword.rhs meta.keyword.resource constant.language.null.migoto", match = '\b(?i)(null)\b'}, # exists because of partner shader keys in custom shader
-    {include = "#string"},
-    {include = "#path-value"},
-    {include = "#key-value"},
-    {include = "#constant"},
-    {include = "#fuzzy-match-expression"}, # only needed for texture override section keys involved in fuzzy matching which can take a constrained expression instead of just a number
-]
-
-[repository.primary-statement]
-patterns = [
-    {include = "#local-declaration"},
-    {include = "#general-statement"},
-    {include = "#conditional-statement"},
-]
 
 [repository.global-declaration]
 name = "meta.statement.declaration.global.migoto"
@@ -629,11 +552,11 @@ captures.1.name = "storage.modifier.migoto"
 captures.2.name = "storage.modifier.migoto"
 captures.3.name = "storage.modifier.migoto"
 captures.4.patterns = [
-    {include = "#named-variable"},
+  {include = "#named-variable"},
 ]
 captures.5.name = "keyword.operator.assignment.migoto"
 captures.6.patterns = [
-    {include = "#constant"},
+  {include = "#static-value"},
 ]
 
 [repository.local-declaration]
@@ -651,148 +574,174 @@ match = '''(?xi)
 (?:$|\n)'''
 captures.1.name = "storage.modifier.migoto"
 captures.2.patterns = [
-    {include = "#named-variable"},
+  {include = "#named-variable"},
 ]
 captures.3.name = "keyword.operator.assignment.migoto"
 captures.4.patterns = [
-    {include = "#operational-expression"},
+  {include = "#operational-expression"},
 ]
 
 [repository.general-statement]
 patterns = [
-    {include = "#assignment-statement"},
-    {include = "#instruction-statement"},
+  {include = "#assignment-statement"},
+  {include = "#instruction-statement"},
 ]
 
-[repository.assignment-statement]
+[[repository.assignment-statement.patterns]]
 name = "meta.statement.assignment.migoto"
 match = '''(?xi)
 ^[ \t]* # optional leading whitespace
 (?:(pre|post)\s+)? # pre and post modifiers, optional
-(\$(?:\\.+\\)?\w+|\b[xyzw]\d{0,3}\b|\b[vgdhpcsturfibo\-\d_]+\b|this|(?:ini|stereo)params|cursor_(?:mask|color)|Resource.+) # a $ variable, a resource, an ini parameter
+( \$ (?:\\.+\\)?\w+ | \b[xyzw]\d{0,3}\b ) # a $ variable or an ini parameter
 \s*
 (=) # assignment operator, surrounded by optional whitespace
 \s*
-([^\r\n]+) # RHS value, depends on type of assignment
+([^\r\n]+) # operational expression
 (?:$|\n)'''
-captures.1.name = "meta.command-list.priority keyword.control.migoto"
+captures.1.name = "meta.command-list.priority keyword.control.directive.migoto"
 captures.2.patterns = [
-    {include = "#ini-parameter"},
-    {include = "#resource"},
-    {include = "#named-variable"},
+  {include = "#ini-parameter"},
+  {include = "#named-variable"},
 ]
 captures.3.name = "keyword.operator.assignment.migoto"
-captures.4.patterns = [
-    {include = "#resource-usage-expression"},
-    {include = "#operational-expression"},
-]
+captures.4.patterns = [{include = "#operational-expression"}]
+
+[[repository.assignment-statement.patterns]]
+name = "meta.statement.assignment.migoto"
+match = '''(?xi)
+^[ \t]* # optional leading whitespace
+(?:(pre|post)\s+)? # pre and post modifiers, optional
+\b(
+  [vgdhpcsturfibo\-\d_]+\b |
+  this\b | (?:ini|stereo)params\b | cursor_(?:mask|color)\b |
+  Resource\S+
+)   # a limited resource operand (buffer/shader variable, resource identifier, custom resource)
+\s*
+(=) # assignment operator, surrounded by optional whitespace
+\s*
+([^\r\n]+) # resource usage expression
+(?:$|\n)'''
+captures.1.name = "meta.command-list.priority keyword.control.directive.migoto"
+captures.2.patterns = [{include = "#resource"}]
+captures.3.name = "keyword.operator.assignment.migoto"
+captures.4.patterns = [{include = "#resource-usage-expression"}]
 
 [repository.instruction-statement]
 name = "meta.statement.instruction.migoto"
 match = '''(?xi)
 ^[ \t]* # optional leading whitespace
 (?:(pre|post)\s+)? # pre and post modifiers, optional
-(
-  (?:
-    run|checktextureoverride|(?:exclude_)?preset|handling|reset_per_frame_limits|clear|direct_mode_eye|analyse_options|dump|special|store|
-    (?:draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)
-  ) # an instruction
-  \s*
-  = # execution operator, surrounded by optional whitespace
-  \s*
-  [^\r\n]+ # RHS value, depends on type of instruction
+(?:
+  (
+    \b\w+\b # an instruction
+    \s*
+    = # execution operator, surrounded by optional whitespace
+    \s*
+    [^\r\n]+ # RHS value, depends on type of instruction
+  ) |
+  (drawauto) # an instruction with no RHS
 )
 (?:$|\n)'''
-captures.1.name = "meta.command-list.priority keyword.control.migoto"
+captures.1.name = "meta.command-list.priority keyword.control.directive.migoto"
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.checktextureoverride"
 match = '(?i)(checktextureoverride)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [{include = "#resource"}]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.run-instruction"
 match = '(?i)(run)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [{include = "#callable-commandlist"}, {include = "#callable-customshader"}]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.preset-instruction"
 match = '(?i)((?:exclude_)?preset)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
-captures.3.patterns = [
-    {name = "meta.function-call variable.other.function.migoto", match = '(?i)(Preset)?(\\[^=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)', captures.1.name = "entity.name.function.section-type.migoto", captures.2.patterns = [{include="#namespace"}], captures.3.patterns = [{include="#section-identifier"}]}
-]
+
+[[repository.instruction-statement.captures.2.patterns.captures.3.patterns]]
+name = "meta.function-call variable.other.function.migoto"
+match = '(?i)(Preset)?(\\[^=$\r\n]+\\)?([^=$,\r\n]+)'
+captures.1.name = "entity.name.function.section-type.migoto"
+captures.2.patterns = [{include = "#namespace"}]
+captures.3.patterns = [{include = "#section-identifier"}]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.handling-instruction"
-match = '(?i)(handling)\s*(=)\s*(skip|abort)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+match = '(?i)(handling)\s*(=)\s*([^\r\n]+)'
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
-captures.3.name = "meta.keyword.rhs constant.language.handling.migoto"
+captures.3.patterns = [{include = "#fixed-value"}]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.reset-limits"
 match = '(?i)(reset_per_frame_limits)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [{include = "#custom-resource"}, {include = "#callable-customshader"}]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.clear-instruction"
 match = '(?i)(clear)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [
-    {include = "#resource"},
-    {name = "constant.numeric.migoto", match = '(?i)\b0x[a-f0-9]+\b'},
-    {include = "#constant"},
-    {name = "meta.keyword.rhs constant.language.clear.migoto", match = '\b(?i)(int|depth|stencil)\b'},
+  {include = "#resource"},
+  {include = "#shader-identifier"},
+  {name = "constant.numeric.migoto", match = '(?i)\b0x[a-f0-9]+\b'},  # hex value
+  {include = "#static-value"},
+  {include = "#fixed-value"},
 ]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.stereo-instruction"
 match = '(?i)(separation|convergence)\s*(=)\s*([^ \t\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
-captures.3.patterns = [{include = "#constant"}]
+captures.3.patterns = [{include = "#static-value"}]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.dme-instruction"
-match = '(?i)(direct_mode_eye)\s*(=)\s*(mono|left|right)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+match = '(?i)(direct_mode_eye)\s*(=)\s*([^\r\n]+)'
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
-captures.3.name = "meta.keyword.rhs constant.language.dme.migoto"
+captures.3.patterns = [{include = "#fixed-value"}]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.analysis-instruction"
 match = '(?i)(analyse_options)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
-captures.3.patterns = [{include = "#frame-analysis-opt"}]
+captures.3.patterns = [{include = "#frame-analysis-option-list"}]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.dump-instruction"
 match = '(?i)(dump)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
-captures.3.patterns = [{include = "#resource"}, {include = "#frame-analysis-opt"}]
+# XXX: may replace with a `dump-instruction-value-list` for consistency
+captures.3.patterns = [
+  {include = "#resource"},
+  {include = "#shader-identifier"},
+  {include = "#frame-analysis-opt"},
+]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.special-instruction"
-match = '(?i)(special)\s*(=)\s*(upscaling_switch_bb|draw_3dmigoto_overlay)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+match = '(?i)(special)\s*(=)\s*([^\r\n]+)'
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
-captures.3.name = "meta.keyword.rhs constant.language.special.migoto"
+captures.3.patterns = [{include = "#fixed-value"}]
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.store-instruction"
 match = '(?i)(store)\s*(=)\s*(?:(\$[^,\r\n]+)\s*,\s*([^,\r\n]+)\s*,\s*(\d+))'
-captures.1.name = "meta.keyword.key keyword.other.instruction.migoto"
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [{include = "#named-variable"}]
 captures.4.patterns = [{include = "#resource-usage-expression"}]
@@ -800,13 +749,65 @@ captures.5.name = "constant.numeric.migoto"
 
 [[repository.instruction-statement.captures.2.patterns]]
 name = "meta.draw-instruction"
-match = '(?i)(draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.instruction.draw.migoto"
+match = '(?i)(draw|drawindexed(?:instanced)?|drawinstanced|dispatch)\s*(=)\s*([^\r\n]+)'
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [
-    {include = "#operational-expression"},
-    {name = "meta.keyword.rhs constant.language.draw.migoto", match = '(?i)\b(auto|from_caller)\b'}, # from_caller only goes with 'draw ='
+  {include = "#operational-expression"},
+  {include = "#fixed-value"},
 ]
+
+[[repository.instruction-statement.captures.2.patterns]]
+name = "meta.draw-indirect-instruction"
+match = '(?i)((?:drawinstanced|drawindexedinstanced|dispatch)indirect)\s*(=)\s*(?:([^\r\n]+)\s*,\s*(\d+))'
+captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
+captures.2.name = "keyword.operator.execution.migoto"
+captures.3.patterns = [{include = "#resource"}, {include = "#shader-identifier"}]
+captures.4.name = "constant.numeric.migoto"
+
+[[repository.instruction-statement.captures.3.patterns]]
+name = "meta.drawauto-instruction meta.function-call.instruction support.function.builtin.migoto"
+
+[repository.list-expression]
+patterns = [
+  {include = "#resource-data-array"},
+  {include = "#blend-expression"},
+  {include = "#fixed-value-option-list"},
+]
+
+[repository.resource-data-array]
+name = "meta.expression.data-array"
+match = '''(?xi)
+\b(\w+)?\b # optional Resource Format specifier (DXGI Format)
+\s*
+([-+\d.\s]+) # content that should be a list of numbers (ints or floats)
+\s*$
+'''
+captures.1.patterns = [{include = "#dxgi-format"}]
+captures.2.patterns = [{include = "#constant-list"}]
+
+[repository.blend-expression]
+name = "meta.expression.blend-state.migoto"
+match = '(?i)\s*\b(?:(\w+)\s+(\w+)\s+(\w+)|(disable))\s*$'
+captures.1.patterns = [
+  {
+    name = "meta.keyword.blend-operator keyword.operator.migoto",
+    match = '\b(?i)(add|(?:rev_)?subtract|min|max)\b'
+  }
+]
+captures.2.patterns = [
+  {
+    name = "meta.keyword.blend-factor keyword.other.migoto",
+    match = '\b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\b'
+  }
+]
+captures.3.patterns = [
+  {
+    name = "meta.keyword.blend-factor keyword.other.migoto",
+    match = '\b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\b'
+  }
+]
+captures.4.name = "meta.keyword.blend-operator keyword.operator.migoto"
 
 [repository.fuzzy-match-expression]
 name = "meta.expression.fuzzy-match.migoto"
@@ -818,25 +819,30 @@ match = '''(?xi)
   (?:
     \b ((?:res_)?(?:width|height)|depth|array) \b # field name
     \s*
-    (?:(\*)\s*\b(\d+)\b)? # integer multiplicand
-    \s*
-    (?:(/)\s*\b(\d+)\b)? # integer divisor
+    (?:
+      (?:(\*)\s*\b((?:res_)?(?:width|height)|depth|array)\b) |
+      (?:(\*)\s*\b(\d+)\b)? # integer multiplicand
+      \s*
+      (?:(/)\s*\b(\d+)\b)? # integer divisor
+    )
   ) # field expression
 )
 \s*$
 '''
 captures.1.name = "keyword.operator.comparison.migoto"
 captures.2.name = "constant.numeric.migoto"
-captures.3.name = "constant.language.migoto"
+captures.3.name = "meta.match-field constant.language.migoto"
 captures.4.name = "keyword.operator.math.migoto"
-captures.5.name = "constant.numeric.migoto"
+captures.5.name = "meta.match-field constant.language.migoto"
 captures.6.name = "keyword.operator.math.migoto"
 captures.7.name = "constant.numeric.migoto"
+captures.8.name = "keyword.operator.math.migoto"
+captures.9.name = "constant.numeric.migoto"
 
 [repository.resource-usage-expression]
 patterns = [
-    {include = "#resource-usage-modifier"},
-    {include = "#resource"},
+  {include = "#resource-usage-modifier"},
+  {include = "#resource"},
 ]
 
 [repository.resource-usage-modifier]
@@ -847,11 +853,11 @@ match = '(?i)\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo
 # we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
 [repository.operational-expression]
 patterns = [
-    # Order is also important here. For example, illegal-operator must come before operator, both must come at the top, and round-braces must be last
-    {include = "#illegal-operator"},
-    {include = "#operator"},
-    {include = "#operand"},
-    {include = "#round-braces"},
+  # Order is also important here. For example, illegal-operator must come before operator, both must come at the top, and round-braces must be last
+  {include = "#illegal-operator"},
+  {include = "#operator"},
+  {include = "#operand"},
+  {include = "#round-braces"},
 ]
 
 # Operators, legal and illegal
@@ -914,8 +920,7 @@ include = "#ini-parameter"
 include = "#resource"
 
 [[repository.operand.patterns]]
-name = "variable.language.shader-identifier.migoto"
-match = '\b(?i)([vhdgpc]s)\b'
+include = "#shader-identifier"
 
 [[repository.operand.patterns]]
 # Numbered Scissor Rectangle. The non-numbered ones corresponding to 0 are in override parameters
@@ -933,9 +938,17 @@ match = '''(?xi)
   stereo_(?:active|available) | scissor_(?:left|top|right|bottom)
 )\b'''
 
+[repository.static-override-parameter]
+name = "constant.language.override-parameter.migoto"
+match = '(?i)\b(sli|hunting|frame_analysis|stereo_(?:active|available))\b'
+
+[repository.shader-identifier]
+name = "variable.language.shader-identifier.migoto"
+match = '\b(?i)([vhdgpc]s)\b'
+
 [repository.named-variable]
 name = "meta.variable.named"
-match = '''(?xi) (\$) (?: ([a-z_]\w+|[a-z_]) | (\\[^\-+*/&%!>|<=$\r\n]+\\) ([a-z_]\w+|[a-z_]) )'''
+match = '''(?xi) (\$) (?: ([a-z_]\w+|[a-z]) | (\\[^=$\r\n]+\\) ([a-z_]\w+|[a-z_]) )'''
 # captures for a normal variable
 captures.1.name = "punctuation.definition.variable.migoto"
 captures.2.name = "variable.other.readwrite.migoto"
@@ -945,87 +958,67 @@ captures.4.name = "variable.other.readwrite.migoto"
 
 [repository.callable-commandlist]
 name = "meta.function-call.commands"
-match = '''\b(?i)((?:BuiltIn)?CommandList)(\\[^\-+*/&%!>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
+match = '''\b(?i)((?:BuiltIn)?CommandList)(\\[^=$\r\n]+\\)?([^=$,\r\n]+)\b(?!\\)'''
 captures.1.name = "entity.name.function.section-type.migoto"
 captures.2.patterns = [{include = "#namespace"}]
 captures.3.patterns = [{include = "#section-identifier"}]
 
 [repository.callable-customshader]
 name = "meta.function-call.shader"
-match = '''\b(?i)((?:BuiltIn)?CustomShader)(\\[^\-+*/&%!>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
+match = '''\b(?i)((?:BuiltIn)?CustomShader)(\\[^=$\r\n]+\\)?([^=$,\r\n]+)\b(?!\\)'''
 captures.1.name = "entity.name.function.section-type.migoto"
 captures.2.patterns = [{include = "#namespace"}]
 captures.3.patterns = [{include = "#section-identifier"}]
 
 [repository.custom-resource]
 name = "meta.variable.custom-resource variable.other.readwrite.migoto"
-match = '''\b(?i)Resource(\\[^\-+*/&%!>|<=$\r\n]+\\)?([^\-+*/&% !>|<=$\r\n]+)\b(?!\\)'''
+match = '''\b(?i)Resource(\\[^=$\r\n]+\\)?([^\/&!>|<= $,\r\n]+)\b(?!\\)'''
 captures.1.patterns = [{include = "#namespace"}]
-captures.2.patterns = [{include = "#section-identifier"}]
+captures.2.patterns = [{name = "entity.name.function.migoto", match = '[^\/&!>|<= $,\r\n]+'}]
 
 [repository.namespace]
-name = "meta.structure.namespace-resolution"
+name = "meta.name.namespace-resolution"
 begin = '\\'
 beginCaptures.0.name = "punctuation.separator.namespace.migoto"
 end = '\\'
 endCaptures.0.name = "punctuation.separator.namespace.migoto"
-patterns = [
-    {name = "entity.name.namespace.migoto", match = '[^=$\r\n]+(?=\\)'}
-]
+patterns = [{name = "entity.name.namespace.migoto", match = '[^=$\r\n]+(?=\\)'}]
 
 [repository.section-identifier]
 name = "entity.name.function.migoto"
-match = '[^\-+*/&% !>|<=$\r\n]+'
+match = '[^=$,\r\n]+'
 
 [repository.ini-parameter]
 name = "variable.parameter.migoto"
 match = '(?i)\b(?:(?<!$)[xyzw]\d{0,3})\b'
 
-[repository.literal-list]
-# The only remaining problem with this is that if a file is one of the literals, this whole thing will not match
-# But after carefully looking through the source code, this scenario is not currently possible
-match = '''(?i)\b(?!(?:.+\S[\\./]\S+))(?:(\w+) +(\w+)(?: +(\w+))?$|(\w+) +(\w+))'''
-name = "meta.expression.literal-list.migoto"
+[repository.constant-list]
+match = '(?i)(?:([-+\d.]+) +([-+\d.]+)(?: +([-+\d.]+))?$|([-+\d.]+) +([-+\d.]+))'
+name = "meta.expression.constant-list.migoto"
+captures.1.patterns = [{include = "#constant"}]
+captures.2.patterns = [{include = "#constant"}]
+captures.3.patterns = [{include = "#constant"}]
+captures.4.patterns = [{include = "#constant"}]
+captures.5.patterns = [{include = "#constant"}]
+
+[repository.fixed-value-option-list]
+match = '(?i)\b([\w\s]+)'
+name = "meta.expression.fixed-value-option-list.migoto"
 captures.1.patterns = [
-    {include = "#constant"},
-    {include = "#key-value"},
-    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
-]
-captures.2.patterns = [
-    {include = "#constant"},
-    {include = "#key-value"},
-    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
-]
-captures.3.patterns = [
-    {include = "#constant"},
-    {include = "#key-value"},
-    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
-]
-captures.4.patterns = [
-    {include = "#constant"},
-    {include = "#key-value"},
-    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
-]
-captures.5.patterns = [
-    {include = "#constant"},
-    {include = "#key-value"},
-    {include = "#frame-analysis-opt"}, # because of the analyse_options key in Hunting
+  {include = "#marking-action-opt"},
+  {include = "#frame-analysis-opt"},
 ]
 
-[repository.constant]
-patterns = [
-    {name = "constant.language.numeric.migoto", match = '\b(?i)(?:inf|NaN)\b'},
-    {name = "constant.numeric.migoto", match = '[+-]?\b\d+(?:\.\d+)?\b'},
-]
+[repository.keybinding-modifier]
+name = "meta.keyword.key-binding constant.language.modifier-key.migoto"
+match = '(?i)\b(?:(?:no_)?(?:vk_)?(?:ctrl|control|alt|shift|windows)|no_modifiers)\b'
 
-[repository.path-value]
-patterns = [ 
-    {name = "constant.other.path.migoto", match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+)'''},
-    {name = "constant.other.file.migoto", match = '''(?i)[^>\\|/<?:*$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''},
-]
+[repository.marking-action-opt]
+name = "meta.fixed-value.marking-action variable.other.enummember.migoto"
+match = '(?i)\b(clipboard|hlsl|asm|regex|mono_snapshot|stereo_snapshot|snapshot_if_pink)\b'
 
 [repository.frame-analysis-opt]
-name = "meta.keyword.rhs constant.language.analysis-option.migoto"
+name = "meta.fixed-value.analysis-option variable.other.enummember.migoto"
 match = '''(?xi)
 \b
 (hold|stereo|mono|
@@ -1034,7 +1027,62 @@ match = '''(?xi)
  share_dupes|symlink|dump_(?:rt|depth|tex)_(?:jps|dds)|dump_[cvi]b_txt)
 \b'''
 
+[repository.constant]
+patterns = [
+  {name = "constant.language.numeric.migoto", match = '\b(?i)(?:inf|NaN)\b'},
+  {name = "constant.numeric.migoto", match = '[-+]?\b(?:\d+(?:\.\d+)?|\.\d+)\b'},
+]
+
+[repository.boolean-value]
+name = "constant.language.boolean.migoto"
+match = '(?i)\b(?:true|false|yes|no|on|off)\b'
+
+[repository.static-value]
+patterns = [
+  {include = "#static-override-parameter"},
+  {include = "#constant"},
+]
+
+[repository.fixed-value]
+name = "meta.fixed-value variable.other.enummember.migoto"
+match = '(?i)\b([a-z0-9]\w+)\b'
+
+[repository.path-value]
+patterns = [
+  {
+    name = "constant.other.path.migoto",
+    match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+)'''
+  },
+  {
+    name = "constant.other.file.migoto",
+    match = '''(?i)[^>\\|/<?:*$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
+  },
+]
+
 [repository.string]
 name = "string.quoted.double.migoto"
 begin = '"'
 end = '"'
+
+[repository.key]
+name = "meta.fixed-value.key keyword.other.migoto"
+match = '(?i)\b(?:[a-z0-9]\w+(?:\[(\d+)\])?)'
+captures.1.name = "constant.numeric.migoto"
+
+[repository.resource-type]
+patterns = [
+  {
+    name = "meta.setting-value.resource entity.name.type.resource.migoto",
+    match = '\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|TextureCube)\b'
+  },
+  {include = "#dxgi-format"},
+]
+
+[repository.dxgi-format]
+name = "meta.setting-value.resource support.type.dxgi-format.migoto"
+match = '''\b(?xi)(?:DXGI_FORMAT_)?(UNKNOWN|R32G32B32A32_TYPELESS|R32G32B32A32_FLOAT|R32G32B32A32_UINT|R32G32B32A32_SINT|R32G32B32_TYPELESS|R32G32B32_FLOAT|R32G32B32_UINT|R32G32B32_SINT|R16G16B16A16_TYPELESS|R16G16B16A16_FLOAT|R16G16B16A16_UNORM|R16G16B16A16_UINT|R16G16B16A16_SNORM|R16G16B16A16_SINT
+|R32G32_TYPELESS|R32G32_FLOAT|R32G32_UINT|R32G32_SINT|R32G8X24_TYPELESS|D32_FLOAT_S8X24_UINT|R32_FLOAT_X8X24_TYPELESS|X32_TYPELESS_G8X24_UINT|R10G10B10A2_TYPELESS|R10G10B10A2_UNORM|R10G10B10A2_UINT|R11G11B10_FLOAT|R8G8B8A8_TYPELESS|R8G8B8A8_UNORM|R8G8B8A8_UNORM_SRGB
+|R8G8B8A8_UINT|R8G8B8A8_SNORM|R8G8B8A8_SINT|R16G16_TYPELESS|R16G16_FLOAT|R16G16_UNORM|R16G16_UINT|R16G16_SNORM|R16G16_SINT|R32_TYPELESS|D32_FLOAT|R32_FLOAT|R32_UINT|R32_SINT|R24G8_TYPELESS|D24_UNORM_S8_UINT|R24_UNORM_X8_TYPELESS|X24_TYPELESS_G8_UINT|R8G8_TYPELESS
+|R8G8_UNORM|R8G8_UINT|R8G8_SNORM|R8G8_SINT|R16_TYPELESS|R16_FLOAT|D16_UNORM|R16_UNORM|R16_UINT|R16_SNORM|R16_SINT|R8_TYPELESS|R8_UNORM|R8_UINT|R8_SNORM|R8_SINT|A8_UNORM|R1_UNORM|R9G9B9E5_SHAREDEXP|R8G8_B8G8_UNORM|G8R8_G8B8_UNORM|BC1_TYPELESS|BC1_UNORM|BC1_UNORM_SRGB
+|BC2_TYPELESS|BC2_UNORM|BC2_UNORM_SRGB|BC3_TYPELESS|BC3_UNORM|BC3_UNORM_SRGB|BC4_TYPELESS|BC4_UNORM|BC4_SNORM|BC5_TYPELESS|BC5_UNORM|BC5_SNORM|B5G6R5_UNORM|B5G5R5A1_UNORM|B8G8R8A8_UNORM|B8G8R8X8_UNORM|R10G10B10_XR_BIAS_A2_UNORM|B8G8R8A8_TYPELESS|B8G8R8A8_UNORM_SRGB
+|B8G8R8X8_TYPELESS|B8G8R8X8_UNORM_SRGB|BC6H_TYPELESS|BC6H_UF16|BC6H_SF16|BC7_TYPELESS|BC7_UNORM|BC7_UNORM_SRGB|AYUV|Y410|Y416|NV12|P010|P016|420_OPAQUE|YUY2|Y210|Y216|NV11|AI44|IA44|P8|A8P8|B4G4R4A4_UNORM)\b'''

@@ -1,21 +1,125 @@
+#:tombi toml-version = "v1.1.0"
+
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
 name = "Regular Expression Replacement"
 scopeName = "source.regexp-replace.pcre2"
 patterns = [
-    {include = "#escapes"},
-    {include = "#variables"},
+  {include = "#base"},
 ]
 
-# TODO: Add conditional replacement - ${1:+foo:bar}
+# Reference: https://www.pcre.org/current/doc/html/pcre2syntax.html#TOC1
+
+repository.base.patterns = [
+  {include = "#escapes"},
+  {include = "#variables"},
+  {include = "#conditionals"},
+]
+
+repository.nested-base.patterns = [
+  {include = "#nested-escapes"},
+  {include = "#variables"},
+  {include = "#conditionals"},
+]
 
 repository.escapes.patterns = [
-    {match = '\\[LUE]', name = "keyword.operator.case-conversion.regexp-replace"},
-    {match = '\\[fnrt]', name = "constant.character.escape.regexp-replace"},
-    {match = '\\x([a-f0-9]{2}|\{[a-f0-9]{4}\})', name = "constant.character.escape.regexp-replace"},
-    {match = '\\.', name = "constant.character.escape.regexp-replace"},
+  {include = "#literalizer"},
+  {include = "#case-forcing"},
+  {
+    match = '\\[lu]',
+    name = "keyword.operator.case-conversion.regexp-replace",
+  },
+  {
+    match = '\\[fnrtbv]',
+    name = "constant.character.escape.regexp-replace",
+  },
+  {
+    match = '\\x([a-f0-9]{2}|\{[a-f0-9]{4}\})',
+    name = "constant.character.escape.regexp-replace",
+  },
+  {
+    match = '\\.',
+    name = "constant.character.escape.regexp-replace",
+  },
 ]
 
-repository.variables.patterns = [
-    {match = '\$\$', name = "constant.character.escape.regexp-replace"},
-    {match = '\$(?x)( \d+ | \{ \w+ \} )', name = "variable.other.constant.capture-content.regexp-replace"},
+repository.nested-escapes.patterns = [
+  {include = "#literalizer"},
+  {include = "#case-forcing"},
+  {
+    match = '\\[lu]',
+    name = "keyword.operator.case-conversion.regexp-replace",
+  },
+  {
+    match = '\\[:}fnrtbv]',
+    name = "constant.character.escape.regexp-replace",
+  },
+  {
+    match = '\\x([a-f0-9]{2}|\{[a-f0-9]{4}\})',
+    name = "constant.character.escape.regexp-replace",
+  },
+  {
+    match = '\\.',
+    name = "constant.character.escape.regexp-replace",
+  },
 ]
+
+# control verb name insertion, i.e. $*MARK or ${*MARK} is not supported at this time
+repository.variables.patterns = [
+  {
+    match = '\$\$',
+    name = "constant.character.escape.regexp-replace",
+  },
+  {
+    match = '''\$[&`'_+]''',
+    name = "variable.language.capture-content.regexp-replace",
+  },
+  {
+    match = '\\g(?:\d+|<(\d+|\s*[a-zA-Z_]\w*\s*)>)',
+    name = "variable.other.constant.capture-content.regexp-replace",
+  },
+  {
+    match = '\$(?x)( \d+ | { ( \d+ | \s* [a-zA-Z_]\w* \s* ) } | < \s* [a-zA-Z_]\w* \s* > )',
+    name = "variable.other.constant.capture-content.regexp-replace",
+  },
+]
+
+[[repository.literalizer.patterns]]
+begin = '\\Q'
+beginCaptures.0.name = "keyword.control.literal.regexp-replace"
+end = '\\E'
+endCaptures.0.name = "keyword.control.literal.regexp-replace"
+name = "meta.string-literal.regexp-replace"
+contentName = "string.quoted.other.regexp-replace"
+
+[[repository.case-forcing.patterns]]
+begin = '(\\L|\\U)'
+beginCaptures.1.name = "keyword.operator.case-conversion.regexp-replace"
+end = '\\E'
+endCaptures.0.name = "keyword.operator.case-conversion.regexp-replace"
+name = "meta.case-conversion.regexp-replace"
+
+[[repository.conditionals.patterns]]
+begin = '(\${)\s*([a-zA-Z_]\w*)\s*(:-)'
+end = '}'
+name = "meta.conditional.unset.regexp-replace"
+beginCaptures.1.name = "punctuation.definition.conditional-substitution.begin.regexp-replace"
+beginCaptures.2.name = "entity.name.function.capture-group.regexp-replace"
+beginCaptures.3.name = "keyword.operator.if-unset.regexp-replace"
+endCaptures.0.name = "punctuation.definition.conditional-substitution.end.regexp-replace"
+patterns = [{include = "#nested-base"}]
+
+[[repository.conditionals.patterns]]
+begin = '(\${)\s*([a-zA-Z_]\w*)\s*(:\+)'
+end = '(?<!\\)}'
+beginCaptures.1.name = "punctuation.definition.conditional-substitution.begin.regexp-replace"
+beginCaptures.2.name = "entity.name.function.capture-group.regexp-replace"
+beginCaptures.3.name = "keyword.operator.if-set.regexp-replace"
+patterns = [
+  {include = "#nested-base"},
+  {include = "#else-symbol"},
+]
+endCaptures.0.name = "punctuation.definition.conditional-substitution.end.regexp-replace"
+
+[repository.else-symbol]
+name = "keyword.operator.else.regexp-replace"
+match = '(?<!\\):'
