@@ -1,61 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
-<language name="PCRE2" version="2" kateversion="5.94" section="Other" extensions="*.re" casesensitive="1" license="GPL-3.0" priority="1" hidden="1">
+<language name="PCRE2" version="3" kateversion="5.94" section="Other" extensions="*.re" casesensitive="1" license="GPL-3.0" priority="1" hidden="1">
     <highlighting>
         <contexts>
             <context attribute="Normal Text" lineEndContext="#stay" name="Patterns">
-                <DetectSpaces/>
-                <IncludeRules context="Common Groups"/>
-                <IncludeRules context="Find Group"/>
-                <IncludeRules context="Find Extended Group"/>
+                <IncludeRules context="Base"/>
+                <IncludeRules context="Extended Base"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Base">
+                <!-- Common = Modifiers + Comment -->
+                <IncludeRules context="Common Group"/>
+                <IncludeRules context="Group"/>
                 <IncludeRules context="Common Base"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="(Anon Base)">
+                <DetectChar attribute="Symbol" context="#pop#pop" char=")"/>
+                <IncludeRules context="Base"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Extended Base">
+                <!-- Common = Modifiers + Comment -->
+                <IncludeRules context="Common Group"/>
+                <IncludeRules context="Extended Group"/>
+                <IncludeRules context="Common Base"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="(Anon Extended Base)">
+                <DetectChar attribute="Symbol" context="#pop#pop" char=")"/>
+                <IncludeRules context="Nested Extended Base"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Nested Extended Base">
+                <!-- Common = Modifiers + Comment -->
+                <IncludeRules context="Common Group"/>
+                <IncludeRules context="Extended Group"/>
+                <IncludeRules context="Extended Patterns"/>
+                <IncludeRules context="Common Base"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Common Base">
+                <DetectSpaces/>
+                <!-- Character Class -->
+                <DetectChar attribute="Control" context="(charclass caret first check)" char="["/>
+                <!-- Anchor -->
+                <RegExpr attribute="Control" context="#stay" String="(?:\\[GAZzBb]|[\^$])"/>
+                <!-- Backref -->
+                <RegExpr attribute="Escape Sequence" context="#stay" String="\\(?:[1-9](?:\d|\d{3,})?)"/>
+                <RegExpr attribute="Escape Sequence" context="#stay" String="\\(?:g(?:\d+|\{-?\d+\}|[&lt;']\+?\d+['&gt;]|[{&lt;']\w+['&gt;}])|k[{&lt;']\w+['&gt;}])"/>
+                <!-- Switch -->
+                <Detect2Chars attribute="Control" context="#stay" char="\" char1="K"/>
+                <Detect2Chars attribute="String" context="String" char="\" char1="Q"/>
+                <!-- Character Escape -->
+                <IncludeRules context="Character Escapes"/>
+                <!-- Operator -->
+                <RegExpr attribute="Operator" context="#stay" String="(?:\.|(?:[?*+]|\{\d+(?:,\d*)?\})[?+]?|\|)"/>
                 <DetectIdentifier/>
+                <AnyChar String="0123456789"/>
                 <AnyChar String=",':{}!@#%/&amp;=`~$-&quot;&gt;&lt;;"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" name="Base">
-                <IncludeRules context="Common Groups"/>
-                <IncludeRules context="Find Group"/>
-                <IncludeRules context="Common Base"/>
-                <DetectSpaces/>
-                <DetectIdentifier/>
-                <AnyChar String=",':{}!@#%/&amp;=`~$-&quot;&gt;&lt;;"/>
-            </context>
-
-            <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="Nested Extended Base">
-                <IncludeRules context="Common Groups"/>
-                <IncludeRules context="Find Nested Extended Group"/>
-                <DetectChar attribute="Comment" context="Extended Pattern Comment" char="#"/>
-                <IncludeRules context="Common Base"/>
-                <DetectSpaces/>
-                <DetectIdentifier/>
-                <AnyChar String=",':{}!@#%/&amp;=`~$-&quot;&gt;&lt;;"/>
-            </context>
-
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Common Groups">
+            <context attribute="Normal Text" lineEndContext="#stay" name="Common Group">
                 <RegExpr context="Modifiers Group" lookAhead="true" String="(\()(\?(?:[imsUJn]+|[imsUJn]*-[imsUJn]+))(\))"/>
                 <RegExpr context="Comment Group" lookAhead="true" String="(\()(\?#)"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" name="Modifiers Group">
+            <context attribute="Normal Text" lineEndContext="#stay" name="Modifiers Group">
                 <DetectChar attribute="Symbol" context="#pop" dynamic="true" char="3"/>
                 <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%2"/>
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Comment Group">
+            <context attribute="Normal Text" lineEndContext="#pop" name="Comment Group">
                 <StringDetect attribute="Comment" context="Comment" dynamic="true" String="%2"/>
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" name="Special Groups">
+            <context attribute="Normal Text" lineEndContext="#stay" name="Special Group">
                 <RegExpr attribute="Control" context="#stay" String="\(\*(?:PRUNE|SKIP|THEN|COMMIT|FAIL|ACCEPT|(?:MARK)?:[A-Z0-9_]+)\)"/>
                 <RegExpr attribute="Control" context="#stay" String="\(\*(?:UTF(?:8|16|32)?|UCP|CR|LF|(?:ANY)?CRLF|ANY|NOTEMPTY(?:_ATSTART)?|NO_JIT|BSR_(?:ANYCRLF|UNICODE)|NO_AUTO_POSSESS|NO_START_OPT)\)"/>
-                <RegExpr context="Backref Group" lookAhead="true" String="(\()(?:(\?[+-]?\d+)|(\?P=)(\w+))(\))"/>
-                <RegExpr context="Recursion Group" lookAhead="true" String="(\()(?:(\?R)|(\?&amp;|\?P&gt;)(\w+))(\))"/>
+                <RegExpr context="Backref Group" lookAhead="true" String="(\()(\?(?:([+-]?\d+)|P=(\w+)))(\))"/>
+                <RegExpr context="Recursion Group" lookAhead="true" String="(\()(\?(?:R|(?:&amp;|P&gt;)(\w+)))(\))"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" name="Backref Group">
+            <context attribute="Normal Text" lineEndContext="#stay" name="Backref Group">
                 <DetectChar attribute="Symbol" context="#pop" dynamic="true" char="5"/>
                 <StringDetect attribute="Function" context="#stay" dynamic="true" String="%4"/>
                 <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%3"/>
@@ -63,124 +92,99 @@
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" name="Recursion Group">
-                <DetectChar attribute="Symbol" context="#pop" dynamic="true" char="5"/>
-                <StringDetect attribute="Function" context="#stay" dynamic="true" String="%4"/>
-                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%3"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Recursion Group">
+                <DetectChar attribute="Symbol" context="#pop" dynamic="true" char="4"/>
+                <StringDetect attribute="Function" context="#stay" dynamic="true" String="%3"/>
                 <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%2"/>
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#stay" name="Find Group">
-                <IncludeRules context="Special Groups"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Group">
+                <IncludeRules context="Special Group"/>
                 <RegExpr context="Inline Modifiers Group" lookAhead="true" String="(\()(\?(?:[imsUJn]+|[imsUJn]*-[imsUJn]+):)"/>
-                <RegExpr context="Assertions Group" lookAhead="true" String="(\()(?:(\?&lt;?[=!])|(\?[:&gt;])|(\?\|)|(\?\(DEFINE\)))"/>
+                <RegExpr context="Assertions Group" lookAhead="true" String="(?x) (\() (?: (\?&lt;?[=!]) | (\?[:&gt;]) | (\?\|) | (\?\(DEFINE\)) )"/>
                 <RegExpr context="Named Capture Group" lookAhead="true" String="(\()(\?(?:'\w+'|P?&lt;\w+&gt;))"/>
                 <RegExpr context="Capture Group" lookAhead="true" String="(\()(?!\?)"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Inline Modifiers Group">
-                <DetectChar attribute="Symbol" context="#pop" char=")"/>
-                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%2"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Inline Modifiers Group">
+                <StringDetect attribute="Modifier" context="(Anon Base)" dynamic="true" String="%2"/>
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
-                <IncludeRules context="Base"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Assertions Group">
-                <DetectChar attribute="Symbol" context="#pop" char=")"/>
-                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%5"/>
-                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%4"/>
-                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%3"/>
-                <StringDetect attribute="Control" context="#stay" dynamic="true" String="%2"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Assertions Group">
+                <!-- Definition -->
+                <StringDetect attribute="Modifier" context="(Anon Base)" dynamic="true" String="%5"/>
+                <!-- Non-incrementing -->
+                <StringDetect attribute="Modifier" context="(Anon Base)" dynamic="true" String="%4"/>
+                <!-- Non-capturing -->
+                <StringDetect attribute="Modifier" context="(Anon Base)" dynamic="true" String="%3"/>
+                <!-- Lookaround -->
+                <StringDetect attribute="Control" context="(Anon Base)" dynamic="true" String="%2"/>
+                <!-- Opening Paren -->
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
-                <IncludeRules context="Base"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Named Capture Group">
-                <DetectChar attribute="Symbol" context="#pop" char=")"/>
-                <StringDetect attribute="Variable" context="#stay" dynamic="true" String="%2"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Named Capture Group">
+                <StringDetect attribute="Variable" context="(Anon Base)" dynamic="true" String="%2"/>
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
-                <IncludeRules context="Base"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Capture Group">
-                <DetectChar attribute="Symbol" context="#pop" char=")"/>
-                <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
-                <IncludeRules context="Base"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Capture Group">
+                <DetectChar attribute="Symbol" context="(Anon Base)" dynamic="true" char="1"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#stay" name="Find Extended Group">
-                <IncludeRules context="Special Groups"/>
-                <RegExpr context="Extended Modifiers Group" lookAhead="true" String="(\()(\?(?:[imsUJn]*xx?[imsUJn]*|[imsUJn]*xx?[imsUJn]*-[imsUJn]+))(\))"/>
-                <RegExpr context="Extended Inline Modifiers Group" lookAhead="true" String="(\()(\?(?:[imsUJn]*xx?[imsUJn]*|[imsUJn]*xx?[imsUJn]*-[imsUJn]+):)"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Extended Group">
+                <IncludeRules context="Special Group"/>
+                <RegExpr context="Extended Modifiers Group" lookAhead="true" String="(\()(\?([imsUJn]*xx?[imsUJn]*|[imsUJn]*xx?[imsUJn]*(-)[imsUJn]+))(\))"/>
+                <RegExpr context="Extended Inline Modifiers Group" lookAhead="true" String="(\()(\?([imsUJn]*xx?[imsUJn]*|[imsUJn]*xx?[imsUJn]*(-)[imsUJn]+):)"/>
                 <RegExpr context="Extended Assertions Group" lookAhead="true" String="(\()(?:(\?&lt;?[=!])|(\?[:&gt;])|(\?\|))"/>
                 <RegExpr context="Extended Named Capture Group" lookAhead="true" String="(\()(\?(?:'\w+'|P?&lt;\w+&gt;))"/>
                 <RegExpr context="Extended Capture Group" lookAhead="true" String="(\()(?!\?)"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#stay" name="Find Nested Extended Group">
-                <IncludeRules context="Special Groups"/>
-                <RegExpr context="Nested Extended Modifiers Group" lookAhead="true" String="(\()(\?[imsUJn]*-[imsUJn]*xx?[imsUJn]*)(\))"/>
-                <RegExpr context="Extended Inline Modifiers Group" lookAhead="true" String="(\()(\?(?:[imsUJn]*xx?[imsUJn]*|[imsUJn]*xx?[imsUJn]*-[imsUJn]+):)"/>
-                <RegExpr context="Extended Assertions Group" lookAhead="true" String="(\()(?:(\?&lt;?[=!])|(\?[:&gt;])|(\?\|))"/>
-                <RegExpr context="Extended Captures Group" lookAhead="true" String="(\()(?:(\?(?:'\w+'|P?&lt;\w+&gt;))|(?!\?))"/>
-            </context>
-
-            <context attribute="Normal Text" lineEndContext="#pop" name="Extended Modifiers Group">
-                <DetectChar attribute="Symbol" context="#pop!Nested Extended Base" dynamic="true" char="3"/>
-                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%2"/>
-                <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
-            </context>
-
-            <context attribute="Normal Text" lineEndContext="#pop" name="Nested Extended Modifiers Group">
-                <DetectChar attribute="Symbol" context="#pop" dynamic="true" char="3"/>
-                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%2"/>
-                <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
-            </context>
-
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Extended Inline Modifiers Group">
-                <DetectChar attribute="Symbol" context="#pop" char=")"/>
-                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%2"/>
-                <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
-                <IncludeRules context="Nested Extended Base"/>
-            </context>
-
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Extended Assertions Group">
-                <DetectChar attribute="Symbol" context="#pop" char=")"/>
-                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%4"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Extended Modifiers Group">
+                <DetectChar attribute="Symbol" context="#pop!(anon nested ctx1)" dynamic="true" char="5"/>
+                <DetectChar attribute="Separator" context="#stay" dynamic="true" char="4"/>
                 <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%3"/>
                 <StringDetect attribute="Control" context="#stay" dynamic="true" String="%2"/>
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="(anon nested ctx1)">
+                <RegExpr context="#pop!(anon nested ctx2)" lookAhead="true" String="(?:(\()(\?([imsUJn]*(-)[imsUJn]*xx?[imsUJn]*))(\))|\z)"/>
                 <IncludeRules context="Nested Extended Base"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Extended Named Capture Group">
-                <DetectChar attribute="Symbol" context="#pop" char=")"/>
-                <StringDetect attribute="Variable" context="#stay" dynamic="true" String="%2"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="(anon nested ctx2)">
+                <DetectChar attribute="Symbol" context="#pop" dynamic="true" char="5"/>
+                <DetectChar attribute="Separator" context="#stay" dynamic="true" char="4"/>
+                <StringDetect attribute="Modifier" context="#stay" dynamic="true" String="%3"/>
+                <StringDetect attribute="Control" context="#stay" dynamic="true" String="%2"/>
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
-                <IncludeRules context="Nested Extended Base"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Extended Capture Group">
-                <DetectChar attribute="Symbol" context="#pop" char=")"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Extended Inline Modifiers Group">
+                <DetectChar attribute="Separator" context="#stay" dynamic="true" char="4"/>
+                <StringDetect attribute="Modifier" context="(Anon Extended Base)" dynamic="true" String="%3"/>
+                <StringDetect attribute="Control" context="#stay" dynamic="true" String="%2"/>
                 <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
-                <IncludeRules context="Nested Extended Base"/>
             </context>
 
-            <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="Common Base">
-                <DetectChar attribute="Control" context="(charclass caret first check)" char="["/>
-                <!-- Anchors -->
-                <RegExpr attribute="Control" context="#stay" String="(?:\\[GAZzBb]|[\^$])"/>
-                <!-- Switches -->
-                <Detect2Chars attribute="Control" context="#stay" char="\" char1="K"/>
-                <Detect2Chars attribute="String" context="String" char="\" char1="Q"/>
-                <!-- Backrefs -->
-                <RegExpr attribute="Escape Sequence" context="#stay" String="\\(?:[1-9](?:\d|\d{3,})?)"/>
-                <RegExpr attribute="Escape Sequence" context="#stay" String="\\(?:g(?:\d+|\{-?\d+\}|[&lt;']\+?\d+['&gt;]|[{&lt;']\w+['&gt;}])|k[{&lt;']\w+['&gt;}])"/>
-                <!-- Character Escapes -->
-                <IncludeRules context="Character Escapes"/>
-                <!-- Operators -->
-                <RegExpr attribute="Operator" context="#stay" String="(?:\.|(?:[?*+]|\{\d+(?:,\d*)?\})[?+]?|\|)"/>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Extended Assertions Group">
+                <StringDetect attribute="Modifier" context="(Anon Extended Base)" dynamic="true" String="%4"/>
+                <StringDetect attribute="Modifier" context="(Anon Extended Base)" dynamic="true" String="%3"/>
+                <StringDetect attribute="Control" context="(Anon Extended Base)" dynamic="true" String="%2"/>
+                <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Extended Named Capture Group">
+                <StringDetect attribute="Variable" context="(Anon Extended Base)" dynamic="true" String="%2"/>
+                <DetectChar attribute="Symbol" context="#stay" dynamic="true" char="1"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Extended Capture Group">
+                <DetectChar attribute="Symbol" context="(Anon Extended Base)" dynamic="true" char="1"/>
             </context>
 
             <context attribute="Operator" lineEndContext="#pop" name="(charclass caret first check)" fallthroughContext="Character Class">
@@ -189,15 +193,15 @@
 
             <context attribute="Normal Text" lineEndContext="#stay" name="Character Class">
                 <RegExpr attribute="Posix" context="#stay" String="\[:(?:ascii|alnum|alpha|blank|cntrl|digit|graph|lower|print|punct|space|upper|word|xdigit|[&gt;&lt;]):\]"/>
-                <RegExpr attribute="Escape Sequence" String="\\[b\[\^\-\]\\]"/>
+                <RegExpr attribute="Escape Sequence" String="\\[\\\^\-\[\]b]"/>
                 <RegExpr attribute="Separator" String="(?&lt;!\\)-"/>
                 <IncludeRules context="Character Escapes"/>
                 <DetectChar attribute="Control" context="#pop#pop" char="]"/>
             </context>
 
-            <context attribute="Escape Sequence" lineEndContext="#stay" fallthroughContext="#pop" name="Character Escapes">
+            <context attribute="Escape Sequence" lineEndContext="#stay" name="Character Escapes">
                 <RegExpr attribute="Escape Sequence" context="#stay" String="(?:\\[wWsSdDhHvVXRCN]|\\[0-7]{3})"/>
-                <RegExpr attribute="Escape Sequence" context="#stay" String="(?:\\[pP](?:\{\w+\}|[CLMNPSZ])|(?:\\x\{[0-9a-fA-F]{4}\}|\\x[0-9a-fA-F]{2})|\\c[A-Z])"/>
+                <RegExpr attribute="Escape Sequence" context="#stay" String="(?x) (?: (?: \\[pP] (?: \{\w+\} | [CLMNPSZ] ) ) | (?: \\x\{[0-9a-fA-F]{4}\} | \\x[0-9a-fA-F]{2} ) | (?: \\c[A-Z] ) )"/>
                 <RegExpr attribute="Escape Sequence" context="#stay" String="\\[ntr0]"/>
                 <RegExpr attribute="Escaped Character" context="#stay" String="\\."/>
             </context>
@@ -223,25 +227,91 @@
                 <DetectSpaces/>
                 <IncludeRules context="Replacement Escapes"/>
                 <IncludeRules context="Replacement Variables"/>
+                <IncludeRules context="Replacement Conditionals"/>
                 <DetectIdentifier/>
+                <AnyChar String="0123456789"/>
+                <AnyChar String=",':[]()_+.|?*^!@#%/&amp;=~`-&quot;&gt;&lt;;"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Nested Replacement">
+                <DetectSpaces/>
+                <IncludeRules context="Nested Replacement Escapes"/>
+                <IncludeRules context="Replacement Variables"/>
+                <IncludeRules context="Replacement Conditionals"/>
+                <DetectIdentifier/>
+                <AnyChar String="0123456789"/>
                 <AnyChar String=",':[]()_+.|?*^!@#%/&amp;=~`-&quot;&gt;&lt;;"/>
             </context>
 
             <context attribute="Escape Sequence" lineEndContext="#stay" name="Replacement Escapes">
-                <RegExpr attribute="Operator" context="#stay" String="\\[LUE]"/>
-                <RegExpr attribute="Escape Sequence" context="#stay" String="\\[fnrt]"/>
+                <!-- Literalizer -->
+                <Detect2Chars attribute="Control" context="Literalizer" char="\" char1="Q"/>
+                <!-- Case Forcing -->
+                <Detect2Chars attribute="Operator" context="Literalizer" char="\" char1="L"/>
+                <Detect2Chars attribute="Operator" context="Literalizer" char="\" char1="U"/>
+                <!-- Other Escapes -->
+                <RegExpr attribute="Operator" context="#stay" String="\\[lu]"/>
+                <RegExpr attribute="Escape Sequence" context="#stay" String="\\[fnrtbv]"/>
                 <RegExpr attribute="Escape Sequence" context="#stay" String="\\x([a-f0-9]{2}|\{[a-f0-9]{4}\})"/>
                 <RegExpr attribute="Escape Sequence" context="#stay" String="\\."/>
             </context>
 
+            <context attribute="Escape Sequence" lineEndContext="#stay" name="Nested Replacement Escapes">
+                <!-- Literalizer -->
+                <Detect2Chars attribute="Control" context="Literalizer" char="\" char1="Q"/>
+                <!-- Case Forcing -->
+                <Detect2Chars attribute="Operator" context="Literalizer" char="\" char1="L"/>
+                <Detect2Chars attribute="Operator" context="Literalizer" char="\" char1="U"/>
+                <!-- Other Escapes -->
+                <RegExpr attribute="Operator" context="#stay" String="\\[lu]"/>
+                <RegExpr attribute="Escape Sequence" context="#stay" String="\\[:}fnrtbv]"/>
+                <RegExpr attribute="Escape Sequence" context="#stay" String="\\x([a-f0-9]{2}|\{[a-f0-9]{4}\})"/>
+                <RegExpr attribute="Escape Sequence" context="#stay" String="\\."/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Literalizer">
+                <Detect2Chars attribute="Control" context="#pop" char="\" char1="E"/>
+            </context>
+
+            <!-- control verb name insertion, i.e. $*MARK or ${*MARK} is not supported at this time -->
             <context attribute="Variable" lineEndContext="#stay" name="Replacement Variables">
                 <Detect2Chars attribute="Escape Sequence" context="#stay" char="$" char1="$"/>
-                <RegExpr attribute="Variable" context="#stay" String="\$(\d+|\{\w+\})"/>
+                <RegExpr attribute="Variable" context="#stay" String="\$[&amp;`'_+]"/>
+                <RegExpr attribute="Variable" context="#stay" String="\\g(?:\d+|&lt;(?:\d+|\s*[a-zA-Z_]\w*\s*)&gt;)"/>
+                <RegExpr attribute="Variable" context="#stay" String="\$(?:\d+|{(?:\d+|\s*[a-zA-Z_]\w*\s*)}|&lt;\s*[a-zA-Z_]\w*\s*&gt;)"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Replacement Conditionals">
+                <RegExpr context="If Unset" lookAhead="true" String="(\${)\s*([a-zA-Z_]\w*)\s*(:-)"/>
+                <RegExpr context="If Set" lookAhead="true" String="(\${)\s*([a-zA-Z_]\w*)\s*(:\+)"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="If Unset">
+                <StringDetect attribute="Operator" context="Unset Body" dynamic="true" String="%3"/>
+                <StringDetect attribute="Function" context="#stay" dynamic="true" String="%2"/>
+                <StringDetect attribute="Symbol" context="#stay" dynamic="true" String="%1"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="If Set">
+                <StringDetect attribute="Operator" context="Set Or Else" dynamic="true" String="%3"/>
+                <StringDetect attribute="Function" context="#stay" dynamic="true" String="%2"/>
+                <StringDetect attribute="Symbol" context="#stay" dynamic="true" String="%1"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Unset Body">
+                <IncludeRules context="Nested Replacement"/>
+                <DetectChar attribute="Symbol" context="#pop#pop" char="}"/>
+            </context>
+
+            <context attribute="Normal Text" lineEndContext="#stay" name="Set Or Else">
+                <IncludeRules context="Nested Replacement"/>
+                <DetectChar attribute="Operator" context="#stay" char=":"/>
+                <DetectChar attribute="Symbol" context="#pop#pop" char="}"/>
             </context>
         </contexts>
         <itemDatas>
             <itemData name="Normal Text" defStyleNum="dsNormal"/>
-            <itemData name="Symbol" defStyleNum="dsNormal"/>
+            <itemData name="Symbol" defStyleNum="dsComment" italic="false"/>
             <itemData name="Operator" defStyleNum="dsOperator"/>
             <itemData name="Control" defStyleNum="dsControlFlow"/>
             <itemData name="Separator" defStyleNum="dsSpecialChar"/>
@@ -253,7 +323,7 @@
             <itemData name="Comment" defStyleNum="dsComment"/>
             <itemData name="Numeric" defStyleNum="dsDecVal"/>
             <itemData name="Function" defStyleNum="dsFunction"/>
-            <itemData name="Variable" defStyleNum="dsVariable"/>
+            <itemData name="Variable" defStyleNum="dsConstant"/>
         </itemDatas>
     </highlighting>
 </language>
