@@ -13,7 +13,7 @@ for (const inputFile of inputFiles) {
     readFileSync(`toml-syntaxes/${inputFile}`, { encoding: "utf-8" }),
   );
   writeFileSync(
-    `vscode-ext/${inputFile.replace(/\.toml/, ".json")}`,
+    `vscode-ext/syntaxes/${inputFile.replace(/\.toml/, ".json")}`,
     JSON.stringify(obj, null, 2),
   );
 }
