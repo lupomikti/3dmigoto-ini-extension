@@ -1,0 +1,316 @@
+#:tombi toml-version = "v1.1.0"
+#:tombi schema.strict = false
+
+name = "PCRE2"
+scope = "source.regexp.pcre2"
+version = 2
+
+# Everything except conditionals should be supported here. Support may be added later.
+
+[contexts]
+main = [
+  {include = "base"},
+  {include = "base-extended"},
+]
+base = [
+  {include = "group-modifiers"},
+  {include = "group-comment"},
+  {include = "group"},
+  {include = "base-common"},
+]
+base-extended = [
+  {include = "group-modifiers"},
+  {include = "group-comment"},
+  {include = "group-extended"},
+  {include = "base-common"},
+]
+base-extended-nested = [
+  {include = "group-modifiers"},
+  {include = "group-comment"},
+  {include = "group-extended"},
+  {include = "extended-patterns"},
+  {include = "base-common"},
+]
+base-common = [
+  {include = "character-class"},
+  {include = "anchor"},
+  {include = "backref"},
+  {include = "switch"},
+  {include = "char-escape"},
+  {include = "operator"},
+]
+
+[[contexts.group-modifiers]]
+match = '(\()(\?([imsUJn]+|[imsUJn]*(-)[imsUJn]+))(\))'
+scope = "meta.group.modifiers.regexp"
+captures.1 = "punctuation.definition.modifier-group.begin.regexp"
+captures.2 = "keyword.other.group.modifiers.regexp"
+captures.3 = "storage.modifier.mode.regexp"
+captures.4 = "puntuation.separator.unset.regexp"
+captures.5 = "punctuation.definition.modifier-group.end.regexp"
+
+[[contexts.group-comment]]
+match = '(\(\?#)(.*)(\))'
+scope = "comment.block.group.regexp"
+captures.1 = "punctuation.definition.comment.begin.regexp"
+captures.2 = "comment.block.group.content.regexp"
+captures.3 = "punctuation.definition.comment.end.regexp"
+
+[[contexts.group-special]]
+match = '\(\*(PRUNE|SKIP|THEN|COMMIT|FAIL|ACCEPT|(?:MARK)?:[A-Z0-9_]+)\)'
+scope = "meta.group.control.regexp keyword.control.verb.regexp"
+
+[[contexts.group-special]]
+match = '\(\*(UTF(?:8|16|32)?|UCP|CR|LF|(?:ANY)?CRLF|ANY|NOTEMPTY(?:_ATSTART)?|NO_JIT|BSR_(?:ANYCRLF|UNICODE)|NO_AUTO_POSSESS|NO_START_OPT)\)'
+scope = "meta.group.control.regexp keyword.control.modifier.regexp"
+
+[[contexts.group-special]]
+match = '(\()(\?(?:([+-]?\d+)|P=(\w+)))(\))'
+scope = "meta.group.back-reference.regexp"
+captures.1 = "punctuation.section.group.begin.regexp"
+captures.2 = "keyword.other.group.backref.regexp"
+captures.3 = "constant.numeric.backref.regexp"
+captures.4 = "entity.name.function.backref.regexp"
+captures.5 = "punctuation.section.group.end.regexp"
+
+[[contexts.group-special]]
+match = '(\()(\?(?:R|(?:&|P>)(\w+)))(\))'
+scope = "meta.group.recursion.regexp"
+captures.1 = "punctuation.section.group.begin.regexp"
+captures.2 = "keyword.other.group.recursion.regexp"
+captures.3 = "entity.name.function.capture-group.regexp"
+captures.4 = "punctuation.section.group.end.regexp"
+
+[[contexts.group]]
+include = "group-special"
+
+# Local Inline Modifiers
+[[contexts.group]]
+match = '(\()(\?([imsUJn]+|[imsUJn]*(-)[imsUJn]+):)'
+captures.1 = "punctuation.section.group.begin.regexp"
+captures.2 = "storage.modifier.mode.regexp"
+push = [
+  {meta_scope = "meta.group.local-modifiers.regexp"},
+  {meta_content_scope = "meta.mode.basic.regexp"},
+  {include = "base"},
+  {
+    match = '\)',
+    scope = "punctuation.section.group.end.regexp",
+    pop = true,
+  },
+]
+
+# Assertions - Lookarounds, Non-capturing groups, non-incrementing group, pre-defined patterns
+[[contexts.group]]
+match = '(\()(?:(\?<?[=!])|(\?[:>])|(\?\|)|(\?\(DEFINE\)))'
+captures.1 = "punctuation.section.group.begin.regexp"
+captures.2 = "keyword.other.lookaround.regexp"
+captures.3 = "keyword.other.non-capturing.regexp"
+captures.4 = "keyword.other.non-incrementing.regexp"
+captures.5 = "keyword.other.definition.regexp"
+push = [
+  {meta_scope = "meta.group.assertion.regexp"},
+  {meta_content_scope = "meta.mode.basic.regexp"},
+  {include = "base"},
+  {
+    match = '\)',
+    scope = "punctuation.section.group.end.regexp",
+    pop = true,
+  },
+]
+
+# Named and unnamed capture groups
+[[contexts.group]]
+match = '''(\()(?:(\?(?:'\w+'|P?<\w+>))|(?!\?))'''
+captures.1 = "punctuation.section.group.begin.regexp"
+captures.2 = "entity.name.function.capture-group.regexp"
+push = [
+  {meta_scope = "meta.group.capture-group.regexp"},
+  {meta_content_scope = "meta.mode.basic.regexp"},
+  {include = "base"},
+  {
+    match = '\)',
+    scope = "punctuation.section.group.end.regexp",
+    pop = true,
+  },
+]
+
+[[contexts.group-extended]]
+include = "group-special"
+
+# Group-modifiers but for the extended mode context
+[[contexts.group-extended]]
+match = '(\()(\?([imsUJn]*xx?[imsUJn]*|[imsUJn]*xx?[imsUJn]*(-)[imsUJn]+))(\))'
+captures.1 = "punctuation.definition.modifier-group.begin.regexp"
+captures.2 = "keyword.other.group.modifiers.regexp"
+captures.3 = "storage.modifier.mode.regexp"
+captures.4 = "punctuation.separator.unset.regexp"
+captures.5 = "punctuation.definition.modifier-group.end.regexp"
+push = [
+  {meta_scope = "meta.group.modifiers.regexp"},
+  {meta_content_scope = "meta.mode.extended.regexp"},
+  {include = "base-extended-nested"},
+  {
+    match = '(?:(\()(\?([imsUJn]*(-)[imsUJn]*xx?[imsUJn]*))(\))|\z)',
+    captures.1 = "punctuation.definition.modifier-group.begin.regexp",
+    captures.2 = "keyword.other.group.modifiers.regexp",
+    captures.3 = "storage.modifier.mode.regexp",
+    captures.4 = "punctuation.separator.unset.regexp",
+    captures.5 = "punctuation.definition.modifier-group.end.regexp",
+    pop = true,
+  },
+]
+
+# Local Inline Modifiers with extended mode
+[[contexts.group-extended]]
+match = '(\()(\?([imsUJn]*xx?[imsUJn]*|[imsUJn]*xx?[imsUJn]*(-)[imsUJn]+):)'
+captures.1 = "punctuation.section.group.begin.regexp"
+captures.2 = "keyword.other.group.modifiers.regexp"
+captures.3 = "storage.modifier.mode.regexp"
+captures.4 = "punctuation.separator.unset.regexp"
+push = [
+  {meta_scope = "meta.group.local-modifiers.regexp"},
+  {meta_content_scope = "meta.mode.extended.regexp"},
+  {include = "base-extended-nested"},
+  {
+    match = '\)',
+    scope = "punctuation.section.group.end.regexp",
+    pop = true,
+  },
+]
+
+[[contexts.group-extended]]
+match = '(\()(?:(\?<?[=!])|(\?[:>])|(\?\|))'
+captures.1 = "punctuation.section.group.begin.regexp"
+captures.2 = "keyword.other.lookaround.regexp"
+captures.3 = "keyword.other.non-capturing.regexp"
+captures.4 = "keyword.other.non-incrementing.regexp"
+push = [
+  {meta_scope = "meta.group.assertion.regexp"},
+  {meta_content_scope = "meta.mode.extended.regexp"},
+  {include = "base-extended-nested"},
+  {
+    match = '\)',
+    scope = "punctuation.section.group.end.regexp",
+    pop = true,
+  },
+]
+
+[[contexts.group-extended]]
+match = '''(\()(?:(\?(?:'\w+'|P?<\w+>))|(?!\?))'''
+captures.1 = "punctuation.section.group.begin.regexp"
+captures.2 = "entity.name.function.capture-group.regexp"
+push = [
+  {meta_scope = "meta.group.capture-group.regexp"},
+  {meta_content_scope = "meta.mode.extended.regexp"},
+  {include = "base-extended-nested"},
+  {
+    match = '\)',
+    scope = "punctuation.section.group.end.regexp",
+    pop = true,
+  }
+]
+
+[[contexts.extended-patterns]]
+match = '\#+'
+push = [
+  {meta_scope = "punctuation.definition.comment.regexp"},
+  {meta_content_scope = "comment.line.number-sign.regexp"},
+  {
+    match = '\n',
+    pop = true,
+  },
+]
+
+[[contexts.character-class]]
+match = '(\[)(\^)?'
+captures.1 = "keyword.control.character-class.begin.regexp"
+captures.2 = "keyword.operator.negation.regexp"
+push = [
+  {include = "posix-class"},
+  {
+    match = '\\[\\\^\-\[\]b]',
+    scope = "constant.character.escape.character-set.regexp",
+  },
+  {
+    match = '-',
+    scope = "punctuation.separator.sequence.regexp",
+  },
+  {include = "char-escape"},
+  {
+    match = '\]',
+    scope = "keyword.control.character-class.end.regexp",
+    pop = true,
+  },
+]
+
+[[contexts.posix-class]]
+match = '\[:(?:ascii|alnum|alpha|blank|cntrl|digit|graph|lower|print|punct|space|upper|word|xdigit|[><]):\]'
+scope = "constant.other.posix-class.regexp"
+
+[[contexts.anchor]]
+match = '\\[GAZzBb]|[\^$]'
+scope = "keyword.control.anchor.regexp"
+
+[[contexts.backref]]
+# weird bs to allow octal escape sequence
+# says: a single digit, two digits, or 4 or more digits are scoped as a backref
+# thus 3 digits is always scoped as octal
+match = '\\([1-9](?:\d|\d{3,})?)'
+scope = "keyword.other.backref.regexp"
+
+[[contexts.backref]]
+# prefixed-match-meta-sequence
+# TODO: make it so ' only goes with ' and < only goes with >
+match = '''\\(?:g(?:\d+|\{-?\d+\}|[<']\+?\d+['>]|[{<']\w+['>}])|k[{<']\w+['>}])'''
+scope = "keyword.other.backref.regexp"
+
+[[contexts.switch]]
+match = '\\K'
+scope = "keyword.control.reset.regexp"
+
+[[contexts.switch]]
+match = '\\Q'
+scope = "keyword.control.literal.regexp"
+push = [
+  {meta_scope = "meta.string-literal.regexp"},
+  {meta_content_scope = "string.quoted.other.regexp"},
+  {
+    match = '\\E',
+    scope = "keyword.control.literal.regexp",
+    pop = true,
+  },
+]
+
+[[contexts.char-escape]]
+match = '(?:(\\[wWsSdDhHvVXRCN])|(\\[0-7]{3}))'
+scope = "meta.structure.meta-sequence.regexp"
+captures.1 = "constant.character.escape.character-class.regexp"
+captures.2 = "constant.character.numeric.regexp"
+
+[[contexts.char-escape]]
+match = '(?:(\\[pP](?:\{\w+\}|[CLMNPSZ]))|(\\x\{[0-9a-fA-F]{4}\}|\\x[0-9a-fA-F]{2})|(\\c[A-Z]))'
+scope = "meta.structure.prefixed-meta-sequence.regexp"
+captures.1 = "constant.character.escape.unicode-property.regexp"
+captures.2 = "constant.character.numeric.regexp"
+captures.3 = "constant.character.escape.control.regexp"
+
+[[contexts.char-escape]]
+match = '\\[ntr0]'
+scope = "meta.structure.common-escapes.regexp constant.character.escape.common.regexp"
+
+[[contexts.char-escape]]
+match = '\\.'
+scope = "constant.character.escape.backslash.regexp"
+
+[[contexts.operator]]
+match = '\|'
+scope = "keyword.operator.or.regexp"
+
+[[contexts.operator]]
+match = '\.'
+scope = "keyword.operator.any.regexp"
+
+[[contexts.operator]]
+match = '(?:[?*+]|\{\d+(?:,\d*)?\})[?+]?'
+scope = "keyword.operator.quantifier.regexp"
