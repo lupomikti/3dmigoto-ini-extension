@@ -10,7 +10,7 @@ const inputFiles = [
 
 for (const inputFile of inputFiles) {
   const obj = TOML.parse(
-    readFileSync(`toml-syntaxes/${inputFile}`, { encoding: "utf-8" }),
+    readFileSync(`toml-syntaxes/tmLanguage/${inputFile}`, { encoding: "utf-8" }),
   );
   writeFileSync(
     `vscode-ext/syntaxes/${inputFile.replace(/\.toml/, ".json")}`,
