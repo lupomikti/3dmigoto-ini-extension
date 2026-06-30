@@ -1,7 +1,7 @@
 #:tombi toml-version = "v1.1.0"
 
 "$schema" = "https://www.schemastore.org/tmlanguage.json"
-version = "2.0.0"
+version = "2.1.0"
 scopeName = "source.migoto"
 name = "migoto"
 fileTypes = ["ini", "3dm", "migoto"]
@@ -89,7 +89,7 @@ name = "meta.section.constants.migoto"
 begin = '(?i)(?:^[ \t]*(\[)\s*(Constants)\s*(\])[ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
 beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
-beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.2.name = "entity.name.constructor.migoto"
 beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
 patterns = [
   {include = "#comment"},
@@ -103,7 +103,7 @@ name = "meta.section.present.migoto"
 begin = '(?i)(?:^[ \t]*(\[)\s*(Present)\s*(\])[ \t]*$)'
 end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
 beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
-beginCaptures.2.name = "entity.name.section.group-title.migoto"
+beginCaptures.2.name = "entity.name.function.migoto"
 beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
 patterns = [
   {include = "#comment"},
@@ -363,7 +363,7 @@ begin = '''(?xi)(?:
 ^[ \t]*
   (\[) # capture group 1, opening bracket
   [ \t]*
-  (Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader|Resource.+|Include.*) # capture group 2, section header
+  (Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader|(?:Resource|Pool).+|Include.*) # capture group 2, section header
   [ \t]*
   (\]) # capture group 3, closing bracket
 [ \t]*$
@@ -383,23 +383,26 @@ begin = '''(?xi)(?:
 ^[ \t]*
   (\[) # capture group 1, opening bracket
   [ \t]*
-  (
-   Clear(?:RenderTarget|DepthStencil)View | ClearUnorderedAccessView(?:Uint|Float) |
-   (?: TextureOverride | ShaderOverride | (?:BuiltIn)?(?:CustomShader|CommandList) ).+
-  )    # capture group 2, section header
+  (?:
+    ( Clear(?:RenderTarget|DepthStencil)View | ClearUnorderedAccessView(?:Uint|Float) | (?: TextureOverride | ShaderOverride ).+ ) |
+    ( (?:BuiltIn)?(?:CustomShader|CommandList).+ )
+  )    # capture group 2 & 3, section header
   [ \t]*
-  (\]) # capture group 3, closing bracket
+  (\]) # capture group 4, closing bracket
 [ \t]*$
 )'''
 end = '''(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'''  # \z is there to match the end of the file
 beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
-beginCaptures.2.name = "entity.name.section.group-title.migoto"
-beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
+beginCaptures.2.name = "entity.name.class.migoto"
+beginCaptures.3.name = "entity.name.function.migoto"
+beginCaptures.4.name = "punctuation.definition.entity.end.migoto"
 patterns = [
   {include = "#comment"},
   {include = "#setting-statement"},
   {include = "#primary-statement"},
 ]
+
+# Setting Statements
 
 [[repository.setting-statement.patterns]]
 name = "meta.statement.setting.migoto"
@@ -429,6 +432,7 @@ match = '''(?xi)
 captures.1.patterns = [{include = "#key"}]
 captures.2.name = "punctuation.separator.key-value.migoto"
 captures.3.patterns = [
+  {include = "#named-variable"},
   {include = "#resource-type"},  # DXGI types + Resource types
   {include = "#constant"},
   {include = "#boolean-value"},
@@ -436,11 +440,13 @@ captures.3.patterns = [
   {include = "#fixed-value"},
 ]
 captures.4.patterns = [
+  {include = "#named-variable"},
   {include = "#string"},
   {include = "#path-value"},
   {include = "#fixed-value"},
 ]
 captures.5.patterns = [
+  {include = "#named-variable"},
   {include = "#string"},
   {include = "#path-value"},
   {include = "#list-expression"},
@@ -587,6 +593,8 @@ patterns = [
   {include = "#instruction-statement"},
 ]
 
+# Assignment Statement
+
 [[repository.assignment-statement.patterns]]
 name = "meta.statement.assignment.migoto"
 match = '''(?xi)
@@ -614,8 +622,8 @@ match = '''(?xi)
 \b(
   [vgdhpcsturfibo\-\d_]+\b |
   this\b | (?:ini|stereo)params\b | cursor_(?:mask|color)\b |
-  Resource\S+
-)   # a limited resource operand (buffer/shader variable, resource identifier, custom resource)
+  (?:Resource|Pool)\S+
+)   # a limited resource operand (buffer/shader variable, resource identifier, custom resource, pool)
 \s*
 (=) # assignment operator, surrounded by optional whitespace
 \s*
@@ -724,7 +732,7 @@ name = "meta.dump-instruction"
 match = '(?i)(dump)\s*(=)\s*([^\r\n]+)'
 captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
-# XXX: may replace with a `dump-instruction-value-list` for consistency
+# FIXME: there can only be one Resource and it must be first
 captures.3.patterns = [
   {include = "#resource"},
   {include = "#shader-identifier"},
@@ -864,18 +872,29 @@ patterns = [
 
 [repository.illegal-operator]
 name = "invalid.illegal.operator.migoto"
-match = '(?xi) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} | ={4,} | [><]{2,} | &{3,} | \|{3,} | \^+ '
+match = '''(?xi)(?:
+-{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} |
+! ={3,} | ={4,} | [><]{3,} | &{3,} | \|{3,} | \^{2,} |
+~{2,} | @{2,} | \#{2,}
+)'''
 
 [repository.operator]
 match = '''(?xi)
 (?:
   ( \*\* | \* | \+ | - | % | // | / ) |       # arithmetic operators
+  ( >> | << ) |                               # bit shift operators
   ( !== | != | === | == | >= | <= | > | < ) | # comparison operators
-  ( ! | && | \|\| )                           # logical operators
+  ( ! | && | \|\| ) |                         # logical operators
+  ( ~ | & | \| | ^ ) |                        # bitwise operators
+  ( @ ) | ( \# )                              # identity and index/size operators
 )'''
 captures.1.name = "keyword.operator.math.migoto"
-captures.2.name = "keyword.operator.comparison.migoto"
-captures.3.name = "keyword.operator.logical.migoto"
+captures.2.name = "keyword.operator.bit-shift.migoto"
+captures.3.name = "keyword.operator.comparison.migoto"
+captures.4.name = "keyword.operator.logical.migoto"
+captures.5.name = "keyword.operator.bitwise.migoto"
+captures.6.name = "keyword.operator.identity.migoto"
+captures.7.name = "keyword.operator.index.migoto"
 
 [repository.round-braces]
 begin = '\('
@@ -903,6 +922,9 @@ match = '\b(?i)(this|null|(?:ini|stereo)params|cursor_(?:mask|color))\b'
 
 [[repository.resource.patterns]]
 include = "#custom-resource"
+
+[[repository.resource.patterns]]
+include = "#resource-pool"
 
 # Normal operands
 
@@ -971,10 +993,37 @@ captures.2.patterns = [{include = "#namespace"}]
 captures.3.patterns = [{include = "#section-identifier"}]
 
 [repository.custom-resource]
-name = "meta.variable.custom-resource variable.other.readwrite.migoto"
-match = '''\b(?i)Resource(\\[^=$\r\n]+\\)?([^\/&!>|<= $,\r\n]+)\b(?!\\)'''
-captures.1.patterns = [{include = "#namespace"}]
-captures.2.patterns = [{name = "entity.name.function.migoto", match = '[^\/&!>|<= $,\r\n]+'}]
+name = "meta.variable.custom-resource"
+match = '''\b(?i)(Resource)(\\[^=$\r\n]+\\)?([^/&!>|< $=,\[\]\r\n]+?)(->[a-z0-9]+)?\b(?!\\)'''
+captures.1.name = "entity.name.tag.migoto"
+captures.2.patterns = [{include = "#namespace"}]
+captures.3.patterns = [{include = "#resource-identifier"}]
+captures.4.patterns = [{
+  name = "meta.expression.property-access",
+  match = '(?i)(->)([a-z0-9]+)',
+  captures.1.name = "keyword.operator.accessor.migoto",
+  captures.2.name = "variable.other.property.migoto",
+}]
+
+[repository.resource-pool]
+name = "meta.variable.resource-pool"
+match = '''\b(?i)(Pool)(\\[^=$\r\n]+\\)?([^/&!>|< $=,\[\]\r\n]+?\b)(\[[+$\w.-]+?\])?(->[a-z0-9]+\b)?(?!\\)'''
+captures.1.name = "entity.name.tag.migoto"
+captures.2.patterns = [{include = "#namespace"}]
+captures.3.patterns = [{include = "#resource-identifier"}]
+captures.4.patterns = [{
+  name = "meta.expression.indexing",
+  match = '(?i)(\[)(.+)(\])',
+  captures.1.name = "punctuation.delimiter.bracket.migoto",
+  captures.2.patterns = [{include = "#named-variable"}, {include = "#constant"}],
+  captures.3.name = "punctuation.delimiter.bracket.migoto",
+}]
+captures.5.patterns = [{
+  name = "meta.expression.property-access",
+  match = '(?i)(->)([a-z0-9]+)',
+  captures.1.name = "keyword.operator.accessor.migoto",
+  captures.2.name = "variable.other.property.migoto",
+}]
 
 [repository.namespace]
 name = "meta.name.namespace-resolution"
@@ -987,6 +1036,10 @@ patterns = [{name = "entity.name.namespace.migoto", match = '[^=$\r\n]+(?=\\)'}]
 [repository.section-identifier]
 name = "entity.name.function.migoto"
 match = '[^=$,\r\n]+'
+
+[repository.resource-identifier]
+name = "entity.name.class.migoto"
+match = '[^/&!>|< $=,\r\n]+'
 
 [repository.ini-parameter]
 name = "variable.parameter.migoto"
@@ -1030,7 +1083,8 @@ match = '''(?xi)
 [repository.constant]
 patterns = [
   {name = "constant.language.numeric.migoto", match = '\b(?i)(?:inf|NaN)\b'},
-  {name = "constant.numeric.migoto", match = '[-+]?\b(?:\d+(?:\.\d+)?|\.\d+)\b'},
+  {name = "constant.numeric.migoto", match = '[+-]?\d+(\.\d+(e[-+]\d+)?)?\b'},
+  {name = "constant.numeric.migoto", match = '[+-]?\.\d+\b'},
 ]
 
 [repository.boolean-value]
