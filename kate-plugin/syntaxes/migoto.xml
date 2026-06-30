@@ -4,8 +4,8 @@
         <!ENTITY setstmt    "(?!\b(?:hash|[vhdgpc]s|(?:override|cache|storage)_directory|include(?:_recursive)?|exclude_recursive|{{(?:done_|toggle_)hunting|next_marking_mode|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next)_(?:index|vertex)buffer_slot|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance|freeze_performance_monitor|tune[123]_(?:up|down)|analyse_frame|toggle_full_screen|force_full_screen_on_key|run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|vb\d|ib|(?:[rf]_)?bb|s?o\d|od|(?&lt;!$)[xyzw]\d{0,3}|this|(?:ini|stereo)params|cursor_(?:mask|color)|Resource.+)\b)[\w\[\]]+\s*=\s*(?:[^&quot;\\/\s\r\n]+|[^\s\r\n]+|[^\r\n]+)">
         <!ENTITY spsetstmt  "(?:\b(?:hash|[vhdgpc]s|(?:override|cache|storage)_directory|include(?:_recursive)?|exclude_recursive|{{(?:done_|toggle_)hunting|next_marking_mode|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next)_(?:index|vertex)buffer_slot|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance|freeze_performance_monitor|tune[123]_(?:up|down)|analyse_frame|toggle_full_screen|force_full_screen_on_key)\b)\s*=\s*[^\r\n]+">
 ]>
-<language name="Migoto" alternativenames="3DM-INI" version="11" kateversion="5.94"
-          section="Scripts" extensions="*.ini" casesensitive="0" license="GPL-3.0" priority="2">
+<language name="Migoto" alternativenames="3DM-INI" version="12" kateversion="5.94"
+          section="Scripts" extensions="*.ini;*.3dm;*.migoto" casesensitive="0" license="GPL-3.0" priority="2">
   <highlighting>
     <!-- #region @keywords -->
       <!-- #region Language Constants -->
@@ -655,8 +655,9 @@
       <context attribute="Header" lineEndContext="#pop" fallthroughContext="#pop" name="SectionTitle">
         <DetectChar attribute="Header" context="#pop" char="]" beginRegion="Section"/>
         <IncludeRules context="FindSpecialBodyHeaders"/>
-        <RegExpr attribute="Header" context="KVPHeader" insensitive="true" String="[ \t]*(?:Resource.+(?=\s*\])|Include.*(?=\s*\])|Hunting|Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader)"/>
-        <RegExpr attribute="Header" context="FullCommandHeader" insensitive="true" String="[ \t]*(?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\s*\])|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
+        <RegExpr attribute="Header" context="KVPHeader" insensitive="true" String="[ \t]*(?:(?:Resource|Pool).+(?=\s*\])|Include.*(?=\s*\])|Hunting|Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader)"/>
+        <RegExpr attribute="Class" context="FullCommandHeader" insensitive="true" String="[ \t]*(?:(?:(?:Shader|Texture)Override).+(?=\s*\])|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))"/>
+        <RegExpr attribute="Function" context="FullCommandHeader" insensitive="true" String="[ \t]*(?:BuiltIn)?(?:CustomShader|CommandList).+(?=\s*\])"/>
       </context>
 
         <!-- Normal Headers -->
@@ -670,8 +671,8 @@
 
         <!-- Special Headers -->
       <context attribute="Header" lineEndContext="#pop" name="FindSpecialBodyHeaders">
-        <RegExpr attribute="Header" context="ConstantsHeader" insensitive="true" String="[ \t]*Constants"/>
-        <RegExpr attribute="Header" context="PresentHeader" insensitive="true" String="[ \t]*Present"/>
+        <RegExpr attribute="Constructor" context="ConstantsHeader" insensitive="true" String="[ \t]*Constants"/>
+        <RegExpr attribute="Function" context="PresentHeader" insensitive="true" String="[ \t]*Present"/>
         <RegExpr attribute="Header" context="KeyHeader" insensitive="true" String="[ \t]*Key.+(?=\s*\])"/>
         <RegExpr attribute="Header" context="PresetHeader" insensitive="true" String="[ \t]*Preset.+(?=\s*\])"/>
         <RegExpr attribute="Header" context="RegexPatternHeader" insensitive="true" String="[ \t]*ShaderRegex.+\.Pattern(?=\s*\])"/>
@@ -711,7 +712,7 @@
       <context attribute="Header" lineEndContext="#pop" name="RegexCommandListHeader">
         <DetectChar attribute="Header" context="#pop#pop!RegexCommandListBody" char="]" beginRegion="Section"/>
       </context>
-      <!-- #endregion -->
+      <!-- #endregion Section headers -->
 
       <!-- #region Special Bodies -->
         <!-- #region Constants Body -->
@@ -945,6 +946,7 @@
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="(setting value ctx1)">
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
         <keyword attribute="Type" String="resource-types"/>
         <keyword attribute="Type" String="dxgi-formats"/>
         <IncludeRules context="Numbers"/>
@@ -954,12 +956,14 @@
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="(setting value ctx2)">
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
         <DetectChar attribute="String" context="String" char="&quot;"/>
         <IncludeRules context="PathValue"/>
         <DetectIdentifier attribute="FixedValue"/>
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="(setting value ctx3)">
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
         <DetectChar attribute="String" context="String" char="&quot;"/>
         <IncludeRules context="PathValue"/>
         <keyword attribute="Type" String="dxgi-formats"/>
@@ -1037,7 +1041,7 @@
         <RegExpr attribute="ControlFlow" insensitive="true" String="(else|endif)"/>
         <!-- Detect an Assignment Statement -->
         <RegExpr attribute="Normal Text" context="OperationalAssignmentStatement" insensitive="true" lookAhead="true" String="(?x) (?:(?:pre|post)\s+)? (?: \$ (?:\\.+\\)? \w+ | \b[xyzw]\d{0,3}\b ) \s* = \s* [^\r\n]+"/>
-        <RegExpr attribute="Normal Text" context="ResourceAssignmentStatement" insensitive="true" lookAhead="true" String="(?x) (?:(?:pre|post)\s+)? \b(?: [vgdhpcsturfibo\-\d_]+\b | this\b | (?:ini|stereo)params\b | cursor_(?:mask|color)\b | Resource\S+ ) \s* = \s* [^\r\n]+"/>
+        <RegExpr attribute="Normal Text" context="ResourceAssignmentStatement" insensitive="true" lookAhead="true" String="(?x) (?:(?:pre|post)\s+)? \b(?: [vgdhpcsturfibo\-\d_]+\b | this\b | (?:ini|stereo)params\b | cursor_(?:mask|color)\b | (?:Resource|Pool)\S+ ) \s* = \s* [^\r\n]+"/>
         <!-- Detect an Instruction Statement -->
         <RegExpr attribute="Normal Text" context="InstructionStatement" insensitive="true" lookAhead="true" String="(?x) (?: (?:(?:pre|post)\s+)? \b\w+\b \s* = \s* [^\r\n]+ | drawauto)"/>
       </context>
@@ -1256,9 +1260,9 @@
       <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="OperationalExpression">
         <DetectSpaces/>
         <!-- Illegal Operators -->
-        <RegExpr attribute="Error" context="#stay" insensitive="true" String="(?x) -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [&gt;&lt;]={2,} | ! ={3,} | ={4,} | [&gt;&lt;]{2,} | &amp;{3,} | \|{3,} | \^+ "/>
+        <RegExpr attribute="Error" context="#stay" insensitive="true" String="(?x)(?: -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [&gt;&lt;]={2,} | ! ={3,} | ={4,} | [&gt;&lt;]{3,} | &amp;{3,} | \|{3,} | \^{2,} | ~{2,} | @{2,} | \#{2,} )"/>
         <!-- Legal Operators -->
-        <RegExpr attribute="Operator" context="#stay" insensitive="true" String="(?x) (?: (?: \*\* | \* | \+ | - | % | // | / ) | (?: !== | != | === | == | &gt;= | &lt;= | &gt; | &lt; ) | (?: ! | &amp;&amp; | \|\| ) ) "/>
+        <RegExpr attribute="Operator" context="#stay" insensitive="true" String="(?x)(?: (?: \*\* | \* | \+ | - | % | // | / ) | (?: &gt;&gt; | &lt;&lt; ) | (?: !== | != | === | == | &gt;= | &lt;= | &gt; | &lt; ) | (?: ! | &amp;&amp; | \|\| ) | (?: ~ | &amp; | \| | ^ ) | @ | \# )"/>
         <!-- Operands -->
           <!-- Constants, numeric -->
         <IncludeRules context="Numbers"/>
@@ -1321,7 +1325,7 @@
         <RegExpr attribute="Function" context="#pop" insensitive="true" String="[^=$,\r\n]+"/>
       </context>
 
-      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop!ResourceSectionIdentifier" name="MaybeNamespacedResourceSection">
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop!MaybeSuffixedResourceSectionIdentifier" name="MaybeNamespacedResourceSection">
         <DetectChar attribute="Symbol" context="ResourceSectionNamespaceValue" char="\"/>
       </context>
 
@@ -1329,13 +1333,48 @@
         <RegExpr attribute="Namespace" context="#pop!NamespacedResourceSectionIdentifier" insensitive="true" String="[^=$\r\n]+(?=\\)"/>
       </context>
 
-      <context attribute="Normal Text" lineEndContext="#pop" name="NamespacedResourceSectionIdentifier">
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop!ResourceSectionIdentifier" name="NamespacedResourceSectionIdentifier">
         <DetectChar attribute="Symbol" context="#stay" char="\"/>
-        <IncludeRules context="ResourceSectionIdentifier"/>
+        <IncludeRules context="MaybeSuffixedResourceSectionIdentifier"/>
+      </context>
+
+      <context attribute="Function" lineEndContext="#pop" fallthroughContext="#pop!ResourceSectionIdentifier" name="MaybeSuffixedResourceSectionIdentifier">
+        <RegExpr attribute="Function" context="#pop!(property access ctx)" insensitive="true" String="[^/&amp;!&gt;|&lt; $=,\r\n]+(?=-&gt;)"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop!MaybeSuffixedPoolSectionIdentifier" name="MaybeNamespacedPoolSection">
+        <DetectChar attribute="Symbol" context="PoolSectionNamespaceValue" char="\"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" name="PoolSectionNamespaceValue">
+        <RegExpr attribute="Namespace" context="#pop!NamespacedPoolSectionIdentifier" insensitive="true" String="[^=$\r\n]+(?=\\)"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop!ResourceSectionIdentifier" name="NamespacedPoolSectionIdentifier">
+        <DetectChar attribute="Symbol" context="#stay" char="\"/>
+        <IncludeRules context="MaybeSuffixedPoolSectionIdentifier"/>
+      </context>
+
+      <context attribute="Function" lineEndContext="#pop" fallthroughContext="#pop!ResourceSectionIdentifier" name="MaybeSuffixedPoolSectionIdentifier">
+        <RegExpr attribute="Function" context="(array index ctx)" insensitive="true" String="[^/&amp;!&gt;|&lt; $=,\[\]\r\n]+(?=\[)"/>
+        <RegExpr attribute="Function" context="#pop!(property acccess ctx)" insensitive="true" String="[^/&amp;!&gt;|&lt; $=,\[\]\r\n]+(?=-&gt;)"/>
+        <RegExpr attribute="Function" context="#pop!(property acccess ctx)" insensitive="true" String="(?&lt;=\])(?=-&gt;)"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop" name="(property access ctx)">
+        <StringDetect attribute="Operator" context="#stay" insensitive="true" String="-&gt;"/>
+        <DetectIdentifier attribute="Normal Text" context="#pop"/>
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#stay" name="(array index ctx)">
+        <DetectChar attribute="Symbol" context="#stay" char="["/>
+        <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
+        <IncludeRules context="Numbers"/>
+        <DetectChar attribute="Symbol" context="#pop" char="]"/>
       </context>
 
       <context attribute="Function" lineEndContext="#pop" fallthroughContext="#pop" name="ResourceSectionIdentifier">
-        <RegExpr attribute="Function" context="#pop" insensitive="true" String="[^\/&amp;!&gt;|&lt;= $,\r\n]+"/>
+        <RegExpr attribute="Function" context="#pop" insensitive="true" String="[^/&amp;!&gt;|&lt; $=,\r\n]+"/>
       </context>
           <!-- #endregion Callable Sections and Custom Resources -->
         <!-- #endregion Namespaced Variables and Sections -->
@@ -1350,6 +1389,8 @@
         <keyword attribute="LanguageVariable" String="resource-identifiers"/>
         <!-- Custom Resources -->
         <RegExpr attribute="Variable" context="MaybeNamespacedResourceSection" insensitive="true" String="Resource(?=.+\b)"/>
+        <!-- Resource Pools -->
+        <RegExpr attribute="Variable" context="MaybeNamespacedPoolSection" insensitive="true" String="Pool(?=.+(?:\b|\]))"/>
       </context>
 
       <context attribute="Normal Text" lineEndContext="#pop" name="StaticValue">
@@ -1360,8 +1401,8 @@
       <context attribute="Normal Text" lineEndContext="#pop" name="Numbers">
         <keyword attribute="LanguageConstant" String="language-constants"/>
         <!-- NOTE: cannot use Float because it doesn't have \b at the end, only the beginning; also Float does too much -->
-        <RegExpr attribute="Float" context="#stay" String="[-+]?\b(?:\d+(?:\.\d+)?|\.\d+)\b"/>
-        <!-- <RegExpr attribute="Integer" context="#stay" String="[-+]?\b\d+\b"/> -->
+        <RegExpr attribute="Float" context="#stay" String="[+-]?\d+(\.\d+(e[-+]\d+)?)?\b"/>
+        <RegExpr attribute="Float" context="#stay" String="[+-]?\.\d+\b"/>
       </context>
 
       <context attribute="String" lineEndContext="#pop" name="String">
@@ -1382,7 +1423,9 @@
     <itemDatas>
       <itemData name="Error" defStyleNum="dsError"/>
       <itemData name="Normal Text" defStyleNum="dsNormal" spellchecking="false"/>
-      <itemData name="Header" defStyleNum="dsAttribute" italic="true" spellchecking="false"/>
+      <itemData name="Header" defStyleNum="dsAttribute" spellchecking="false"/>
+      <itemData name="Constructor" defStyleNum="dsBuiltIn" spellchecking="false"/>
+      <itemData name="Class" defStyleNum="dsDataType" spellchecking="false"/>
       <itemData name="Comment" defStyleNum="dsComment"/>
       <itemData name="ControlFlow" defStyleNum="dsControlFlow" bold="true" spellchecking="false"/>
       <itemData name="BooleanValue" defStyleNum="dsConstant" spellchecking="false"/>
