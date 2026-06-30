@@ -8,8 +8,9 @@ file_extensions:
 scope: source.migoto
 version: 2
 variables:
-  cl_section_names: \s*(?:(?:(?:Shader|Texture)Override|(?:BuiltIn)?(?:CustomShader|CommandList)).+(?=\s*\])|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))
-  kvp_section_names: \s*(?:Resource.+(?=\s*\])|Include.*(?=\s*\])|Hunting|Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader)
+  cl_section_names: \s*(?:(?:(?:Shader|Texture)Override).+(?=\s*\])|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))
+  cl2_section_names: \s*(?:BuiltIn)?(?:CustomShader|CommandList).+(?=\s*\])
+  kvp_section_names: \s*(?:(?:Resource|Pool).+(?=\s*\])|Include.*(?=\s*\])|Hunting|Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader)
   special_section_names: \s*(?:Constants|Present|(?:Key|Preset|ShaderRegex).+(?=\s*\]))
   ws: "[ \\t]"
   namespace_path: '[^\s>\\|\/<?:*="$][^>\\|\/<?:*=$\r\n]+(?:[\\\/][^>\\|\/<?:*=$\r\n]+)*'
@@ -38,7 +39,7 @@ contexts:
       match: \b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|TextureCube)\b
     - include: dxgi-format
   fallthrough:
-    - match: (?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\])
+    - match: (?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}}|{{cl2_section_names}})\])
       pop: 2
   comment:
     - match: ^({{ws}}+)?((;)<([^\n]*)\n)
@@ -114,7 +115,7 @@ contexts:
   section-title:
     - meta_scope: meta.tag.section-header.migoto
     - match: (?i){{ws}}*Constants
-      scope: meta.section.constants.migoto entity.name.section.group-title.migoto
+      scope: meta.section.constants.migoto entity.name.constructor.migoto
       push:
         - match: \]
           scope: punctuation.definition.entity.end.migoto
@@ -123,7 +124,7 @@ contexts:
         - match: \n
           pop: true
     - match: (?i){{ws}}*Present
-      scope: meta.section.present.migoto entity.name.section.group-title.migoto
+      scope: meta.section.present.migoto entity.name.function.migoto
       push:
         - match: \]
           scope: punctuation.definition.entity.end.migoto
@@ -201,7 +202,7 @@ contexts:
         - match: \n
           pop: true
     - match: (?i){{ws}}*{{kvp_section_names}}
-      scope: entity.name.section.group-title.migoto.kvp-section
+      scope: entity.name.section.group-title.migoto
       push:
         - match: \]
           scope: punctuation.definition.entity.end.migoto
@@ -210,7 +211,16 @@ contexts:
         - match: \n
           pop: true
     - match: (?i){{ws}}*{{cl_section_names}}
-      scope: entity.name.section.group-title.migoto.cl-section
+      scope: entity.name.class.migoto
+      push:
+        - match: \]
+          scope: punctuation.definition.entity.end.migoto
+          pop: 2
+          set: cl-body
+        - match: \n
+          pop: true
+    - match: (?i){{ws}}*{{cl2_section_names}}
+      scope: entity.name.function.migoto
       push:
         - match: \]
           scope: punctuation.definition.entity.end.migoto
@@ -488,7 +498,7 @@ contexts:
           scope: punctuation.separator.key-value.migoto
           push:
             - include: path-value
-            - match: (.+?){{ws}}*$
+            - match: "{{ws}}*(.+?){{ws}}*$"
               captures:
                 "1": constant.other.path.migoto
             - match: "{{line_end_context}}"
@@ -512,9 +522,9 @@ contexts:
         )\b)
 
         (?=
-          [\w\[\]]+   # a word-like that is not in the preceding list and includes brackets for blend[N]/blend_factor[N] keys
-          \s* = \s*   # kvp separator surrounded by optional whitespace
-          (?: [^"\\/\s\r\n]+ | [^\s\r\n]+ | [^\r\n]+ )    # match anything on the right-hand-side
+          [\w\[\]]+
+          \s* = \s*
+          (?: [^"\\/\s\r\n]+ | [^\s\r\n]+ | [^\r\n]+ )
         )
       push:
         - meta_scope: meta.statement.setting.migoto
@@ -524,6 +534,7 @@ contexts:
           push:
             - match: (?i)(?=[^"\\/\s\r\n]+)
               push:
+                - include: named-variable
                 - include: resource-type
                 - include: constant
                 - include: boolean-value
@@ -533,6 +544,7 @@ contexts:
                   pop: true
             - match: (?i)(?=[^\s\r\n]+)
               push:
+                - include: named-variable
                 - include: string
                 - include: path-value
                 - include: fixed-value
@@ -540,6 +552,7 @@ contexts:
                   pop: true
             - match: (?i)(?=[^\r\n]+)
               push:
+                - include: named-variable
                 - include: string
                 - include: path-value
                 - include: dxgi-format
@@ -586,8 +599,8 @@ contexts:
         \s*
           (?:
             = \s*
-            (?:[+\-]?[\d.]+|inf|NaN) # RHS value, only Numbers allowed
-          )? # Assignment operator and RHS-value are optional
+            (?:[+\-]?[\d.]+|inf|NaN)
+          )?
         )
       push:
         - meta_scope: meta.statement.declaration.global.migoto
@@ -631,14 +644,12 @@ contexts:
     - include: assignment-statement
     - include: instruction-statement
   assignment-statement:
-    - match: >-
+    - match: |-
         (?xi)
-
         ^{{ws}}*
-
         (?=
-          (?: (?:pre|post) \s+)? # pre and post modifiers, optional
-          (?: \$ (?:\\.+\\)? \w+ | \b[xyzw]\d{0,3}\b ) # a $ variable or an ini parameter
+          (?: (?:pre|post) \s+)?
+          (?: \$ (?:\\.+\\)? \w+ | \b[xyzw]\d{0,3}\b )
           \s* = \s*
           [^\r\n]+
         )
@@ -660,12 +671,12 @@ contexts:
         (?xi)
         ^{{ws}}*
         (?=
-          (?: (?:pre|post) \s+)? # pre and post modifiers, optional
+          (?: (?:pre|post) \s+)?
           \b(
             [vgdhpcsturfibo\-\d_]+\b |
             this\b | (?:ini|stereo)params\b | cursor_(?:mask|color)\b |
-            Resource\S+
-          )   # a limited resource operand
+            (?:Resource|Pool)\S+
+          )
           \s* = \s*
           [^\r\n]+
         )
@@ -688,10 +699,10 @@ contexts:
         {{ws}}*
         (?=
           (?:
-            (?: (?:pre|post) \s+)? # pre and post modifiers, optional
-            \b\w+\b  # an instruction
+            (?: (?:pre|post) \s+)?
+            \b\w+\b
             \s* = \s*
-            [^\r\n]+ # RHS value, depends on type of instruction
+            [^\r\n]+
           ) |
           drawauto
         )
@@ -981,21 +992,31 @@ contexts:
     - include: round-braces
   illegal-operator:
     - scope: invalid.illegal.operator.migoto
-      match:
-        "(?xi) -{2,} | \\+{2,} | \\*{3,} | /{3,} | %{2,} | [><]={2,} | ! ={3,} |
-        ={4,} | [!><]{2,} | &{3,} | \\|{3,} | \\^+ "
+      match: |-
+        (?xi)(?:
+        -{2,} | \+{2,} | \*{3,} | /{3,} | %{2,} | [><]={2,} |
+        ! ={3,} | ={4,} | [><]{3,} | &{3,} | \|{3,} | \^{2,} |
+        ~{2,} | @{2,} | \#{2,}
+        )
   operator:
     - match: |-
         (?xi)
         (?:
-          ( \*\* | \* | \+ | - | % | // | / ) |       # arithmetic operators
-          ( !== | != | === | == | >= | <= | > | < ) | # comparison operators
-          ( ! | && | \|\| )                           # logical operators
+          ( \*\* | \* | \+ | - | % | // | / ) |
+          ( >> | << ) |
+          ( !== | != | === | == | >= | <= | > | < ) |
+          ( ! | && | \|\| ) |
+          ( ~ | & | \| | ^ ) |
+          ( @ ) | ( \# )
         )
       captures:
         "1": keyword.operator.math.migoto
-        "2": keyword.operator.comparison.migoto
-        "3": keyword.operator.logical.migoto
+        "2": keyword.operator.bit-shift.migoto
+        "3": keyword.operator.comparison.migoto
+        "4": keyword.operator.logical.migoto
+        "5": keyword.operator.bitwise.migoto
+        "6": keyword.operator.identity.migoto
+        "7": keyword.operator.index.migoto
   round-braces:
     - match: \(
       captures:
@@ -1015,6 +1036,7 @@ contexts:
     - scope: variable.language.resource-identifier.migoto
       match: \b(?i)(this|null|(?:ini|stereo)params|cursor_(?:mask|color))\b
     - include: custom-resource
+    - include: resource-pool
   operand:
     - include: constant
     - include: named-variable
@@ -1096,18 +1118,63 @@ contexts:
         (?=
           Resource
           (?:\\{{namespace}}\\)?
-          [^\/&!>|<= $,\r\n]+
+          [^\\\/&!|< $=,\r\n]+
           \b (?!\\)
         )
       push:
         - meta_content_scope: meta.variable.custom-resource
         - match: (?i)\bResource
-          scope: variable.other.readwrite.migoto
+          scope: entity.name.label.migoto
         - match: (?=\\)
           push:
             - include: namespace
-        - match: "[^\\/&!>|<= $,\\r\\n]+"
-          scope: entity.name.function.migoto
+        - match: (?=->)
+          push:
+            - meta_scope: meta.expression.property-access
+            - match: (?i)(->)([a-z0-9]+)\b
+              captures:
+                "1": keyword.operator.accessor.migoto
+                "2": variable.other.member.migoto
+              pop: true
+        - include: resource-identifier
+        - match: (?=[/&!>|<\s=$,])
+          pop: true
+  resource-pool:
+    - match: |-
+        (?xi)
+        (?=
+          Pool
+          (?:\\{{namespace}}\\)?
+          [^\\\/&!|< $=,\r\n]+
+          (?!\\)
+        )
+      push:
+        - meta_content_scope: meta.variable.resource-pool
+        - match: (?i)\bPool
+          scope: entity.name.label.migoto
+        - match: (?=\\)
+          push:
+            - include: namespace
+        - match: (?=\[)
+          push:
+            - meta_scope: meta.expression.indexing
+            - match: \[
+              scope: punctuation.bracket.begin.migoto
+              push:
+                - include: named-variable
+                - include: constant
+                - match: \]
+                  scope: punctuation.bracket.end.migoto
+                  pop: 2
+        - match: (?=->)
+          push:
+            - meta_scope: meta.expression.property-access
+            - match: (?i)(->)([a-z0-9]+)\b
+              captures:
+                "1": keyword.operator.accessor.migoto
+                "2": variable.other.property.migoto
+              pop: true
+        - include: resource-identifier
         - match: (?=[/&!>|<\s=$,])
           pop: true
   namespace:
@@ -1124,6 +1191,9 @@ contexts:
   section-identifier:
     - scope: entity.name.function.migoto
       match: "{{custom_section_name}}"
+  resource-identifier:
+    - scope: entity.name.class.migoto
+      match: "[^/&!>|< $=,\\r\\n]+?"
   ini-parameter:
     - scope: variable.parameter.migoto
       match: (?i)\b(?:(?<!$)[xyzw]\d{0,3})\b
@@ -1149,7 +1219,9 @@ contexts:
     - scope: constant.language.numeric.migoto
       match: (?i)\b(?:inf|NaN)\b
     - scope: constant.numeric.migoto
-      match: "[-+]?\\b(?:\\d+(?:\\.\\d+)?|\\.\\d+)\\b"
+      match: "[+-]?\\d+(\\.\\d+(e[-+]\\d+)?)?\\b"
+    - scope: constant.numeric.migoto
+      match: "[+-]?\\.\\d+\\b"
   boolean-value:
     - scope: constant.language.boolean.migoto
       match: (?i)\b(?:true|false|yes|no|on|off)\b
