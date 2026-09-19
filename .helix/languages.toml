@@ -1,0 +1,104 @@
+use-grammars = { only = [
+  "comment",
+  "javascript",
+  "json",
+  "jsonc",
+  "markdown",
+  "python",
+  "regex",
+  "rust",
+  "scheme",
+  "toml",
+  "tsq",
+  "typescript",
+  "xml",
+  "yaml",
+] }
+
+[[language]]
+name = "typescript"
+roots = ["deno.json", "deno.jsonc", "package.json"]
+file-types = ["ts", "tsx"]
+formatter = { command = "deno", args = ["fmt", "-", "--ext", "ts"] }
+auto-format = false
+language-servers = ["deno-lsp", "vscode-eslint-language-server"]
+
+[[language]]
+name = "javascript"
+roots = ["deno.json", "deno.jsonc", "package.json"]
+file-types = ["js", "jsx"]
+formatter = { command = "deno", args = ["fmt", "-", "--ext", "js"] }
+auto-format = false
+language-servers = ["deno-lsp", "vscode-eslint-language-server"]
+
+[[language]]
+name = "xml"
+file-types = [ "xml", "svg", "xsd", "xslt", "xsl" ]
+language-servers = ["lemminx"]
+
+[[language]]
+name = "json"
+formatter = { command = "deno", args = ["fmt", "-", "--ext", "json"] }
+auto-format = true
+
+[[language]]
+name = "jsonc"
+formatter = { command = "deno", args = ["fmt", "-", "--ext", "jsonc"] }
+auto-format = true
+
+[[language]]
+name = "python"
+formatter = { command = "ruff", args = ["format", "--line-length", "88", "-"] }
+auto-format = true
+language-servers = ["ty", "ruff"]
+
+[[language]]
+name = "toml"
+roots = [".tombi.toml", "tombi.toml"]
+auto-format = false
+language-servers = ["tombi"]
+
+[[language]]
+name = "markdown"
+formatter = { command = "rumdl", args = ["check", "--fix", "--stdin"] }
+auto-format = false
+
+[[language]]
+name = "tsq"
+roots = [".tsqueryrc.json"]
+
+[language-server.deno-lsp]
+command = "deno"
+args = ["lsp"]
+config.deno.enable = true
+
+[language-server.lemminx]
+command = "lemminx"
+
+[language-server.lemminx.config.xml]
+preferences.quoteStyle = "double"
+
+[language-server.lemminx.config.xml.format]
+spaceBeforeEmptyCloseTag = false
+enforceQuoteStyle = "preferred"
+preservedNewlines = 1
+
+[[language-server.lemminx.config.xml.fileAssociations]]
+systemId = "https://raw.githubusercontent.com/notepad-plus-plus/userDefinedLanguages/master/.validators/userDefineLangs.xsd"
+pattern = "**/*.udl.xml"
+
+[language-server.ruff]
+command = "ruff"
+args = ["server"]
+
+[language-server.ty]
+command = "ty"
+args = ["server"]
+
+[language-server.ty.config]
+inlayHints.callArgumentNames = false
+experimental.rename = true
+experimental.autoImport = true
+
+[language-server.ts_query_ls]
+command = "ts_query_ls"
