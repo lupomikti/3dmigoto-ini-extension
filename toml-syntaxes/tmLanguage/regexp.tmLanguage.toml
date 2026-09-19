@@ -1,45 +1,48 @@
+#:tombi toml-version = "v1.1.0"
+#:tombi schema.strict = false
+
 "$schema" = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json"
 name = "PCRE2"
 scopeName = "source.regexp.pcre2"
 # Everything except conditionals should be supported here. Support may be added later.
 patterns = [
-    {include = "#base"},
-    {include = "#base-extended"},
+  {include = "#base"},
+  {include = "#base-extended"},
 ]
 
 [repository.base]
 patterns = [
-    {include = "#group-modifiers"},
-    {include = "#group-comment"},
-    {include = "#group"},
-    {include = "#base-common"},
+  {include = "#group-modifiers"},
+  {include = "#group-comment"},
+  {include = "#group"},
+  {include = "#base-common"},
 ]
 
 [repository.base-extended]
 patterns = [
-    {include = "#group-modifiers"},
-    {include = "#group-comment"},
-    {include = "#group-extended"},
-    {include = "#base-common"},
+  {include = "#group-modifiers"},
+  {include = "#group-comment"},
+  {include = "#group-extended"},
+  {include = "#base-common"},
 ]
 
 [repository.base-extended-nested]
 patterns = [
-    {include = "#group-modifiers"},
-    {include = "#group-comment"},
-    {include = "#group-extended"},
-    {include = "#extended-patterns"},
-    {include = "#base-common"},
+  {include = "#group-modifiers"},
+  {include = "#group-comment"},
+  {include = "#group-extended"},
+  {include = "#extended-patterns"},
+  {include = "#base-common"},
 ]
 
 [repository.base-common]
 patterns = [
-    {include = "#character-class"},
-    {include = "#anchor"},
-    {include = "#backref"},
-    {include = "#switch"},
-    {include = "#char-escape"},
-    {include = "#operator"},
+  {include = "#character-class"},
+  {include = "#anchor"},
+  {include = "#backref"},
+  {include = "#switch"},
+  {include = "#char-escape"},
+  {include = "#operator"},
 ]
 
 [repository.group-modifiers]
@@ -180,8 +183,16 @@ patterns = [{include = "#base-extended-nested"}]
 
 [repository.extended-patterns]
 patterns = [
-    {begin = '\#+', beginCaptures.0.name = "punctuation.definition.comment.regexp", end = '\n', contentName = "comment.line.number-sign.regexp"},
-    {match = '(?<!\\)\s+', name = "meta.ignored-whitespace.regexp"},
+  {
+    begin = '\#+',
+    beginCaptures.0.name = "punctuation.definition.comment.regexp",
+    end = '\n',
+    contentName = "comment.line.number-sign.regexp",
+  },
+  {
+    match = '(?<!\\)\s+',
+    name = "meta.ignored-whitespace.regexp",
+  },
 ]
 
 [[repository.character-class.patterns]]
@@ -191,10 +202,10 @@ beginCaptures.2.name = "keyword.operator.negation.regexp"
 end = '(?<!:)(\])'
 endCaptures.0.name = "keyword.control.character-class.end.regexp"
 patterns = [
-    {include = "#posix-class"},
-    {match = '\\[\\\^\-\[\]b]', name = "constant.character.escape.character-set.regexp"},
-    {match = '(?<!\\)-', name = "punctuation.separator.sequence.regexp"},
-    {include = "#char-escape"},
+  {include = "#posix-class"},
+  {match = '\\[\\\^\-\[\]b]', name = "constant.character.escape.character-set.regexp"},
+  {match = '(?<!\\)-', name = "punctuation.separator.sequence.regexp"},
+  {include = "#char-escape"},
 ]
 
 [repository.posix-class]
@@ -207,10 +218,17 @@ name = "keyword.control.anchor.regexp"
 
 [repository.backref]
 patterns = [
-    # weird bs to allow octal escape sequence; says a single digit, two digits, or 4 or more digits are scoped as a backref, thus 3 digits is always scoped as octal
-    {match = '\\([1-9](?:\d|\d{3,})?)', name = "keyword.other.backref.regexp"},
-    # prefixed-match-meta-sequence; TODO: make it so ' only goes with ' and < only goes with >
-    {match = '''\\(?:g(?:\d+|\{-?\d+\}|[<']\+?\d+['>]|[{<']\w+['>}])|k[{<']\w+['>}])''', name = "keyword.other.backref.regexp"},
+  # weird bs to allow octal escape sequence; says a single digit, two digits
+  # or 4 or more digits are scoped as a backref, thus 3 digits is always scoped as octal
+  {
+    match = '\\([1-9](?:\d|\d{3,})?)',
+    name = "keyword.other.backref.regexp",
+  },
+  # prefixed-match-meta-sequence; TODO: make it so ' only goes with ' and < only goes with >
+  {
+    match = '''\\(?:g(?:\d+|\{-?\d+\}|[<']\+?\d+['>]|[{<']\w+['>}])|k[{<']\w+['>}])''',
+    name = "keyword.other.backref.regexp",
+  },
 ]
 
 [[repository.switch.patterns]]
@@ -248,7 +266,7 @@ name = "constant.character.escape.backslash.regexp"
 
 [repository.operator]
 patterns = [
-    {match = '\|', name = "keyword.operator.or.regexp"},
-    {match = '\.', name = "keyword.operator.any.regexp"},
-    {match = '(?:[?*+]|\{\d+(?:,\d*)?\})[?+]?', name = "keyword.operator.quantifier.regexp"},
+  {match = '\|', name = "keyword.operator.or.regexp"},
+  {match = '\.', name = "keyword.operator.any.regexp"},
+  {match = '(?:[?*+]|\{\d+(?:,\d*)?\})[?+]?', name = "keyword.operator.quantifier.regexp"},
 ]
