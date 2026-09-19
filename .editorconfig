@@ -1,0 +1,47 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.toml]
+indent_size = 2
+
+[*.{json,jsonc}]
+indent_size = 2
+indent_style = space
+
+[*.{js,ts}]
+indent_size = 2
+indent_style = space
+
+[*.py]
+indent_size = 4
+; max line width = 79 (or 99)
+
+[kate-plugin/**.xml]
+indent_size = 2
+indent_style = space
+
+[*.udl.xml]
+indent_size = 4
+indent_style = space
+
+[{sublime-text-pkg,legacy-files}/**.tm*]
+indent_size = 4
+indent_style = tab
+
+[*.sublime-*]
+indent_size = 2
+indent_style = space
+
+[{.prettierrc}]
+indent_size = 4
+indent_style = space
+
+[*.rs]
+indent_size = 4
+indent_style = space
+; max line width = 100
