@@ -2,7 +2,7 @@
 #:tombi schema.strict = false
 
 "$schema" = "https://www.schemastore.org/tmlanguage.json"
-version = "3.0.0"
+version = "3.0.1"
 scopeName = "source.migoto"
 name = "migoto"
 fileTypes = ["ini", "3dm", "migoto"]
@@ -611,13 +611,12 @@ captures.6.patterns = [
 name = "meta.statement.declaration.local.migoto"
 match = '''(?xi)
 ^[ \t]*
-(local)\s+
-(\$\w+)
+(local) \s+ (\$\w+)
 \s*
 (?:
-  (=) \s* # assignment operator, surrounded by optional whitespace
-  ([^\r\n]+) # RHS value
-)? # Assignment operator and RHS-value are optional, e.g. `local $variable` on a line by itself
+  (=) \s*
+  ([^\r\n]+)
+)?
 \s*
 (?:$|\n)'''
 captures.1.name = "storage.modifier.migoto"
@@ -671,7 +670,10 @@ captures.1.name = "meta.command-list.priority keyword.control.directive.migoto"
 captures.2.patterns = [{include = "#callable-commandlist"}]
 captures.3.name = "keyword.operator.assignment.migoto"
 captures.4.patterns = [
-  {name = "meta.keyword.proxy-modifier keyword.other.functional.migoto", match = '(?i)ref(?:erence)?'},
+  {
+    name = "meta.keyword.proxy-modifier keyword.other.functional.migoto",
+    match = '(?i)\bref(?:erence)?\b',
+  },
   {include = "#callable-commandlist"},
 ]
 
@@ -714,6 +716,8 @@ captures.2.patterns = [
 captures.3.name = "keyword.operator.assignment.migoto"
 captures.4.patterns = [{include = "#resource-usage-expression"}]
 
+# Instruction Statement
+
 [repository.instruction-statement]
 name = "meta.statement.instruction.migoto"
 match = '''(?xi)
@@ -738,7 +742,7 @@ match = '(?i)(?!(?:exclude_)?preset)(\w+)\s*(=)\s*([^\r\n]+)'
 captures.1.name = "keyword.other.instruction.migoto"
 captures.2.name = "keyword.operator.execution.migoto"
 captures.3.patterns = [
-  {include = "#operand"},
+  {include = "#operational-expression"},  # for direct draw instructions
   {include = "#callable-commandlist"},
   {include = "#callable-customshader"},
   {include = "#fixed-value"},  # for frame analysis opts and other enum values
@@ -751,7 +755,7 @@ captures.1.name = "meta.function-call.instruction keyword.other.instruction.migo
 captures.2.name = "keyword.operator.execution.migoto"
 
 [[repository.instruction-statement.captures.2.patterns.captures.3.patterns]]
-name = "meta.function-call variable.other.function.migoto"
+name = "variable.other.function.migoto"
 match = '(?i)(Preset)?(\\[^=$\r\n]+\\)?([^=$,\r\n]+)'
 captures.1.name = "entity.name.function.section-type.migoto"
 captures.2.patterns = [{include = "#namespace"}]
@@ -1034,7 +1038,7 @@ match = '''(?xi)
 (\$)
 (?! Pool
   (?:\\[^=$\r\n]+\\)?
-  (?: [^/&!>|<( )$=,\[\]\r\n]+ )
+  (?: [^-/&!>|<( )$=,\[\]\r\n]+ )
   (?: \[ [^\r\n\[\]]+ \] )
 )
 (?:
@@ -1054,7 +1058,7 @@ match = '''(?xi)
 (\$)
 ( Pool
   (?:\\[^=$\r\n]+\\)?
-  (?: [^/&!>|<( )$=,\[\]\r\n]+ )
+  (?: [^-/&!>|<( )$=,\[\]\r\n]+ )
   (?: \[ [^\r\n\[\]]+ \] )
 )(?!\\)'''
 captures.1.name = "punctuation.definition.variable.migoto"
@@ -1076,7 +1080,7 @@ captures.3.patterns = [{include = "#section-identifier"}]
 
 [repository.custom-resource]
 name = "meta.variable.custom-resource"
-match = '''\b(?i)(Resource)(\\[^=$\r\n]+\\)?([^/&!>|<( )$=,\[\]\r\n]+)(?!\\)'''
+match = '''\b(?i)(Resource)(\\[^=$\r\n]+\\)?([^-/&!>|<( )$=,\[\]\r\n]+)(?!\\)'''
 captures.1.name = "entity.name.tag.migoto"
 captures.2.patterns = [{include = "#namespace"}]
 captures.3.patterns = [{include = "#resource-identifier"}]
@@ -1086,7 +1090,7 @@ name = "meta.variable.resource-pool"
 match = '''\b(?xi)
 (Pool)
 (\\[^=$\r\n]+\\)?
-([^/&!>|<( )$=,\[\]\r\n]+)
+([^-/&!>|<( )$=,\[\]\r\n]+)
 (?!\\)'''
 captures.1.name = "entity.name.tag.migoto"
 captures.2.patterns = [{include = "#namespace"}]
@@ -1095,7 +1099,7 @@ captures.3.patterns = [{include = "#resource-identifier"}]
 [repository.resource-pool]
 name = "meta.variable.resource-pool"
 match = '''\b(?xi)
-( Pool (?:\\[^=$\r\n]+\\)? (?: [^/&!>|<( )$=,\[\]\r\n]+ ) )
+( Pool (?:\\[^=$\r\n]+\\)? (?: [^-/&!>|<( )$=,\[\]\r\n]+ ) )
 ( \[ [^\r\n\[\]]+ \] )
 (?!\\)'''
 captures.1.patterns = [{include = "#resource-pool-base"}]
@@ -1103,9 +1107,9 @@ captures.2.patterns = [
   {
     name = "meta.expression.indexing",
     match = '(?i)(\[)(.+)(\])',
-    captures.1.name = "punctuation.delimiter.bracket.migoto",
-    captures.2.patterns = [{include = "#operational-expression"}],
-    captures.3.name = "punctuation.delimiter.bracket.migoto",
+    captures.1.name = "punctuation.bracket.begin.migoto",
+    captures.2.patterns = [{include = "#static-operational-expression"}],
+    captures.3.name = "punctuation.bracket.end.migoto",
   }
 ]
 
@@ -1123,7 +1127,7 @@ match = '[^=$,\r\n]+'
 
 [repository.resource-identifier]
 name = "entity.name.class.migoto"
-match = '[^/&!>|<( )$=,\[\]\r\n]+'
+match = '[^-/&!>|<( )$=,\[\]\r\n]+'
 
 [repository.ini-parameter]
 name = "variable.parameter.migoto"
