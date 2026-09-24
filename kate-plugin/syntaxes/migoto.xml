@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE language
-[
-        <!ENTITY setstmt    "(?!\b(?:hash|[vhdgpc]s|(?:override|cache|storage)_directory|include(?:_recursive)?|exclude_recursive|{{(?:done_|toggle_)hunting|next_marking_mode|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next)_(?:index|vertex)buffer_slot|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance|freeze_performance_monitor|tune[123]_(?:up|down)|analyse_frame|toggle_full_screen|force_full_screen_on_key|run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|vb\d|ib|(?:[rf]_)?bb|s?o\d|od|(?&lt;!$)[xyzw]\d{0,3}|this|(?:ini|stereo)params|cursor_(?:mask|color)|Resource.+)\b)[\w\[\]]+\s*=\s*(?:[^&quot;\\/\s\r\n]+|[^\s\r\n]+|[^\r\n]+)">
-        <!ENTITY spsetstmt  "(?:\b(?:hash|[vhdgpc]s|(?:override|cache|storage)_directory|include(?:_recursive)?|exclude_recursive|{{(?:done_|toggle_)hunting|next_marking_mode|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next)_(?:index|vertex)buffer_slot|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance|freeze_performance_monitor|tune[123]_(?:up|down)|analyse_frame|toggle_full_screen|force_full_screen_on_key)\b)\s*=\s*[^\r\n]+">
+<!DOCTYPE language [
+  <!ENTITY setstmt "(?!\b(?:hash|[vhdgpc]s|(?:override|cache|storage)_directory|include(?:_recursive)?|exclude_recursive|{{(?:done_|toggle_)hunting|next_marking_mode|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next)_(?:index|vertex)buffer_slot|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance|freeze_performance_monitor|tune[123]_(?:up|down)|analyse_frame|toggle_full_screen|force_full_screen_on_key|run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|vb\d|ib|(?:[rf]_)?bb|s?o\d|od|(?&lt;!$)[xyzw]\d{0,3}|this|(?:ini|stereo)params|cursor_(?:mask|color)|Resource.+)\b)[\w\[\]]+\s*=\s*(?:[^&quot;\\/\s\r\n]+|[^\s\r\n]+|[^\r\n]+)">
+  <!ENTITY spsetstmt "(?:\b(?:hash|[vhdgpc]s|(?:override|cache|storage)_directory|include(?:_recursive)?|exclude_recursive|{{(?:done_|toggle_)hunting|next_marking_mode|mark_snapshot|(?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|(?:previous|next|mark)_(?:index|vertex)buffer|(?:previous|next)_(?:index|vertex)buffer_slot|(?:previous|next|mark)_rendertarget|take_screenshot|reload_fixes|(?:reload|wipe_user)_config|show_original|monitor_performance|freeze_performance_monitor|tune[123]_(?:up|down)|analyse_frame|toggle_full_screen|force_full_screen_on_key)\b)\s*=\s*[^\r\n]+">
 ]>
-<language name="Migoto" alternativenames="3DM-INI" version="12" kateversion="5.94"
-          section="Scripts" extensions="*.ini;*.3dm;*.migoto" casesensitive="0" license="GPL-3.0" priority="2">
+<language name="Migoto" alternativenames="3DM-INI" version="12" kateversion="5.94" section="Scripts" extensions="*.ini;*.3dm;*.migoto" casesensitive="0" license="GPL-3.0" priority="2">
   <highlighting>
     <!-- #region @keywords -->
-      <!-- #region Language Constants -->
+    <!-- #region Language Constants -->
     <list name="boolean-values">
       <item>true</item>
       <item>false</item>
@@ -25,9 +23,9 @@
       <item>inf</item>
       <item>nan</item>
     </list>
-      <!-- #endregion -->
+    <!-- #endregion -->
 
-      <!-- #region Resource-related keywords -->
+    <!-- #region Resource-related keywords -->
     <!-- variable.language.resource-identifier.migoto -->
     <list name="resource-identifiers">
       <item>this</item>
@@ -64,9 +62,9 @@
       <item>ps</item>
       <item>cs</item>
     </list>
-      <!-- #endregion -->
+    <!-- #endregion -->
 
-      <!-- #region Override Parameters -->
+    <!-- #region Override Parameters -->
     <list name="static-override-parameters">
       <item>stereo_active</item>
       <item>stereo_available</item>
@@ -117,9 +115,9 @@
       <item>frame_analysis</item>
       <item>effective_dpi</item>
     </list>
-      <!-- #endregion -->
+    <!-- #endregion -->
 
-      <!-- #region Draw Instructions -->
+    <!-- #region Draw Instructions -->
     <list name="direct-draw-instructions">
       <item>draw</item>
       <item>drawindexed</item>
@@ -132,9 +130,9 @@
       <item>drawindexedinstancedindirect</item>
       <item>dispatchindirect</item>
     </list>
-      <!-- #endregion -->
+    <!-- #endregion -->
 
-      <!-- #region Keys -->
+    <!-- #region Keys -->
     <list name="bracketed-keys">
       <item>blend[0]</item>
       <item>alpha[0]</item>
@@ -233,9 +231,9 @@
       <item>toggle_full_screen</item>
       <item>force_full_screen_on_key</item>
     </list>
-      <!-- #endregion -->
+    <!-- #endregion -->
 
-      <!-- #region KeyValues -->
+    <!-- #region KeyValues -->
     <list name="resource-types">
       <item>StructuredBuffer</item>
       <item>AppendStructuredBuffer</item>
@@ -589,8 +587,9 @@
       <item>dump_vb_txt</item>
       <item>dump_ib_txt</item>
     </list>
-      <!-- #endregion-->
+    <!-- #endregion-->
     <!-- #endregion @keywords -->
+
     <!-- Contexts -->
     <contexts>
       <context attribute="Normal Text" lineEndContext="#stay" name="INI">
@@ -660,7 +659,7 @@
         <RegExpr attribute="Function" context="FullCommandHeader" insensitive="true" String="[ \t]*(?:BuiltIn)?(?:CustomShader|CommandList).+(?=\s*\])"/>
       </context>
 
-        <!-- Normal Headers -->
+      <!-- Normal Headers -->
       <context attribute="Header" lineEndContext="#pop" name="KVPHeader">
         <DetectChar attribute="Header" context="#pop#pop!KVPBody" char="]" beginRegion="Section"/>
       </context>
@@ -669,7 +668,7 @@
         <DetectChar attribute="Header" context="#pop#pop!FullCommandBody" char="]" beginRegion="Section"/>
       </context>
 
-        <!-- Special Headers -->
+      <!-- Special Headers -->
       <context attribute="Header" lineEndContext="#pop" name="FindSpecialBodyHeaders">
         <RegExpr attribute="Constructor" context="ConstantsHeader" insensitive="true" String="[ \t]*Constants"/>
         <RegExpr attribute="Function" context="PresentHeader" insensitive="true" String="[ \t]*Present"/>
@@ -715,7 +714,7 @@
       <!-- #endregion Section headers -->
 
       <!-- #region Special Bodies -->
-        <!-- #region Constants Body -->
+      <!-- #region Constants Body -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="ConstantsBody">
         <DetectSpaces/>
         <IncludeRules context="DetectComments"/>
@@ -729,17 +728,17 @@
         <DetectChar attribute="Variable" context="VariableIdentifier" char="$"/>
         <DetectChar attribute="Assignment" context="StaticValue" char="="/>
       </context>
-        <!-- #endregion Constants Body -->
+      <!-- #endregion Constants Body -->
 
-        <!-- #region Present Body -->
+      <!-- #region Present Body -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="PresentBody">
         <DetectSpaces/>
         <IncludeRules context="DetectComments"/>
         <IncludeRules context="PrimaryStatements"/>
       </context>
-        <!-- #endregion Present Body -->
+      <!-- #endregion Present Body -->
 
-        <!-- #region Key Section Body -->
+      <!-- #region Key Section Body -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="KeyBody">
         <DetectSpaces/>
         <IncludeRules context="DetectComments"/>
@@ -779,14 +778,14 @@
         <DetectChar String=","/>
       </context>
 
-          <!-- Run Instruction Statement List for Key Body, supporting cycle -->
+      <!-- Run Instruction Statement List for Key Body, supporting cycle -->
       <context attribute="Normal Text" lineEndContext="#pop" name="RunInstructionList">
         <!-- RunInstruction already includes the Assignment Operator check -->
         <IncludeRules context="RunInstruction"/>
         <DetectChar String=","/>
       </context>
 
-          <!-- INI Parameter Static Assignment for Key Body, supporting cycle -->
+      <!-- INI Parameter Static Assignment for Key Body, supporting cycle -->
       <context attribute="Normal Text" lineEndContext="#pop" name="StaticValueAssignmentList">
         <DetectSpaces/>
         <!-- Assignment Operator -->
@@ -796,7 +795,7 @@
         <DetectChar String=","/>
       </context>
 
-          <!-- Named Variable Static Assignment for Key Body, supporting cycle -->
+      <!-- Named Variable Static Assignment for Key Body, supporting cycle -->
       <context attribute="Normal Text" lineEndContext="#pop" name="MaybeNamespacedVariableStaticAssignmentList">
         <DetectSpaces/>
         <!-- Named Variable with possible namespace resolution -->
@@ -807,9 +806,9 @@
         <IncludeRules context="StaticValue"/>
         <DetectChar String=","/>
       </context>
-        <!-- #endregion Key Body -->
+      <!-- #endregion Key Body -->
 
-        <!-- #region Preset Section Body -->
+      <!-- #region Preset Section Body -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="PresetBody">
         <DetectSpaces/>
         <IncludeRules context="DetectComments"/>
@@ -853,9 +852,9 @@
         <!-- Assignment Operator -->
         <DetectChar attribute="Assignment" context="StaticValue" char="="/>
       </context>
-        <!-- #endregion Preset Section Body -->
+      <!-- #endregion Preset Section Body -->
 
-        <!-- #region Regex Bodies -->
+      <!-- #region Regex Bodies -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="(escape embedded language)">
         <RegExpr attribute="Header" context="#pop!ConstantsHeader" insensitive="true" lookAhead="true" String="\[\s*Constants\s*\]"/>
         <RegExpr attribute="Header" context="#pop!PresentHeader" insensitive="true" lookAhead="true" String="\[\s*Present\s*\]"/>
@@ -911,11 +910,11 @@
         <AnyChar String=".,':{}|?!@#%^&amp;*/+`~"/>
         <DetectSpaces/>
       </context>
-        <!-- #endregion Regex Bodies -->
+      <!-- #endregion Regex Bodies -->
       <!-- #endregion Special Bodies -->
 
       <!-- #region Common Bodies -->
-        <!-- #region Non-CL Section Bodies -->
+      <!-- #region Non-CL Section Bodies -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="KVPBody">
         <DetectSpaces/>
         <IncludeRules context="DetectComments"/>
@@ -1016,19 +1015,19 @@
         <DetectIdentifier/>
         <AnyChar String="./;'[]=\`0123456789"/>
       </context>
-        <!-- #endregion Non-CL Section Bodies -->
+      <!-- #endregion Non-CL Section Bodies -->
 
-        <!-- #region CL Section Bodies -->
+      <!-- #region CL Section Bodies -->
       <context attribute="Normal Text" lineEndContext="#stay" fallthroughContext="#pop" name="FullCommandBody">
         <!-- Comments and Setting Statements via including KVPBody -->
         <IncludeRules context="KVPBody"/>
         <!-- Primary Statements -->
-          <!-- Detect a Local Declaration (Separated from PrimaryStatements because they are not allowed in Constants section which also includes PrimaryStatements) -->
+        <!-- Detect a Local Declaration (Separated from PrimaryStatements because they are not allowed in Constants section which also includes PrimaryStatements) -->
         <RegExpr attribute="Normal Text" context="LocalDeclaration" insensitive="true" lookAhead="true" String="\blocal\s+\$\w+\b\s*(?:=\s*[^\r\n]+)?"/>
         <IncludeRules context="PrimaryStatements"/>
       </context>
 
-          <!-- #region Primary Statements -->
+      <!-- #region Primary Statements -->
       <context attribute="Normal Text" lineEndContext="#pop" name="LocalDeclaration">
         <WordDetect attribute="Modifier" context="#stay" insensitive="true" String="local"/>
         <DetectChar attribute="Variable" context="VariableIdentifier" char="$"/>
@@ -1099,9 +1098,9 @@
         <!-- Draw Instructions, separated only for organization -->
         <IncludeRules context="DrawInstructions"/>
       </context>
-          <!-- #endregion Primary Statements -->
+      <!-- #endregion Primary Statements -->
 
-          <!-- #region Instruction Statements -->
+      <!-- #region Instruction Statements -->
       <context attribute="Normal Text" lineEndContext="#pop" name="CTOInstruction">
         <DetectSpaces/>
         <DetectChar attribute="Assignment" context="#stay" char="="/>
@@ -1201,9 +1200,9 @@
         <!-- Integer -->
         <RegExpr attribute="Integer" context="#stay" String="[+\-]?\b\d+\b"/>
       </context>
-          <!-- #endregion Instruction Statements -->
+      <!-- #endregion Instruction Statements -->
 
-          <!-- #region Draw Instruction Statements -->
+      <!-- #region Draw Instruction Statements -->
       <context attribute="Normal Text" lineEndContext="#pop" name="DrawInstructions">
         <!-- "Direct" Draw Instructions -->
         <keyword attribute="Instruction" context="DrawExpression" String="direct-draw-instructions"/>
@@ -1233,8 +1232,8 @@
         <!-- Integer -->
         <RegExpr attribute="Integer" context="#stay" String="[+\-]?\b\d+\b"/>
       </context>
-          <!-- #endregion Draw Instruction Statements -->
-        <!-- #endregion CL Section Bodies -->
+      <!-- #endregion Draw Instruction Statements -->
+      <!-- #endregion CL Section Bodies -->
       <!-- #endregion Common Bodies -->
 
       <!-- #region Expressions -->
@@ -1264,19 +1263,19 @@
         <!-- Legal Operators -->
         <RegExpr attribute="Operator" context="#stay" insensitive="true" String="(?x)(?: (?: \*\* | \* | \+ | - | % | // | / ) | (?: &gt;&gt; | &lt;&lt; ) | (?: !== | != | === | == | &gt;= | &lt;= | &gt; | &lt; ) | (?: ! | &amp;&amp; | \|\| ) | (?: ~ | &amp; | \| | ^ ) | @ | \# )"/>
         <!-- Operands -->
-          <!-- Constants, numeric -->
+        <!-- Constants, numeric -->
         <IncludeRules context="Numbers"/>
-          <!-- Named Variable -->
+        <!-- Named Variable -->
         <DetectChar attribute="Variable" context="MaybeNamespacedVariable" char="$"/>
-          <!-- INI Parameter -->
+        <!-- INI Parameter -->
         <RegExpr attribute="ShaderParameter" insensitive="true" String="\b(?:(?&lt;!$)[xyzw]\d{0,3})\b"/>
-          <!-- Resources -->
+        <!-- Resources -->
         <IncludeRules context="Resources"/>
-          <!-- Shader Identifiers, must match after Resources -->
+        <!-- Shader Identifiers, must match after Resources -->
         <keyword attribute="LanguageVariable" String="shader-identifiers"/>
-          <!-- Numbered Scissor Rectangle -->
+        <!-- Numbered Scissor Rectangle -->
         <RegExpr attribute="LanguageVariable" insensitive="true" String="\bscissor\d+_(?:left|top|right|bottom)\b"/>
-          <!-- Override Parameters -->
+        <!-- Override Parameters -->
         <keyword attribute="LanguageVariable" String="override-parameters"/>
         <!-- Round Brackets -->
         <DetectChar attribute="Symbol" context="NestedOperationalExpression" char="("/>
@@ -1287,8 +1286,8 @@
         <IncludeRules context="OperationalExpression"/>
       </context>
 
-        <!-- #region Namespaced Sections and Variables -->
-          <!-- #region Named Variables -->
+      <!-- #region Namespaced Sections and Variables -->
+      <!-- #region Named Variables -->
       <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop!VariableIdentifier" name="MaybeNamespacedVariable">
         <DetectChar attribute="Symbol" context="VariableNamespaceValue" char="\"/>
       </context>
@@ -1305,9 +1304,9 @@
       <context attribute="Variable" lineEndContext="#pop" fallthroughContext="#pop" name="VariableIdentifier">
         <DetectIdentifier attribute="Variable" context="#pop"/>
       </context>
-          <!-- #endregion Named Variables -->
+      <!-- #endregion Named Variables -->
 
-          <!-- #region Callable Sections and Custom Resources -->
+      <!-- #region Callable Sections and Custom Resources -->
       <context attribute="Normal Text" lineEndContext="#pop" fallthroughContext="#pop!SectionIdentifier" name="MaybeNamespacedUseableSection">
         <DetectChar attribute="Symbol" context="SectionNamespaceValue" char="\"/>
       </context>
@@ -1376,8 +1375,8 @@
       <context attribute="Function" lineEndContext="#pop" fallthroughContext="#pop" name="ResourceSectionIdentifier">
         <RegExpr attribute="Function" context="#pop" insensitive="true" String="[^/&amp;!&gt;|&lt; $=,\r\n]+"/>
       </context>
-          <!-- #endregion Callable Sections and Custom Resources -->
-        <!-- #endregion Namespaced Variables and Sections -->
+      <!-- #endregion Callable Sections and Custom Resources -->
+      <!-- #endregion Namespaced Variables and Sections -->
       <!-- #endregion Expressions -->
 
       <!-- #region Values -->
