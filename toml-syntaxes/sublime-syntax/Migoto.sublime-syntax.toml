@@ -9,11 +9,11 @@ version = 2
 [variables]
 cl_section_names = '\s*(?:(?:(?:Shader|Texture)Override).+(?=\s*\])|Clear(?:RenderTarget|DepthStencil)View|ClearUnorderedAccessView(?:Uint|Float))'
 cl2_section_names = '\s*(?:BuiltIn)?(?:CustomShader|CommandList).+(?=\s*\])'
-kvp_section_names = '\s*(?:(?:Resource|Pool).+(?=\s*\])|Include.*(?=\s*\])|Hunting|Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader)'
-special_section_names = '\s*(?:Constants|Present|(?:Key|Preset|ShaderRegex).+(?=\s*\]))'
+kvp_section_names = '\s*(?:Resource.+(?=\s*\])|Include.*(?=\s*\])|Hunting|Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader)'
+special_section_names = '\s*(?:Constants|Present|(?:Pool|Key|Preset|ShaderRegex).+(?=\s*\]))'
 ws = '[ \t]'
 namespace_path = '[^\s>\\|\/<?:*="$][^>\\|\/<?:*=$\r\n]+(?:[\\\/][^>\\|\/<?:*=$\r\n]+)*'
-namespace = '[^=$\r\n]+'
+namespace = '[^=$&>|<\r\n]+'
 custom_section_name = '[^=$,\r\n]+'
 var = '[a-z_]\w+|[a-z]'
 ident = '[a-z0-9]\w+'
@@ -26,7 +26,21 @@ keybinding_keys = '''
   (?:previous|next|mark)_rendertarget|
   take_screenshot | reload_fixes | (?:reload|wipe_user)_config | show_original |
   monitor_performance | freeze_performance_monitor | tune[123]_(?:up|down) |
-  analyse_frame | toggle_full_screen | force_full_screen_on_key
+  analyse_frame | toggle_full_screen | force_full_screen_on_key | toggle_input
+'''
+instructions = '''
+  run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|
+  draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?
+'''
+resource_copy_targets = '''
+  [vgdhpcsturfibo\-\d_]+\b|
+  this\b|(?:ini|stereo)params\b|cursor_(?:mask|color)\b|
+  (?:Resource|Pool)[^=\r\n]+
+'''
+resource_copy_targets_non_slot = '''
+  (?:vb\d|ib|(?:[rf]_)?bb|s?o\d|od)\b|
+  this\b|(?:ini|stereo)params\b|cursor_(?:mask|color)\b|
+  (?:Resource|Pool)[^=\r\n]+
 '''
 
 [contexts]
@@ -36,10 +50,10 @@ main = [
   {include = "section-base"},
 ]
 resource-type = [
-  {meta_scope = "meta.setting-value.resource"},
+  {meta_scope = "meta.enum-value.directx"},
   {
     scope = "entity.name.type.resource.migoto",
-    match = '\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|TextureCube)\b'
+    match = '\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|TextureCube)\b',
   },
   {include = "dxgi-format"},
 ]
@@ -50,35 +64,45 @@ pop = 2
 
 # Comment context
 
+# Folding comment - open
 [[contexts.comment]]
-match = '^({{ws}}+)?((;)<([^\n]*)\n)'
+match = '^({{ws}}*)((;)<([^\n]*)\n)'
 captures.0 = "comment.line.semicolon.migoto"
 captures.1 = "punctuation.whitespace.comment.leading.migoto"
 captures.2 = "punctuation.definition.comment-fold.begin.migoto"
 captures.3 = "punctuation.definition.comment.migoto"
 captures.4 = "comment.line.semicolon.content.migoto"
 
+# Folding comment - close
 [[contexts.comment]]
-match = '^({{ws}}+)?(;).*(>)(?=\n)'
+match = '^({{ws}}*)(;).*(>)(?=\n)'
 captures.1 = "punctuation.whitespace.comment.leading.migoto"
 captures.2 = "punctuation.definition.comment.migoto"
 captures.3 = "punctuation.definition.comment-fold.end.migoto"
 push = [
   {meta_scope = "comment.line.semicolon.migoto"},
   {meta_content_scope = "comment.line.semicolon.content.migoto"},
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
+# Document comment
 [[contexts.comment]]
-match = '^({{ws}}+)?(;;!)'
+match = '^({{ws}}*)(;;!)'
 captures.1 = "punctuation.whitespace.comment.leading.migoto"
 captures.2 = "punctuation.definition.comment.migoto"
 push = [
   {meta_scope = "comment.line.documentation.migoto"},
   {meta_content_scope = "comment.line.documentation.content.migoto"},
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
+# Normal comment
 [[contexts.comment]]
 match = '^({{ws}}+)?(;)(?!;!)'
 captures.1 = "punctuation.whitespace.comment.leading.migoto"
@@ -86,15 +110,22 @@ captures.2 = "punctuation.definition.comment.migoto"
 push = [
   {meta_scope = "comment.line.semicolon.migoto"},
   {meta_content_scope = "comment.line.semicolon.content.migoto"},
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
+# Illegal comment - comments must start a line, preceded only by whitespace
 [[contexts.comment]]
 match = '^\S+{{ws}}*(;)'
 captures.1 = "invalid.illegal punctuation.definition.comment.migoto"
 push = [
   {meta_scope = "invalid.illegal comment.line.semicolon.migoto"},
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 # Preamble context
@@ -105,8 +136,15 @@ captures.1 = "meta.fixed-value.key keyword.other.migoto"
 captures.2 = "punctuation.separator.key-value.migoto"
 push = [
   {meta_scope = "meta.head.namespace.migoto"},
-  {match = '(?i)\b{{namespace_path}}', scope = "entity.name.namespace.migoto", pop = true},
-  {match = '\n', pop = true},
+  {
+    match = '(?i)\b{{namespace_path}}',
+    scope = "entity.name.namespace.migoto",
+    pop = true,
+  },
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.preamble]]
@@ -115,11 +153,11 @@ captures.1 = "meta.fixed-value.key keyword.other.migoto"
 captures.2 = "keyword.operator.assignment.migoto"
 push = [
   {meta_scope = "meta.head.include-condition.migoto"},
-  {include = "illegal-operator"},
-  {include = "operator"},
-  {include = "static-value"},
-  {include = "round-braces"},
-  {match = '\n', pop = true},
+  {include = "static-operational-expr"},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 # Sections contexts
@@ -145,7 +183,10 @@ push = [
     pop = 2,
     set = "constants-body",
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.section-title]]
@@ -159,7 +200,27 @@ push = [
     pop = 2,
     set = "present-body",
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
+]
+
+[[contexts.section-title]]
+match = '(?i){{ws}}*Pool.+(?=\s*\])'
+scope = "meta.section.pool.migoto entity.name.section.group-title.migoto"
+push = [
+  # pop anonymous context and pop section-title, then push body
+  {
+    match = '\]',
+    scope = "punctuation.definition.entity.end.migoto",
+    pop = 2,
+    set = "pool-body",
+  },
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.section-title]]
@@ -173,7 +234,10 @@ push = [
     pop = 2,
     set = "key-body",
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.section-title]]
@@ -187,14 +251,16 @@ push = [
     pop = 2,
     set = "preset-body",
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.section-title]]
 match = '(?i){{ws}}*ShaderRegex.+\.Pattern(?=\s*\])'
 scope = "meta.section.shader-regex.pattern.migoto entity.name.section.group-title.migoto"
 push = [
-  {meta_content_scope = "meta.tag.section-header.migoto entity.name.section.group-title.migoto"},
   {
     match = '\]',
     scope = "punctuation.definition.entity.end.migoto",
@@ -207,16 +273,18 @@ push = [
         pop = true
       },
       {include = "scope:source.regexp.pcre2"},
-    ]
+    ],
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.section-title]]
 match = '(?i){{ws}}*ShaderRegex.+\.Pattern\.Replace(?=\s*\])'
 scope = "meta.section.shader-regex.replace.migoto entity.name.section.group-title.migoto"
 push = [
-  {meta_content_scope = "meta.tag.section-header.migoto entity.name.section.group-title.migoto"},
   {
     match = '\]',
     scope = "punctuation.definition.entity.end.migoto",
@@ -229,9 +297,12 @@ push = [
         pop = true
       },
       {include = "scope:source.regexp-replace.pcre2"},
-    ]
+    ],
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.section-title]]
@@ -245,7 +316,10 @@ push = [
     pop = 2,
     set = "regex-declarations-body",
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.section-title]]
@@ -259,14 +333,17 @@ push = [
     pop = 2,
     set = "regex-commandlist-body",
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 # Normal Headers
 
 [[contexts.section-title]]
 match = '(?i){{ws}}*{{kvp_section_names}}'
-scope = "entity.name.section.group-title.migoto"
+scope = "meta.section.settings.migoto entity.name.section.group-title.migoto"
 push = [
   # pop anonymous context and pop section-title, then push body
   {
@@ -275,12 +352,15 @@ push = [
     pop = 2,
     set = "kvp-body",
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.section-title]]
 match = '(?i){{ws}}*{{cl_section_names}}'
-scope = "entity.name.class.migoto"
+scope = "meta.section.commandlists.migoto entity.name.class.migoto"
 push = [
   # pop anonymous context and pop section-title, then push body
   {
@@ -289,12 +369,15 @@ push = [
     pop = 2,
     set = "cl-body",
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 [[contexts.section-title]]
 match = '(?i){{ws}}*{{cl2_section_names}}'
-scope = "entity.name.function.migoto"
+scope = "meta.section.commandlists.migoto entity.name.function.migoto"
 push = [
   # pop anonymous context and pop section-title, then push body
   {
@@ -303,7 +386,10 @@ push = [
     pop = 2,
     set = "cl-body",
   },
-  {match = '\n', pop = true},
+  {
+    match = '\n',
+    pop = true,
+  },
 ]
 
 # Special Bodies
@@ -333,6 +419,89 @@ include = "primary-statement"
 [[contexts.present-body]]
 include = "fallthrough"
 
+# Pool Section Body
+
+[[contexts.pool-body]]
+include = "comment"
+
+# special setting statement for keys that start with `pool`
+[[contexts.pool-body]]
+match = '''(?xi)
+^{{ws}}*
+(?=
+  pool_\w+\b
+  \s* = \s*
+  (?: [^"$\\/\s\r\n]+ | [^$\s\r\n]+ | [^\r\n]+ )
+)
+'''
+push = [
+  {meta_scope = "meta.statement.setting.migoto"},
+  {include = "key"},  # If a Key is found, match and continue searching in this context
+  # once the separator is found, only allow certain values on the right
+  {
+    match = '=',
+    scope = "punctuation.separator.key-value.migoto",
+    push = [
+      {
+        match = '(?i)(?=[^"$\\/\s\r\n]+)',
+        push = [
+          {include = "resource-type"},  # DXGI types + Resource types
+          {include = "constant"},
+          {include = "boolean-value"},
+          {include = "path-value"},
+          {include = "fixed-value"},
+          {
+            match = '{{line_end_context}}',
+            pop = true,
+          },
+        ],
+      },
+      {
+        match = '(?i)(?=[^$\s\r\n]+)',
+        push = [
+          {include = "string"},
+          {include = "path-value"},
+          {include = "fixed-value"},
+          {
+            match = '{{line_end_context}}',
+            pop = true,
+          },
+        ],
+      },
+      {
+        match = '(?i)(?=[^\r\n]+)',
+        push = [
+          {include = "static-operational-expr"},
+          {include = "string"},
+          {include = "path-value"},
+          {include = "dxgi-format"},
+          {include = "blend-expr"},
+          {include = "fuzzy-match-expr"},
+          {include = "fixed-value-opt"},
+          {
+            match = '{{line_end_context}}',
+            pop = true,
+          },
+        ],
+      },
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ]
+  },
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
+]
+
+[[contexts.pool-body]]
+include = "setting-statement"
+
+[[contexts.pool-body]]
+include = "fallthrough"
+
 # Key Section Body
 
 ## Key Setting Statement - Keybinding Value Key
@@ -346,10 +515,16 @@ push = [
     scope = "punctuation.separator.key-value.migoto",
     push = [
       {include = "keybinding-modifier"},
-      {match = '\n', pop = 2},
+      {
+        match = '\n',
+        pop = 2,
+      },
     ]
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Key Run Instruction | run = list of callable_commandlist
@@ -363,10 +538,16 @@ push = [
     scope = "keyword.operator.execution.migoto",
     push = [
       {include = "callable-commandlist"},
-      {match = '{{line_end_context}}', pop = true},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
     ]
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Key Condition Statement | condition = list of operational_expression
@@ -380,10 +561,16 @@ push = [
     scope = "keyword.operator.assignment.migoto",
     push = [
       {include = "operational-expr"},
-      {match = '{{line_end_context}}', pop = true},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
     ]
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Key Assignment Statement | assignments, but listable values
@@ -397,10 +584,16 @@ push = [
     scope = "keyword.operator.assignment.migoto",
     push = [
       {include = "static-value"},
-      {match = '{{line_end_context}}', pop = true},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
     ]
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 [[contexts.key-body]]
@@ -413,10 +606,16 @@ push = [
     scope = "keyword.operator.assignment.migoto",
     push = [
       {include = "static-value"},
-      {match = '{{line_end_context}}', pop = true},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
     ]
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Key Setting Statement
@@ -432,10 +631,16 @@ push = [
       {include = "fixed-value"},
       {include = "boolean-value"},
       {include = "static-value"},
-      {match = '\n', pop = 2},
+      {
+        match = '\n',
+        pop = 2,
+      },
     ]
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 [[contexts.key-body]]
@@ -460,11 +665,16 @@ push = [
     scope = "keyword.operator.execution.migoto",
     push = [
       {include = "callable-commandlist"},
-      # TODO: forbid `,` in this
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Preset Condition Statement
@@ -478,11 +688,16 @@ push = [
     scope = "keyword.operator.assignment.migoto",
     push = [
       {include = "operational-expr"},
-      # TODO: forbid `,` in this
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Preset Assignment Statement
@@ -496,11 +711,16 @@ push = [
     scope = "keyword.operator.assignment.migoto",
     push = [
       {include = "static-value"},
-      # TODO: forbid `,` in this
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 [[contexts.preset-body]]
@@ -513,11 +733,16 @@ push = [
     scope = "keyword.operator.assignment.migoto",
     push = [
       {include = "static-value"},
-      # TODO: forbid `,` in this
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Preset Setting Statement
@@ -533,10 +758,16 @@ push = [
       {include = "fixed-value"},
       {include = "boolean-value"},
       {include = "static-value"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 [[contexts.preset-body]]
@@ -576,10 +807,16 @@ push = [
     scope = "punctuation.separator.key-value.migoto",
     push = [
       {include = "constant"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 [[contexts.shader-regex-setting-statement]]
@@ -591,10 +828,16 @@ push = [
     match = '=',
     scope = "punctuation.separator.key-value.migoto",
     push = [
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 # Normal Bodies
@@ -636,15 +879,24 @@ match = '''(?xi)
 '''
 push = [
   {meta_scope = "meta.statement.setting.migoto"},
-  {match = '(?i)\b(hash)\b', scope = "meta.keyword.hash.key keyword.other.migoto"},
+  {
+    match = '(?i)\b(hash)\b',
+    scope = "meta.keyword.hash.key keyword.other.migoto",
+  },
   {
     match = '=',
     scope = "punctuation.separator.key-value.migoto",
     push = [
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Custom Shader Name Keys
@@ -659,17 +911,26 @@ match = '''(?xi)
 '''
 push = [
   {meta_scope = "meta.statement.setting.migoto"},
-  {match = '(?i)\b([vhdgpc]s)\b', scope = "meta.keyword.shader.key keyword.other.migoto"},
+  {
+    match = '(?i)\b([vhdgpc]s)\b',
+    scope = "meta.keyword.shader.key keyword.other.migoto",
+  },
   {
     match = '=',
     scope = "punctuation.separator.key-value.migoto",
     push = [
       {match = '(?i)\b(null)\b', scope = "constant.language.null.migoto"},
       {include = "path-value"},
-      {match = '{{line_end_context}}', pop = true},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
     ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Keybinding Keys
@@ -684,16 +945,25 @@ match = '''(?xi)
 '''
 push = [
   {meta_scope = "meta.statement.setting.migoto"},
-  {match = '(?i)\b{{keybinding_keys}}', scope = "meta.keyword.binding.key keyword.other.migoto"},
+  {
+    match = '(?i)\b{{keybinding_keys}}',
+    scope = "meta.keyword.binding.key keyword.other.migoto",
+  },
   {
     match = '=',
     scope = "punctuation.separator.key-value.migoto",
     push = [
       {include = "keybinding-modifier"},
-      {match = '{{line_end_context}}', pop = true},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
     ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Directory and File Keys
@@ -708,36 +978,43 @@ match = '''(?xi)
 '''
 push = [
   {meta_scope = "meta.statement.setting.migoto"},
-  {match = '(?i)\b{{path_keys}}', scope = "meta.keyword.path-value.key keyword.other.migoto"},
+  {
+    match = '(?i)\b{{path_keys}}',
+    scope = "meta.keyword.path-value.key keyword.other.migoto",
+  },
   {
     match = '=',
     scope = "punctuation.separator.key-value.migoto",
     push = [
       {include = "path-value"},
-      {match = '{{ws}}*(.+?){{ws}}*$', captures.1 = "constant.other.path.migoto"},
-      {match = '{{line_end_context}}', pop = true},
+      {
+        match = '{{ws}}*(.+?){{ws}}*$',
+        captures.1 = "constant.other.path.migoto",
+      },
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
     ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 [[contexts.setting-statement]]
 match = '''(?xi)
 ^{{ws}}*
 (?!\b(?:
-  hash|[vhdgpc]s|
-  {{path_keys}}|{{keybinding_keys}}|
-  run|checktextureoverride|(?:exclude_)?preset|handling|clear|special|dump|store|
-  draw(?:indexed|instanced|indexedinstanced|instancedindirect|indexedinstancedindirect)?|dispatch(?:indirect)?|
-  vb\d|ib|(?:[rf]_)?bb|s?o\d|od|
-  (?<!$)[xyzw]\d{0,3}|
-  this|(?:ini|stereo)params|cursor_(?:mask|color)|
-  Resource.+
+  hash | [vhdgpc]s | [xyzw]\d{0,3} |
+  {{path_keys}} | {{keybinding_keys}} |
+  {{instructions}} | {{resource_copy_targets_non_slot}}
 )\b)
 (?=
   [\w\[\]]+
   \s* = \s*
-  (?: [^"\\/\s\r\n]+ | [^\s\r\n]+ | [^\r\n]+ )
+  (?: [^"$\\/\s\r\n]+ | [^$\s\r\n]+ | [^\r\n]+ )
 )
 '''
 push = [
@@ -749,47 +1026,62 @@ push = [
     scope = "punctuation.separator.key-value.migoto",
     push = [
       {
-        match = '(?i)(?=[^"\\/\s\r\n]+)',
+        match = '(?i)(?=[^"$\\/\s\r\n]+)',
         push = [
-          {include = "named-variable"},
           {include = "resource-type"},  # DXGI types + Resource types
           {include = "constant"},
           {include = "boolean-value"},
           {include = "path-value"},
           {include = "fixed-value"},
-          {match = '{{line_end_context}}', pop = true},
-        ]
+          {
+            match = '{{line_end_context}}',
+            pop = true,
+          },
+        ],
       },
       {
-        match = '(?i)(?=[^\s\r\n]+)',
+        match = '(?i)(?=[^$\s\r\n]+)',
         push = [
-          {include = "named-variable"},
           {include = "string"},
           {include = "path-value"},
           {include = "fixed-value"},
-          {match = '{{line_end_context}}', pop = true},
-        ]
+          {
+            match = '{{line_end_context}}',
+            pop = true,
+          },
+        ],
       },
       {
         match = '(?i)(?=[^\r\n]+)',
         push = [
-          {include = "named-variable"},
+          {include = "static-operational-expr"},
           {include = "string"},
           {include = "path-value"},
+          # -- begin list-expr terminals --
           {include = "dxgi-format"},
-          {include = "constant"},
+          # {include = "constant"}, <-- taken care of by static-operational-expr
           {include = "blend-expr"},
-          {include = "marking-action-opt"},
-          {include = "frame-analysis-opt"},
+          # {include = "marking-action-opt"}, <-- taken care of by fixed-value-opt
+          # {include = "frame-analysis-opt"}, <-- taken care of by fixed-value-opt
+          # -- end list-expr terminals --
           {include = "fuzzy-match-expr"},
-          {include = "fixed-value"},
-          {match = '{{line_end_context}}', pop = true},
-        ]
+          {include = "fixed-value-opt"},
+          {
+            match = '{{line_end_context}}',
+            pop = true,
+          },
+        ],
       },
-      {match = '{{line_end_context}}', pop = true},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
     ]
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 # Command List Statements
@@ -812,7 +1104,10 @@ push = [
   {meta_scope = "meta.statement.conditional.migoto"},
   {meta_content_scope = "meta.expression.operational.migoto"},
   {include = "operational-expr"},
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 [[contexts.conditional-statement]]
@@ -820,35 +1115,47 @@ match = '(?i)^{{ws}}*(else|endif){{ws}}*$'
 captures.1 = "keyword.control.flow.migoto"
 push = [
   {meta_scope = "meta.statement.conditional.migoto"},
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Global Declaration
 [[contexts.global-declaration]]
 match = '''(?xi)
 (?=
-  (?:\b persist \s+)?
+  (?: \b (?:persist|locked) \s+)?
   \b global \s+
-  (?:\b persist \s+)?
+  (?: \b (?:persist|locked) \s+)?
 \s*
   (?:
     = \s*
-    (?:[+\-]?[\d.]+|inf|NaN)
+    [^\r\n]+
   )?
 )'''
 push = [
   {meta_scope = "meta.statement.declaration.global.migoto"},
-  {match = '(?i)\b(global|persist)\b', scope = "storage.modifier.migoto"},
+  {
+    match = '(?i)\b(global|persist|locked)\b',
+    scope = "storage.modifier.migoto",
+  },
   {include = "named-variable"},
   {
     match = '=',
     scope = "keyword.operator.assignment.migoto",
     push = [
-      {include = "static-value"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {include = "static-operational-expr"},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Local Declaration
@@ -865,17 +1172,26 @@ match = '''(?xi)
 )'''
 push = [
   {meta_scope = "meta.statement.declaration.local.migoto"},
-  {match = '(?i)\b(local)\b', scope = "storage.modifier.migoto"},
+  {
+    match = '(?i)\b(local)\b',
+    scope = "storage.modifier.migoto",
+  },
   {include = "named-variable"},
   {
     match = '=',
     scope = "keyword.operator.assignment.migoto",
     push = [
       {include = "operational-expr"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## General Statement
@@ -891,24 +1207,103 @@ match = '''(?xi)
 ^{{ws}}*
 (?=
   (?: (?:pre|post) \s+)?
-  (?: \$ (?:\\.+\\)? \w+ | \b[xyzw]\d{0,3}\b )
+  (?: \$ [^=\r\n]+ | \b[xyzw]\d{0,3}\b )
   \s* = \s*
   [^\r\n]+
 )'''
 push = [
   {meta_scope = "meta.statement.assignment.migoto"},
-  {match = '(?i)\b(pre|post)\b', scope = "meta.command-list.priority keyword.control.directive.migoto"},
+  {
+    match = '(?i)\b(pre|post)\b',
+    scope = "meta.command-list.priority keyword.control.directive.migoto",
+  },
   {include = "ini-parameter"},
-  {include = "named-variable"},
+  {include = "scalar-variable"},
   {
     match = '=',
     scope = "keyword.operator.assignment.migoto",
     push = [
       {include = "operational-expr"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
+]
+
+[[contexts.assignment-statement]]
+match = '''(?xi)
+^{{ws}}*
+(?=
+  (?: (?:pre|post) \s+)?
+  commandlist[^=\r\n]+\b
+  \s* = \s*
+  [^\r\n]+
+)'''
+push = [
+  {meta_scope = "meta.statement.assignment.migoto"},
+  {
+    match = '(?i)\b(pre|post)\b',
+    scope = "meta.command-list.priority keyword.control.directive.migoto",
+  },
+  {include = "callable-commandlist"},
+  {
+    match = '=',
+    scope = "keyword.operator.assignment.migoto",
+    push = [
+      {
+        match = '(?i)\bref(?:erence)?\b',
+        scope = "meta.keyword.proxy-modifier keyword.other.functional.migoto",
+      },
+      {include = "callable-commandlist"},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
+  },
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
+]
+
+[[contexts.assignment-statement]]
+match = '''(?xi)
+^{{ws}}*
+(?=
+  (?: (?:pre|post) \s+)?
+  [^\r\n]+ -> \w+\( .+ \)
+  \s* = \s*
+  [^\r\n]+
+)'''
+push = [
+  {meta_scope = "meta.statement.assignment.migoto"},
+  {
+    match = '(?i)\b(pre|post)\b',
+    scope = "meta.command-list.priority keyword.control.directive.migoto",
+  },
+  {include = "resource-property-method-call"},
+  {
+    match = '=',
+    scope = "keyword.operator.assignment.migoto",
+    push = [
+      {include = "operational-expr"},
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
+  },
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 [[contexts.assignment-statement]]
@@ -919,24 +1314,34 @@ match = '''(?xi)
   \b(
     [vgdhpcsturfibo\-\d_]+\b |
     this\b | (?:ini|stereo)params\b | cursor_(?:mask|color)\b |
-    (?:Resource|Pool)\S+
+    (?: Resource | Pool ) [^=\r\n]+
   )
   \s* = \s*
   [^\r\n]+
 )'''
 push = [
   {meta_scope = "meta.statement.assignment.migoto"},
-  {match = '(?i)\b(pre|post)\b', scope = "meta.command-list.priority keyword.control.directive.migoto"},
+  {
+    match = '(?i)\b(pre|post)\b',
+    scope = "meta.command-list.priority keyword.control.directive.migoto",
+  },
   {include = "resource"},
+  {include = "resource-pool-base"},
   {
     match = '=',
     scope = "keyword.operator.assignment.migoto",
     push = [
       {include = "resource-usage-expr"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Instruction Statement
@@ -961,274 +1366,86 @@ match = '(?i)\b(pre|post)\b'
 scope = "meta.command-list.priority keyword.control.directive.migoto"
 
 [[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b checktextureoverride \b \s* = \s* [^\r\n]+)'
+match = '(?xi)(?= \b (?!(?:exclude_)?preset) \w+ \b \s* = \s* [^\r\n]+)'
 push = [
-  {meta_scope = "meta.checktextureoverride"},
-  {match = '(?i)\b(checktextureoverride)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
+  {meta_scope = "meta.function-call.instruction"},
   {
-    match = '=',
-    scope = "keyword.operator.execution.migoto",
-    push = [
-      {include = "resource"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
+    match = '(?xi)\b({{instructions}})\b',
+    scope = "keyword.other.instruction.migoto",
   },
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b run \b \s* = \s* [^\r\n]+)'
-push = [
-  {meta_scope = "meta.run-instruction"},
-  {match = '(?i)\b(run)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
   {
     match = '=',
     scope = "keyword.operator.execution.migoto",
     push = [
+      {include = "operational-expr"},  # for direct draw instructions
       {include = "callable-commandlist"},
       {include = "callable-customshader"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
+      {include = "fixed-value"},  # for frame analysis opts and aother enum values
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 [[contexts.instruction-statement.push]]
 match = '(?xi)(?= \b (?:exclude_)?preset \b \s* = \s* [^\r\n]+)'
 push = [
   {meta_scope = "meta.preset-instruction"},
-  {match = '(?i)\b((?:exclude_)?preset)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
+  {
+    match = '(?i)\b((?:exclude_)?preset)\b',
+    scope = "meta.function-call.instruction keyword.other.instruction.migoto",
+  },
   {
     match = '=',
     scope = "keyword.operator.execution.migoto",
     push = [
       {
-        match = '(?xi)(?= (?:Preset)? (?:\\.+\\)? [^=$,\r\n]+ )',
+        match = '(?xi)(?= (?:Preset (?:\\.+\\)? )? [^=$,\r\n]+ )',
         push = [
-          {meta_scope = "meta.function-call variable.other.function.migoto"},
-          {match = '(?i)\b(Preset)', scope = "entity.name.function.section-type.migoto"},
-          {match = '(?=\\)', push = [{include = "namespace"}]},
+          {meta_scope = "variable.other.function.migoto"},
+          {
+            match = '(?i)\b(Preset)',
+            scope = "entity.name.function.section-type.migoto",
+          },
+          {
+            match = '(?=\\)',
+            push = [{include = "namespace"}],
+          },
           {include = "section-identifier"},
-          {match = '{{line_end_context}}', pop = true},
-        ]
+          {
+            match = '{{line_end_context}}',
+            pop = true,
+          },
+        ],
       },
-      {match = '{{line_end_context}}', pop = true},
-    ]
-  },
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b handling \b \s* = \s* [^\r\n]+)'
-push = [
-  {meta_scope = "meta.handling-instruction"},
-  {match = '(?i)\b(handling)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
-  {match = '=', scope = "keyword.operator.execution.migoto"},
-  {include = "fixed-value"},
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b reset_per_frame_limits \b \s* = \s* [^\r\n]+)'
-push = [
-  {meta_scope = "meta.reset-limits"},
-  {
-    match = '(?i)\b(reset_per_frame_limits)\b',
-    scope = "meta.function-call.instruction support.function.builtin.migoto"
+      {
+        match = '{{line_end_context}}',
+        pop = true,
+      },
+    ],
   },
   {
-    match = '=',
-    scope = "keyword.operator.execution.migoto",
-    push = [
-      {include = "custom-resource"},
-      {include = "callable-customshader"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
+    match = '{{line_end_context}}',
+    pop = true,
   },
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b clear \b \s* = \s* [^\r\n]+)'
-push = [
-  {meta_scope = "meta.clear-instruction"},
-  {match = '(?i)\b(clear)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
-  {
-    match = '=',
-    scope = "keyword.operator.execution.migoto",
-    push = [
-      {include = "resource"},
-      {include = "shader-identifier"},
-      {match = '(?i)\b0x[a-f0-9]+\b', scope = "constant.numeric.migoto"},
-      {include = "static-value"},
-      {include = "fixed-value"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
-  },
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b (?:separation|convergence) \b \s* = \s* [^ \t\r\n]+)'
-push = [
-  {meta_scope = "meta.stereo-instruction"},
-  {
-    match = '(?i)\b(separation|convergence)\b',
-    scope = "meta.function-call.instruction support.function.builtin.migoto"
-  },
-  {
-    match = '=',
-    scope = "keyword.operator.execution.migoto",
-    push = [
-      {include = "static-value"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
-  },
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b direct_mode_eye \b \s* = \s* [^\r\n]+)'
-push = [
-  {meta_scope = "meta.dme-instruction"},
-  {match = '(?i)\b(direct_mode_eye)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
-  {match = '=', scope = "keyword.operator.execution.migoto"},
-  {include = "fixed-value"},
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b analyse_options \b \s* = \s* [^\r\n]+)'
-push = [
-  {meta_scope = "meta.analysis-instruction"},
-  {match = '(?i)\b(analyse_options)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
-  {
-    match = '=',
-    scope = "keyword.operator.execution.migoto",
-    push = [
-      {include = "frame-analysis-opt"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
-  },
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b dump \b \s* = \s* [^\r\n]+)'
-push = [
-  {meta_scope = "meta.dump-instruction"},
-  {match = '(?i)\b(dump)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
-  {
-    match = '=',
-    scope = "keyword.operator.execution.migoto",
-    push = [
-      {include = "resource"},
-      {include = "shader-identifier"},
-      {include = "frame-analysis-opt"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
-  },
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '(?xi)(?= \b special \b \s* = \s* [^\r\n]+)'
-push = [
-  {meta_scope = "meta.special-instruction"},
-  {match = '(?i)\b(special)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
-  {match = '=', scope = "keyword.operator.execution.migoto"},
-  {include = "fixed-value"},
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '''(?xi)
-(?=
-  \b store \b
-  \s* = \s*
-  (?:(\$[^,\r\n]+)\s*,\s*([^,\r\n]+)\s*,\s*(\d+))
-)'''
-push = [
-  {meta_scope = "meta.store-instruction"},
-  {match = '(?i)\b(store)\b', scope = "meta.function-call.instruction support.function.builtin.migoto"},
-  {
-    match = '=',
-    scope = "keyword.operator.execution.migoto",
-    push = [
-      {include = "named-variable"},
-      {include = "resource-usage-expr"},
-      {match = '\d+', scope = "constant.numeric.migoto"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
-  },
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '''(?xi)
-{{ws}}*
-(?=
-  \b (draw (indexed|instanced|indexedinstanced)? | dispatch) \b
-  \s* = \s*
-  [^\r\n]+
-)
-'''
-push = [
-  {meta_scope = "meta.draw-instruction"},
-  {
-    match = '(?i)\b(draw(indexed|instanced|indexedinstanced)?|dispatch)\b',
-    scope = "meta.function-call.instruction support.function.builtin.migoto"
-  },
-  {
-    match = '=',
-    scope = "keyword.operator.execution.migoto",
-    push = [
-      {include = "operational-expr"},
-      {include = "fixed-value"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
-  },
-  {match = '{{line_end_context}}', pop = true},
-]
-
-[[contexts.instruction-statement.push]]
-match = '''(?xi)
-{{ws}}*
-(?=
-  \b (?:drawinstanced|drawindexedinstanced|dispatch)indirect \b
-  \s* = \s*
-  [^\r\n]+\s*,\s*\d+
-)
-'''
-push = [
-  {meta_scope = "meta.draw-indirect-instruction"},
-  {
-    match = '(?i)\b((?:drawinstanced|drawindexedinstanced|dispatch)indirect)\b',
-    scope = "meta.function-call.instruction support.function.builtin.migoto"
-  },
-  {
-    match = '=',
-    scope = "keyword.operator.execution.migoto",
-    push = [
-      {include = "resource"},
-      {include = "shader-identifier"},
-      {match = '\d+', scope = "constant.numeric.migoto"},
-      {match = '{{line_end_context}}', pop = true},
-    ]
-  },
-  {match = '{{line_end_context}}', pop = true},
 ]
 
 [[contexts.instruction-statement.push]]
 match = '(?i){{ws}}*\b(drawauto)\b'
 scope = "meta.drawauto-instruction"
-captures.1 = "meta.function-call.instruction support.function.builtin.migoto"
+captures.1 = "meta.function-call.instruction keyword.other.instruction.migoto"
 
 [[contexts.instruction-statement.push]]
 match = '{{line_end_context}}'
 pop = true
 
-# Expressions
+# Expressions for Setting Statements
 
 ## Blend Expression
 [[contexts.blend-expr]]
@@ -1239,13 +1456,16 @@ push = [
   {meta_scope = "meta.expression.blend-state.migoto"},
   {
     match = '(?i)\b(add|(?:rev_)?subtract|min|max|disable)\b',
-    scope = "meta.keyword.blend-operator keyword.operator.migoto"
+    scope = "meta.keyword.blend-operator keyword.operator.migoto",
   },
   {
     match = '\b(?i)(zero|one|(?:inv_)?(?:src1?|dest)_(?:color|alpha)|src_alpha_sat|(?:inv_)?blend_factor)\b',
-    scope = "meta.keyword.blend-factor keyword.other.migoto"
+    scope = "meta.keyword.blend-factor keyword.other.migoto",
   },
-  {match = '{{line_end_context}}', pop = true},
+  {
+    match = '{{line_end_context}}',
+    pop = true,
+  },
 ]
 
 ## Fuzzy Match Expression
@@ -1279,6 +1499,8 @@ captures.7 = "constant.numeric.migoto"
 captures.8 = "keyword.operator.math.migoto"
 captures.9 = "constant.numeric.migoto"
 
+# Expressions for General Statements
+
 ## Resource Usage Expression
 [[contexts.resource-usage-expr]]
 meta_scope = "meta.expression.resource-usage.migoto"
@@ -1287,7 +1509,13 @@ meta_scope = "meta.expression.resource-usage.migoto"
 include = "resource-usage-modifier"
 
 [[contexts.resource-usage-expr]]
+include = "resource-property-method-call"
+
+[[contexts.resource-usage-expr]]
 include = "resource"
+
+[[contexts.resource-usage-expr]]
+include = "resource-pool-base"
 
 [[contexts.resource-usage-modifier]]
 match = '(?i)\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa|unless_null)\b'
@@ -1307,6 +1535,21 @@ include = "operator"
 include = "operand"
 
 [[contexts.operational-expr]]
+include = "round-braces"
+
+[[contexts.static-operational-expr]]
+meta_scope = "meta.expression.operational.migoto"
+
+[[contexts.static-operational-expr]]
+include = "illegal-operator"
+
+[[contexts.static-operational-expr]]
+include = "operator"
+
+[[contexts.static-operational-expr]]
+include = "static-value"
+
+[[contexts.static-operational-expr]]
 include = "round-braces"
 
 ### Operators, legal and illegal
@@ -1378,14 +1621,30 @@ include = "resource-pool"
 include = "constant"
 
 [[contexts.operand]]
-include = "named-variable"
+match = '\b(?i)D3D11_BIND_\w+\b'
+scope = "meta.enum-value.directx variable.otherenummember.migoto"
+
+[[contexts.operand]]
+match = '\b(?i)DXGI_FORMAT_\w+\b'
+scope = "meta.enum-value.directx support.type.dxgi-format.migoto"
+
+[[contexts.operand]]
+include = "scalar-variable"
 
 [[contexts.operand]]
 include = "ini-parameter"
 
+# even though this uses a resource, it returns an operational value
+[[contexts.operand]]
+include = "property-access-expr"
+
 # resource must come before shader-identifier
 [[contexts.operand]]
 include = "resource"
+
+# this is separate from resource because they aren't used in resource usage expressions
+[[contexts.operand]]
+include = "resource-pool-base"
 
 [[contexts.operand]]
 include = "shader-identifier"
@@ -1397,31 +1656,144 @@ match = '\b(?i)(scissor\d+_(?:left|top|right|bottom))\b'
 
 [[contexts.operand]]
 # constant instead of variable scope name because their use is more like language constants
-scope = "constant.language.override-parameter.migoto"
+scope = "constant.language.runtime-parameter.migoto"
 match = '''(?xi)
 \b(
   (?:rt|res|window)_(?:width|height) | (?:vertex|index|instance)_count | first_(?:vertex|index|instance) |
   thread_group_count_[xyz] | indirect_offset | draw_type | cursor_(?: showing | (?:screen_|window_|hotspot_)?[xy] ) |
   time | hunting | sli | frame_analysis | effective_dpi | (?:raw_|eye_)?separation | convergence |
-  stereo_(?:active|available) | scissor_(?:left|top|right|bottom)
+  stereo_(?:active|available) | scissor_(?:left|top|right|bottom) |
+  (?:frame|dispatch|draw)_number | frame_time | fps
 )\b'''
 
-[[contexts.static-override-parameter]]
-scope = "constant.language.override-parameter.migoto"
-match = '(?i)\b(sli|hunting|frame_analysis|stereo_(?:active|available))'
+[[contexts.operand]]
+include = "function-call"
+
+[[contexts.function-call]]
+include = "resource-property-method-call"
+
+[[contexts.function-call]]
+include = "builtin-function-call"
+
+[[contexts.scalar-variable]]
+include = "named-variable"
+
+[[contexts.scalar-variable]]
+include = "pooled-variable"
+
+[[contexts.static-runtime-parameter]]
+scope = "constant.language.runtime-parameter.migoto"
+match = '(?i)\b(sli|hunting|frame_(?:time|number|analysis)|stereo_(?:active|available))\b'
 
 [[contexts.shader-identifier]]
 scope = "variable.language.shader-identifier.migoto"
 match = '(?i)\b[vhdgpc]s\b'
 
+[[contexts.property-access-expr]]
+match = '(?xi)(?= [^\r\n]+ -> \w+ )(?!\\)'
+push = [
+  {meta_scope = "meta.expression.property-access"},
+  {
+    match = '(?xi)(?= \b {{resource_copy_targets}} -> \w+ )',
+    push = [
+      {include = "resource"},
+      {
+        match = '(?i)(->)(\w+)\b',
+        captures.1 = "keyword.operator.accessor.migoto",
+        captures.2 = "variable.object.property.migoto",
+        pop = 2,
+      },
+    ],
+  },
+]
+
+[[contexts.resource-property-method-call]]
+match = '(?xi)(?= [^\r\n]+ -> \w+ \( )'
+push = [
+  {meta_scope = "meta.function-call.resource-property"},
+  {include = "property-access-expr"},
+  {
+    match = '\(',
+    captures.0 = "punctuation.parenthesis.begin.migoto",
+    push = [
+      {include = "operational-expr"},
+      {
+        match = '\)',
+        captures.0 = "punctuation.parenthesis.end.migoto",
+        pop = 2,
+      },
+    ],
+  }
+]
+
+[[contexts.builtin-function-call]]
+match = '(?xi)(?! [^\r\n]+ -> ) (?= \w+ \( )'
+push = [
+  {meta_scope = "meta.function-call"},
+  {
+    match = '(?i)\w+(?=\()',
+    scope = "support.function.builtin.migoto",
+  },
+  {
+    match = '\(',
+    captures.0 = "punctuation.parenthesis.begin.migoto",
+    push = [
+      {include = "operational-expr"},
+      {
+        match = '\)',
+        captures.0 = "punctuation.parenthesis.end.migoto",
+        pop = 2,
+      },
+    ],
+  }
+]
+
 [[contexts.named-variable]]
-match = '''(?xi) (?= \$ (?:\\{{namespace}}\\)? (?:{{var}}) \b )'''
+match = '''(?xi)
+(?! \$Pool
+  (?: \\[^=$\r\n]+\\ )?
+  (?: [^-/&!>|<( )$=,\[\]\r\n]+ )
+  (?: \[ [^\r\n\[\]]+ \] )
+)
+(?= \$ (?:\\{{namespace}}\\)? (?:{{var}}) \b )'''
 push = [
   {meta_scope = "meta.variable.named"},
-  {match = '\$', scope = "punctuation.definition.variable.migoto"},
-  {match = '(?=\\)', push = [{include = "namespace"}]},
-  {match = '(?i)({{var}})', scope = "variable.other.readwrite.migoto"},
-  {match = '\b', pop = true},
+  {
+    match = '\$',
+    scope = "punctuation.definition.variable.migoto",
+  },
+  {
+    match = '(?=\\)',
+    push = [{include = "namespace"}],
+  },
+  {
+    match = '(?i)({{var}})',
+    scope = "variable.other.readwrite.migoto",
+  },
+  {
+    match = '\b',
+    pop = true,
+  },
+]
+
+[[contexts.pooled-variable]]
+match = '''(?xi)
+(?= \$Pool
+  (?: \\[^=$\r\n]+\\ )?
+  (?: [^-/&!>|<( )$=,\[\]\r\n]+ )
+  (?: \[ [^\r\n\[\]]+ \] )
+)(?!\\)'''
+push = [
+  {meta_scope = "meta.variable.pooled"},
+  {
+    match = '\$',
+    scope = "punctuation.definition.variable.migoto",
+  },
+  {include = "resource-pool"},
+  {
+    match = '(?=[-/&!>|<\s=$\[\],()])',
+    pop = true,
+  },
 ]
 
 [[contexts.callable-commandlist]]
@@ -1434,10 +1806,19 @@ match = '''(?xi)
 )'''
 push = [
   {meta_scope = "meta.function-call.commands"},
-  {match = '(?i)\b(?:BuiltIn)?CommandList', scope = "entity.name.function.section-type.migoto"},
-  {match = '(?=\\)', push = [{include = "namespace"}]},
+  {
+    match = '(?i)\b(?:BuiltIn)?CommandList',
+    scope = "entity.name.function.section-type.migoto",
+  },
+  {
+    match = '(?=\\)',
+    push = [{include = "namespace"}],
+  },
   {include = "section-identifier"},
-  {match = '(?=[=$,\r\n])', pop = true},
+  {
+    match = '(?=[=$,\r\n])',
+    pop = true,
+  },
 ]
 
 [[contexts.callable-customshader]]
@@ -1450,10 +1831,19 @@ match = '''(?xi)
 )'''
 push = [
   {meta_content_scope = "meta.function-call.shader"},
-  {match = '(?i)\b(?:BuiltIn)?CustomShader', scope = "entity.name.function.section-type.migoto"},
-  {match = '(?=\\)', push = [{include = "namespace"}]},
+  {
+    match = '(?i)\b(?:BuiltIn)?CustomShader',
+    scope = "entity.name.function.section-type.migoto",
+  },
+  {
+    match = '(?=\\)',
+    push = [{include = "namespace"}],
+  },
   {include = "section-identifier"},
-  {match = '(?=[=$,\r\n])', pop = true},
+  {
+    match = '(?=[=$,\r\n])',
+    pop = true,
+  },
 ]
 
 [[contexts.custom-resource]]
@@ -1461,24 +1851,49 @@ match = '''(?xi)
 (?=
   Resource
   (?:\\{{namespace}}\\)?
-  [^\\\/&!|< $=,\r\n]+
+  [^-\\/&!|<( )$=,\r\n]+
   \b (?!\\)
 )'''
 push = [
   {meta_content_scope = "meta.variable.custom-resource"},
-  {match = '(?i)\bResource', scope = "entity.name.label.migoto"},
-  {match = '(?=\\)', push = [{include = "namespace"}]},
-  {match = '(?=->)', push = [
-    {meta_scope = "meta.expression.property-access"},
-    {
-      match = '(?i)(->)([a-z0-9]+)\b',
-      captures.1 = "keyword.operator.accessor.migoto",
-      captures.2 = "variable.other.member.migoto",
-      pop = true,
-    },
-  ]},
+  {
+    match = '(?i)\bResource',
+    scope = "entity.name.label.migoto",
+  },
+  {
+    match = '(?=\\)',
+    push = [{include = "namespace"}],
+  },
   {include = "resource-identifier"},
-  {match = '(?=[/&!>|<\s=$,])', pop = true},
+  {
+    match = '(?=[-/&!>|<\s=$,()])',
+    pop = true,
+  },
+]
+
+[[contexts.resource-pool-base]]
+match = '''(?xi)
+(?=
+  Pool
+  (?:\\{{namespace}}\\)?
+  [^-\\/&!|<( )$=,\r\n]+
+  (?!\\)
+)'''
+push = [
+  {meta_content_scope = "meta.variable.resource-pool"},
+  {
+    match = '(?i)\bPool',
+    scope = "entity.name.label.migoto",
+  },
+  {
+    match = '(?=\\)',
+    push = [{include = "namespace"}],
+  },
+  {include = "resource-identifier"},
+  {
+    match = '(?=[-/&!>|<\s=$,\[\]()])',
+    pop = true,
+  },
 ]
 
 [[contexts.resource-pool]]
@@ -1486,40 +1901,43 @@ match = '''(?xi)
 (?=
   Pool
   (?:\\{{namespace}}\\)?
-  [^\\\/&!|< $=,\r\n]+
+  [^-\\/&!|<( )$=,\r\n]+
+  \[ [^\r\n\[\]]+ \]
   (?!\\)
 )'''
 push = [
   {meta_content_scope = "meta.variable.resource-pool"},
-  {match = '(?i)\bPool', scope = "entity.name.label.migoto"},
-  {match = '(?=\\)', push = [{include = "namespace"}]},
-  {match = '(?=\[)', push = [
-    {meta_scope = "meta.expression.indexing"},
-    {
-      match = '\[',
-      scope = "punctuation.bracket.begin.migoto",
-      push = [
-        {include = "named-variable"},
-        {include = "constant"},
-        {
-          match = '\]',
-          scope = "punctuation.bracket.end.migoto",
-          pop = 2,
-        }
-      ],
-    },
-  ]},
-  {match = '(?=->)', push = [
-    {meta_scope = "meta.expression.property-access"},
-    {
-      match = '(?i)(->)([a-z0-9]+)\b',
-      captures.1 = "keyword.operator.accessor.migoto",
-      captures.2 = "variable.other.property.migoto",
-      pop = true,
-    },
-  ]},
+  {
+    match = '(?i)\bPool',
+    scope = "entity.name.label.migoto",
+  },
+  {
+    match = '(?=\\)',
+    push = [{include = "namespace"}],
+  },
+  {
+    match = '(?=\[)',
+    push = [
+      {meta_scope = "meta.expression.indexing"},
+      {
+        match = '\[',
+        scope = "punctuation.bracket.begin.migoto",
+        push = [
+          {include = "static-operational-expr"},
+          {
+            match = '\]',
+            scope = "punctuation.bracket.end.migoto",
+            pop = 2,
+          },
+        ],
+      },
+    ],
+  },
   {include = "resource-identifier"},
-  {match = '(?=[/&!>|<\s=$,])', pop = true},
+  {
+    match = '(?=[-/&!>|<\s=$,\[\]()])',
+    pop = true,
+  },
 ]
 
 [[contexts.namespace]]
@@ -1528,7 +1946,20 @@ scope = "punctuation.separator.namespace.migoto"
 push = [
   {meta_scope = "meta.name.namespace-resolution"},
   {meta_content_scope = "entity.name.namespace.migoto"},
-  {match = '[^=$\r\n]+(?=\\)', push = [{match = '\\', scope = "punctuation.separator.namespace.migoto", pop = 3}]},
+  {
+    match = '{{namespace}}(?=\\)',
+    push = [
+      {
+        match = '(?=\\)',
+        pop = true,
+      }
+    ],
+  },
+  {
+    match = '\\',
+    scope = "punctuation.separator.namespace.migoto",
+    pop = 2,
+  },
 ]
 
 [[contexts.section-identifier]]
@@ -1537,11 +1968,20 @@ match = '{{custom_section_name}}'
 
 [[contexts.resource-identifier]]
 scope = "entity.name.class.migoto"
-match = '[^/&!>|< $=,\r\n]+?'
+match = '[^-/&!>|<( )$=,\[\]\r\n]+'
 
 [[contexts.ini-parameter]]
 scope = "variable.parameter.migoto"
 match = '(?i)\b(?:(?<!$)[xyzw]\d{0,3})\b'
+
+[[contexts.fixed-value-opt]]
+include = "marking-action-opt"
+
+[[contexts.fixed-value-opt]]
+include = "frame-analysis-opt"
+
+[[contexts.fixed-value-opt]]
+include = "fixed-value"
 
 [[contexts.keybinding-modifier]]
 scope = "meta.keyword.key-binding constant.language.modifier-key.migoto"
@@ -1573,12 +2013,23 @@ match = '[+-]?\d+(\.\d+(e[-+]\d+)?)?\b'
 scope = "constant.numeric.migoto"
 match = '[+-]?\.\d+\b'
 
+[[contexts.constant]]
+scope = "constant.numeric.migoto"
+match = '(?i)\b0x[a-f0-9]+\b'
+
+[[contexts.constant]]
+scope = "constant.numeric.migoto"
+match = '(?i)\b0b[01]+\b'
+
 [[contexts.boolean-value]]
 scope = "constant.language.boolean.migoto"
 match = '(?i)\b(?:true|false|yes|no|on|off)\b'
 
 [[contexts.static-value]]
-include = "static-override-parameter"
+include = "static-runtime-parameter"
+
+[[contexts.static-value]]
+include = "named-variable"
 
 [[contexts.static-value]]
 include = "constant"
@@ -1599,7 +2050,10 @@ match = '''(?i)\b[^>\\|/<?:*$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+'''
 match = '"'
 push = [
   {meta_scope = "string.quoted.double.migoto"},
-  {match = '"', pop = true},
+  {
+    match = '"',
+    pop = true,
+  },
 ]
 
 [[contexts.key]]
