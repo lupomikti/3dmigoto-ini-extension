@@ -364,7 +364,6 @@ push = [
       {include = "boolean-value"},
       {include = "string"},
       {include = "path-value"},
-      {include = "blend-expr"},
       {include = "fuzzy-match-expr"},
       {include = "fixed-value-opt"},
       {
