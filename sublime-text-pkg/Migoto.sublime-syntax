@@ -45,13 +45,18 @@ contexts:
     - include: comment
     - include: preamble
     - include: section-base
-  resource-type:
-    - meta_scope: meta.enum-value.directx
-    - scope: entity.name.type.resource.migoto
-      match: \b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|TextureCube)\b
-    - include: dxgi-format
   fallthrough:
-    - match: (?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}}|{{cl2_section_names}})\])
+    - match: |-
+        (?xi)(?=
+          \[
+          (?:
+            {{cl_section_names}} |
+            {{kvp_section_names}} |
+            {{special_section_names}} |
+            {{cl2_section_names}}
+          )
+          \]
+        )
       pop: 2
   comment:
     - match: ^({{ws}}*)((;)<([^\n]*)\n)
@@ -151,7 +156,17 @@ contexts:
           push:
             - meta_content_scope: meta.embedded.block.regexp
             - include: comment
-            - match: (?=\[\s*(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\s*\])
+            - match: |-
+                (?xi)(?=
+                          \[\s*
+                            (?:
+                              {{cl_section_names}}|
+                              {{cl2_section_names}}|
+                              {{kvp_section_names}}|
+                              {{special_section_names}}
+                            )
+                          \s*\]
+                        )
               pop: true
             - include: scope:source.regexp.pcre2
         - match: \n
@@ -166,7 +181,17 @@ contexts:
           push:
             - meta_content_scope: meta.embedded.block.regexp-replace
             - include: comment
-            - match: (?=\[\s*(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\s*\])
+            - match: |-
+                (?xi)(?=
+                          \[\s*
+                            (?:
+                              {{cl_section_names}}|
+                              {{cl2_section_names}}|
+                              {{kvp_section_names}}|
+                              {{special_section_names}}
+                            )
+                          \s*\]
+                        )
               pop: true
             - include: scope:source.regexp-replace.pcre2
         - match: \n
@@ -278,14 +303,7 @@ contexts:
     - include: comment
     - include: fallthrough
   setting-statement:
-    - match: |
-        (?xi)
-        ^{{ws}}*
-        (?=
-          \bhash\b
-          \s* = \s*
-          [a-z0-9]+
-        )
+    - match: (?xi) ^{{ws}}* (?= \b hash \b \s* = \s* [a-z0-9]+ )
       push:
         - meta_scope: meta.statement.setting.migoto
         - match: (?i)\b(hash)\b
@@ -297,14 +315,7 @@ contexts:
               pop: true
         - match: "{{line_end_context}}"
           pop: true
-    - match: |
-        (?xi)
-        ^{{ws}}*
-        (?=
-          \b[vhdgpc]s\b
-          \s* = \s*
-          [^\r\n]+
-        )
+    - match: (?xi) ^{{ws}}* (?= \b [vhdgpc]s \b \s* = \s* [^\r\n]+ )
       push:
         - meta_scope: meta.statement.setting.migoto
         - match: (?i)\b([vhdgpc]s)\b
@@ -319,14 +330,7 @@ contexts:
               pop: true
         - match: "{{line_end_context}}"
           pop: true
-    - match: |
-        (?xi)
-        ^{{ws}}*
-        (?=
-          \b({{keybinding_keys}})\b
-          \s* = \s*
-          [^\r\n]+
-        )
+    - match: (?xi) ^{{ws}}* (?= \b (?:{{keybinding_keys}}) \b \s* = \s* [^\r\n]+ )
       push:
         - meta_scope: meta.statement.setting.migoto
         - match: (?xi)\b({{keybinding_keys}})
@@ -361,14 +365,7 @@ contexts:
               pop: true
         - match: "{{line_end_context}}"
           pop: true
-    - match: |
-        (?xi)
-        ^{{ws}}*
-        (?=
-          \b({{path_keys}})\b
-          \s* = \s*
-          [^\r\n]+
-        )
+    - match: (?xi) ^{{ws}}* (?= \b (?:{{path_keys}}) \b \s* = \s* [^\r\n]+ )
       push:
         - meta_scope: meta.statement.setting.migoto
         - match: (?i)\b{{path_keys}}
@@ -611,7 +608,7 @@ contexts:
                 - include: operational-expr
                 - include: callable-commandlist
                 - include: callable-customshader
-                - include: fixed-value
+                - include: fixed-value-opt
                 - match: "{{line_end_context}}"
                   pop: true
             - match: "{{line_end_context}}"
@@ -680,13 +677,14 @@ contexts:
       captures:
         "1": keyword.operator.comparison.migoto
         "2": constant.numeric.migoto
-        "3": meta.match-field constant.language.migoto
-        "4": keyword.operator.math.migoto
-        "5": meta.match-field constant.language.migoto
-        "6": keyword.operator.math.migoto
-        "7": constant.numeric.migoto
-        "8": keyword.operator.math.migoto
-        "9": constant.numeric.migoto
+        "3": keyword.operator.comparison.migoto
+        "4": meta.match-field constant.language.migoto
+        "5": keyword.operator.math.migoto
+        "6": meta.match-field constant.language.migoto
+        "7": keyword.operator.math.migoto
+        "8": constant.numeric.migoto
+        "9": keyword.operator.math.migoto
+        "10": constant.numeric.migoto
   resource-usage-expr:
     - meta_scope: meta.expression.resource-usage.migoto
     - include: resource-usage-modifier
@@ -694,7 +692,14 @@ contexts:
     - include: resource
     - include: resource-pool-base
   resource-usage-modifier:
-    - match: (?i)\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa|unless_null)\b
+    - match: |-
+        (?xi)\b(
+          copy(?:_desc(?:ription)?)?|
+          ref(?:erence)?
+          |raw|stereo|mono|stereo2mono|
+          set_viewport|no_view_cache|
+          resolve_msaa|unless_null
+        )\b
       scope: meta.keyword.resource-usage-modifier keyword.other.functional.migoto
   operational-expr:
     - meta_scope: meta.expression.operational.migoto
@@ -1042,7 +1047,14 @@ contexts:
       match: (?i)\b({{ident}})\b
   path-value:
     - scope: constant.other.path.migoto
-      match: (?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+)
+      match: |
+        (?xi)
+          (?=.*[\\/])
+          (?:
+            (?:(?:[a-z]:|\.[.]?)[\\/])?
+            (?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)
+            (?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+
+          )
     - scope: constant.other.file.migoto
       match: (?i)\b[^>\\|/<?:*$]+(?!\s+)\.(?=[a-z0-9]*[a-z]+)[a-z0-9]+
   string:
@@ -1056,7 +1068,15 @@ contexts:
       match: (?i)\b(?:[a-z0-9]\w+(?:\[(\d+)\])?)
       captures:
         "1": constant.numeric.migoto
-  dxgi-format:
+  resource-type:
+    - meta_scope: meta.enum-value.directx
+    - scope: entity.name.type.resource.migoto
+      match: |-
+        (?xi)\b(
+          (?:RW)?(?:Append|Consume)?StructuredBuffer|
+          (?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|
+          TextureCube
+        )\b
     - scope: support.type.dxgi-format.migoto
       match: |
         (?xi)\b

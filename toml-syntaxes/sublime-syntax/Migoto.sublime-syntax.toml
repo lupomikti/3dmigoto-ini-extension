@@ -50,17 +50,18 @@ main = [
   {include = "preamble"},
   {include = "section-base"},
 ]
-resource-type = [
-  {meta_scope = "meta.enum-value.directx"},
-  {
-    scope = "entity.name.type.resource.migoto",
-    match = '\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|TextureCube)\b',
-  },
-  {include = "dxgi-format"},
-]
 
 [[contexts.fallthrough]]
-match = '(?=\[(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}}|{{cl2_section_names}})\])'
+match = '''(?xi)(?=
+  \[
+  (?:
+    {{cl_section_names}} |
+    {{kvp_section_names}} |
+    {{special_section_names}} |
+    {{cl2_section_names}}
+  )
+  \]
+)'''
 pop = 2
 
 # Comment context
@@ -219,7 +220,16 @@ push = [
       {meta_content_scope = "meta.embedded.block.regexp"},
       {include = "comment"},
       {
-        match = '(?=\[\s*(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\s*\])',
+        match = '''(?xi)(?=
+          \[\s*
+            (?:
+              {{cl_section_names}}|
+              {{cl2_section_names}}|
+              {{kvp_section_names}}|
+              {{special_section_names}}
+            )
+          \s*\]
+        )''',
         pop = true
       },
       {include = "scope:source.regexp.pcre2"},
@@ -243,7 +253,16 @@ push = [
       {meta_content_scope = "meta.embedded.block.regexp-replace"},
       {include = "comment"},
       {
-        match = '(?=\[\s*(?:{{cl_section_names}}|{{kvp_section_names}}|{{special_section_names}})\s*\])',
+        match = '''(?xi)(?=
+          \[\s*
+            (?:
+              {{cl_section_names}}|
+              {{cl2_section_names}}|
+              {{kvp_section_names}}|
+              {{special_section_names}}
+            )
+          \s*\]
+        )''',
         pop = true
       },
       {include = "scope:source.regexp-replace.pcre2"},
@@ -475,14 +494,7 @@ include = "fallthrough"
 
 ## Hash Statement
 [[contexts.setting-statement]]
-match = '''(?xi)
-^{{ws}}*
-(?=
-  \bhash\b
-  \s* = \s*
-  [a-z0-9]+
-)
-'''
+match = '''(?xi) ^{{ws}}* (?= \b hash \b \s* = \s* [a-z0-9]+ )'''
 push = [
   {meta_scope = "meta.statement.setting.migoto"},
   {
@@ -507,14 +519,7 @@ push = [
 
 ## Custom Shader Name Keys
 [[contexts.setting-statement]]
-match = '''(?xi)
-^{{ws}}*
-(?=
-  \b[vhdgpc]s\b
-  \s* = \s*
-  [^\r\n]+
-)
-'''
+match = '''(?xi) ^{{ws}}* (?= \b [vhdgpc]s \b \s* = \s* [^\r\n]+ )'''
 push = [
   {meta_scope = "meta.statement.setting.migoto"},
   {
@@ -544,14 +549,7 @@ push = [
 
 ## Keybinding Keys
 [[contexts.setting-statement]]
-match = '''(?xi)
-^{{ws}}*
-(?=
-  \b({{keybinding_keys}})\b
-  \s* = \s*
-  [^\r\n]+
-)
-'''
+match = '''(?xi) ^{{ws}}* (?= \b (?:{{keybinding_keys}}) \b \s* = \s* [^\r\n]+ )'''
 push = [
   {meta_scope = "meta.statement.setting.migoto"},
   {
@@ -611,14 +609,7 @@ push = [
 
 ## Directory and File Keys
 [[contexts.setting-statement]]
-match = '''(?xi)
-^{{ws}}*
-(?=
-  \b({{path_keys}})\b
-  \s* = \s*
-  [^\r\n]+
-)
-'''
+match = '''(?xi) ^{{ws}}* (?= \b (?:{{path_keys}}) \b \s* = \s* [^\r\n]+ )'''
 push = [
   {meta_scope = "meta.statement.setting.migoto"},
   {
@@ -979,7 +970,7 @@ push = [
       {include = "operational-expr"},  # for direct draw instructions
       {include = "callable-commandlist"},
       {include = "callable-customshader"},
-      {include = "fixed-value"},  # for frame analysis opts and aother enum values
+      {include = "fixed-value-opt"},
       {
         match = '{{line_end_context}}',
         pop = true,
@@ -1090,13 +1081,14 @@ match = '''(?xi)
 '''
 captures.1 = "keyword.operator.comparison.migoto"
 captures.2 = "constant.numeric.migoto"
-captures.3 = "meta.match-field constant.language.migoto"
-captures.4 = "keyword.operator.math.migoto"
-captures.5 = "meta.match-field constant.language.migoto"
-captures.6 = "keyword.operator.math.migoto"
-captures.7 = "constant.numeric.migoto"
-captures.8 = "keyword.operator.math.migoto"
-captures.9 = "constant.numeric.migoto"
+captures.3 = "keyword.operator.comparison.migoto"
+captures.4 = "meta.match-field constant.language.migoto"
+captures.5 = "keyword.operator.math.migoto"
+captures.6 = "meta.match-field constant.language.migoto"
+captures.7 = "keyword.operator.math.migoto"
+captures.8 = "constant.numeric.migoto"
+captures.9 = "keyword.operator.math.migoto"
+captures.10 = "constant.numeric.migoto"
 
 # Expressions for General Statements
 
@@ -1117,7 +1109,13 @@ include = "resource"
 include = "resource-pool-base"
 
 [[contexts.resource-usage-modifier]]
-match = '(?i)\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa|unless_null)\b'
+match = '''(?xi)\b(
+  copy(?:_desc(?:ription)?)?|
+  ref(?:erence)?
+  |raw|stereo|mono|stereo2mono|
+  set_viewport|no_view_cache|
+  resolve_msaa|unless_null
+)\b'''
 scope = "meta.keyword.resource-usage-modifier keyword.other.functional.migoto"
 
 ## Operational Expression
@@ -1639,7 +1637,14 @@ match = '(?i)\b({{ident}})\b'
 
 [[contexts.path-value]]
 scope = "constant.other.path.migoto"
-match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+)'''
+match = '''(?xi)
+  (?=.*[\\/])
+  (?:
+    (?:(?:[a-z]:|\.[.]?)[\\/])?
+    (?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)
+    (?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+
+  )
+'''
 
 [[contexts.path-value]]
 scope = "constant.other.file.migoto"
@@ -1660,7 +1665,18 @@ scope = "meta.fixed-value.key keyword.other.migoto"
 match = '(?i)\b(?:[a-z0-9]\w+(?:\[(\d+)\])?)'
 captures.1 = "constant.numeric.migoto"
 
-[[contexts.dxgi-format]]
+[[contexts.resource-type]]
+meta_scope = "meta.enum-value.directx"
+
+[[contexts.resource-type]]
+scope = "entity.name.type.resource.migoto"
+match = '''(?xi)\b(
+  (?:RW)?(?:Append|Consume)?StructuredBuffer|
+  (?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|
+  TextureCube
+)\b'''
+
+[[contexts.resource-type]]
 scope = "support.type.dxgi-format.migoto"
 match = '''(?xi)\b
 (?:DXGI_FORMAT_)?(UNKNOWN|
