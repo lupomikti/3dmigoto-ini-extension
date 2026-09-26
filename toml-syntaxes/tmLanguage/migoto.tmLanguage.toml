@@ -2,7 +2,7 @@
 #:tombi schema.strict = false
 
 "$schema" = "https://www.schemastore.org/tmlanguage.json"
-version = "3.0.1"
+version = "3.1.0"
 scopeName = "source.migoto"
 name = "migoto"
 fileTypes = ["ini", "3dm", "migoto"]
@@ -66,63 +66,12 @@ captures.3.name = "comment.line.semicolon.content.migoto"
 
 [repository.section]
 patterns = [
-  {include = "#special-section"},
+  {include = "#pool-section"},
+  {include = "#shader-regex-section"},
   {include = "#setting-section"},
   {include = "#commandlist-section"},
 ]
 
-[repository.special-section]
-patterns = [
-  {include = "#constants-section"},
-  {include = "#present-section"},
-  {include = "#keybind-containing-section"},
-  {include = "#pool-section"},
-  {include = "#key-section"},
-  {include = "#preset-section"},
-  {include = "#shader-regex-section"},
-]
-
-# Constants Section
-[repository.constants-section]
-name = "meta.section.constants.migoto"
-begin = '(?i)(?:^[ \t]*(\[)\s*(Constants)\s*(\])[ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
-beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
-beginCaptures.2.name = "entity.name.constructor.migoto"
-beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
-patterns = [
-  {include = "#comment"},
-  {include = "#global-declaration"},
-  {include = "#primary-statement"},
-]
-
-# Present Section
-[repository.present-section]
-name = "meta.section.present.migoto"
-begin = '(?i)(?:^[ \t]*(\[)\s*(Present)\s*(\])[ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
-beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
-beginCaptures.2.name = "entity.name.function.migoto"
-beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
-patterns = [
-  {include = "#comment"},
-  {include = "#primary-statement"},
-]
-
-# Hunting and Input Sections (sections that contain keys which take keybindings)
-[repository.keybind-containing-section]
-name = "meta.section.keybind-containing.migoto"
-begin = '(?i)(?:^[ \t]*(\[)\s*(Hunting|Input)\s*(\])[ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
-beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
-beginCaptures.2.name = "entity.name.section.group-title.migoto"
-beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
-patterns = [
-  {include = "#setting-statement"},
-  {include = "#comment"},  # moved to second spot to allow `;` as key-binding character
-]
-
-# Pool Sections
 [repository.pool-section]
 name = "meta.section.pool.migoto"
 begin = '(?i)(?:^[ \t]*(\[)\s*(Pool.+)\s*(\])[ \t]*$)'
@@ -138,200 +87,23 @@ patterns = [
     match = '''(?xi)
     ^[ \t]*
     (pool_\w+\b) # a key that starts with `pool`
-    \s* (=) \s* # kvp separator surrounded by optional whitespace
-    (?: ([^"$\\/\s\r\n]+) | ([^$\s\r\n]+) | ([^\r\n]+) )  # match anything on the right-hand-side
+    \s* (=) \s*  # kvp separator surrounded by optional whitespace
+    ([^\r\n]+)   # match anything on the right-hand-side
     (?:$|\n)''',
     captures.1.patterns = [{include = "#key"}],
     captures.2.name = "punctuation.separator.key-value.migoto",
     captures.3.patterns = [
-      {include = "#resource-type"},  # DXGI types + Resource types
-      {include = "#constant"},
-      {include = "#boolean-value"},
-      {include = "#path-value"},
-      {include = "#fixed-value"},
-    ],
-    captures.4.patterns = [
-      {include = "#string"},
-      {include = "#path-value"},
-      {include = "#fixed-value"},
-    ],
-    captures.5.patterns = [
       {include = "#static-operational-expression"},
+      {include = "#resource-type"},
+      {include = "#boolean-value"},
       {include = "#string"},
       {include = "#path-value"},
-      {include = "#list-expression"},
       {include = "#fuzzy-match-expression"},
-      {include = "#fixed-value"},
+      {include = "#fixed-value-option-list"},
     ],
   },
   {include = "#setting-statement"},
 ]
-
-# Key Section
-[repository.key-section]
-name = "meta.section.key.migoto"
-begin = '(?i)(?:^[ \t]*(\[)\s*(Key.+)\s*(\])[ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
-beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
-beginCaptures.2.name = "entity.name.section.group-title.migoto"
-beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
-
-# Key Setting Statement
-[[repository.key-section.patterns]]
-name = "meta.statement.setting.migoto"
-match = '''(?xi)
-^[ \t]*
-(?!\b(?:
-  run|condition|key|back|
-  vb\d|ib|(?:[rf]_)?bb|s?o\d|od|
-  (?<!$)[xyzw]\d{0,3}|
-  this|(?:ini|stereo)params|cursor_(?:mask|color)
-)\b)                 # keywords and variables that are not keys, defined in-lieu of lexical precedence
-([a-z0-9]\w+)        # fixed_value
-\s*(=)\s*([^\r\n]+)  # = fixed_value | boolean_value | static_value ; can be a list of each, or mixed. LSP will handle correctness
-'''
-captures.1.name = "meta.keyword.key keyword.other.migoto"
-captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [
-  {include = "#fixed-value"},
-  {include = "#boolean-value"},
-  {include = "#static-value"},
-]
-
-## Key Setting Statement - Keybinding Value Key
-[[repository.key-section.patterns]]
-name = "meta.statement.setting.migoto"
-match = '(?i)^[ \t]*(key|back)\s*(=)\s*([^\r\n]+)'
-captures.1.name = "meta.keyword.key keyword.other.migoto"
-captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [{include = "#keybinding-modifier"}]
-
-# Key Run Instruction | run = list of callable_commandlist
-[[repository.key-section.patterns]]
-name = "meta.statement.instruction.migoto"
-match = '(?i)^[ \t]*(run)\s*(=)\s*([^\r\n]+)(?:$|\n)'
-captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
-captures.2.name = "keyword.operator.execution.migoto"
-captures.3.patterns = [{include = "#callable-commandlist"}]
-
-# Key Condition Statement | condition = list of operational_expression
-[[repository.key-section.patterns]]
-name = "meta.statement.condition.migoto"
-match = '(?i)^[ \t]*(condition)\s*(=)\s*([^\r\n]+)(?:$|\n)'
-captures.1.name = "meta.keyword.key keyword.other.condition.migoto"
-captures.2.name = "keyword.operator.assignment.migoto"
-captures.3.patterns = [{include = "#operational-expression"}]
-
-# Key Assignment Statement | assignments, but listable values
-[[repository.key-section.patterns]]
-name = "meta.statement.assignment.migoto"
-match = '''(?xi)
-^[ \t]* # optional leading whitespace
-(\b[xyzw]\d{0,3}\b) # an ini parameter
-\s*
-(=) # assignment operator, surrounded by optional whitespace
-\s*
-([^\r\n]+) # RHS value, here must be a static value
-(?:$|\n)'''
-captures.1.patterns = [{include = "#ini-parameter"}]
-captures.2.name = "keyword.operator.assignment.migoto"
-captures.3.patterns = [{include = "#static-value"}]
-
-[[repository.key-section.patterns]]
-name = "meta.statement.assignment.migoto"
-match = '''(?xi)
-^[ \t]* # optional leading whitespace
-(\$(?:\\.+\\)?\w+\b) # a $ variable
-\s*
-(=) # assignment operator, surrounded by optional whitespace
-\s*
-([^\r\n]+) # RHS value, here must be a static value
-(?:$|\n)'''
-captures.1.patterns = [{include = "#named-variable"}]
-captures.2.name = "keyword.operator.assignment.migoto"
-captures.3.patterns = [{include = "#static-value"}]
-
-[[repository.key-section.patterns]]
-include = "#comment"
-
-# Preset Section
-[repository.preset-section]
-name = "meta.section.preset.migoto"
-begin = '(?i)(?:^[ \t]*(\[)\s*(Preset.+)\s*(\])[ \t]*$)'
-end = '(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'  # \z is there to match the end of the file
-beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
-beginCaptures.2.name = "entity.name.section.group-title.migoto"
-beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
-
-# Preset Setting Statement
-[[repository.preset-section.patterns]]
-name = "meta.statement.setting.migoto"
-match = '''(?xi)
-^[ \t]*
-(?!\b(?:
-  run|condition|
-  vb\d|ib|(?:[rf]_)?bb|s?o\d|od|
-  (?<!$)[xyzw]\d{0,3}|
-  this|(?:ini|stereo)params|cursor_(?:mask|color)
-)\b)                 # keywords and variables that are not keys, defined in-lieu of lexical precedence
-([a-z0-9]\w+)        # fixed_value
-\s*(=)\s*([^,\r\n]+)  # = fixed_value | boolean_value | static_value
-'''
-captures.1.name = "meta.keyword.key keyword.other.migoto"
-captures.2.name = "punctuation.separator.key-value.migoto"
-captures.3.patterns = [
-  {include = "#fixed-value"},
-  {include = "#boolean-value"},
-  {include = "#static-value"},
-]
-
-# Preset Run Instruction
-[[repository.preset-section.patterns]]
-name = "meta.statement.instruction.migoto"
-match = '(?i)^[ \t]*(run)\s*(=)\s*([^,\r\n]+)(?:$|\n)'
-captures.1.name = "meta.function-call.instruction support.function.builtin.migoto"
-captures.2.name = "keyword.operator.execution.migoto"
-captures.3.patterns = [{include = "#callable-commandlist"}]
-
-# Preset Condition Statement
-[[repository.preset-section.patterns]]
-name = "meta.statement.condition.migoto"
-match = '(?i)^[ \t]*(condition)\s*(=)\s*([^,\r\n]+)(?:$|\n)'
-captures.1.name = "meta.keyword.key keyword.other.condition.migoto"
-captures.2.name = "keyword.operator.assignment.migoto"
-captures.3.patterns = [{include = "#operational-expression"}]
-
-# Preset Assignment Statement
-[[repository.preset-section.patterns]]
-name = "meta.statement.assignment.migoto"
-match = '''(?xi)
-^[ \t]* # optional leading whitespace
-(\b[xyzw]\d{0,3}\b) # an ini parameter
-\s*
-(=) # assignment operator, surrounded by optional whitespace
-\s*
-([^,\r\n]+) # RHS value, here must be a static value
-(?:$|\n)'''
-captures.1.patterns = [{include = "#ini-parameter"}]
-captures.2.name = "keyword.operator.assignment.migoto"
-captures.3.patterns = [{include = "#static-value"}]
-
-[[repository.preset-section.patterns]]
-name = "meta.statement.assignment.migoto"
-match = '''(?xi)
-^[ \t]* # optional leading whitespace
-(\$(?:\\.+\\)?\w+\b) # a $ variable
-\s*
-(=) # assignment operator, surrounded by optional whitespace
-\s*
-([^,\r\n]+) # RHS value, here must be a static value
-(?:$|\n)'''
-captures.1.patterns = [{include = "#named-variable"}]
-captures.2.name = "keyword.operator.assignment.migoto"
-captures.3.patterns = [{include = "#static-value"}]
-
-[[repository.preset-section.patterns]]
-include = "#comment"
 
 # Shader Regex Sections
 
@@ -407,7 +179,11 @@ begin = '''(?xi)(?:
 ^[ \t]*
   (\[) # capture group 1, opening bracket
   [ \t]*
-  (Logging|System|Device|Stereo|Rendering|Profile|ConvergenceMap|Loader|Resource.+|Include.*) # capture group 2, section header
+  (
+    Hunting|Input|Logging|System|Device|Stereo|
+    Rendering|Profile|ConvergenceMap|Loader|
+    (?:Resource|Key|Preset).+|Include.*
+  ) # capture group 2, section header
   [ \t]*
   (\]) # capture group 3, closing bracket
 [ \t]*$
@@ -416,10 +192,7 @@ end = '''(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'''  # \z is there to match the end of t
 beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
 beginCaptures.2.name = "entity.name.section.group-title.migoto"
 beginCaptures.3.name = "punctuation.definition.entity.end.migoto"
-patterns = [
-  {include = "#comment"},
-  {include = "#setting-statement"},
-]
+patterns = [{include = "#section-body"}]
 
 [repository.commandlist-section]
 name = "meta.section.commandlists.migoto"
@@ -428,22 +201,30 @@ begin = '''(?xi)(?:
   (\[) # capture group 1, opening bracket
   [ \t]*
   (?:
-    ( Clear(?:RenderTarget|DepthStencil)View | ClearUnorderedAccessView(?:Uint|Float) | (?: TextureOverride | ShaderOverride ).+ ) |
-    ( (?:BuiltIn)?(?:CustomShader|CommandList).+ )
-  )    # capture group 2 & 3, section header
+    ( Clear(?:RenderTarget|DepthStencil)View |
+      ClearUnorderedAccessView(?:Uint|Float) |
+      (?: TextureOverride | ShaderOverride ).+ ) |
+    ( Present | (?:BuiltIn)?(?:CustomShader|CommandList).+ ) |
+    ( Constants )
+  )    # capture group 2, 3, & 4 section header
   [ \t]*
-  (\]) # capture group 4, closing bracket
+  (\]) # capture group 5, closing bracket
 [ \t]*$
 )'''
 end = '''(?i)(?=^[ \t]*\[.+\][ \t]*$|\z)'''  # \z is there to match the end of the file
 beginCaptures.1.name = "punctuation.definition.entity.begin.migoto"
 beginCaptures.2.name = "entity.name.class.migoto"
 beginCaptures.3.name = "entity.name.function.migoto"
-beginCaptures.4.name = "punctuation.definition.entity.end.migoto"
+beginCaptures.4.name = "entity.name.constructor.migoto"
+beginCaptures.5.name = "punctuation.definition.entity.end.migoto"
+patterns = [{include = "#section-body"}]
+
+[repository.section-body]
 patterns = [
-  {include = "#comment"},
   {include = "#setting-statement"},
-  {include = "#primary-statement"},
+  {include = "#global-declaration"},
+  {include = "#primary-statement"}, # local decl -> assignment -> instruction -> conditional
+  {include = "#comment"},
 ]
 
 # Setting Statements
@@ -453,7 +234,7 @@ name = "meta.statement.setting.migoto"
 match = '''(?xi)
 ^[ \t]*
 (?!\b(?:
-  hash|[vhdgpc]s|
+  key|back|hash|[vhdgpc]s|(?:blend|alpha)(?:\[\d+\])?|
   (?:override|cache|storage)_directory|include(?:_recursive)?|exclude_recursive|
   (?:done_|toggle_)hunting|next_marking_mode|mark_snapshot|
   (?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader|
@@ -471,29 +252,18 @@ match = '''(?xi)
 )\b)        # ^ exclusions to resolve conflicts or handle special cases
 ([\w\[\]]+) # a word-like that is not in the preceding list and includes brackets for blend[N]/blend_factor[N] keys
 \s* (=) \s* # kvp separator surrounded by optional whitespace
-(?: ([^"$\\/\s\r\n]+) | ([^$\s\r\n]+) | ([^\r\n]+) )  # match anything on the right-hand-side
+([^\r\n]+)  # match anything on the right-hand-side
 (?:$|\n)'''
 captures.1.patterns = [{include = "#key"}]
 captures.2.name = "punctuation.separator.key-value.migoto"
 captures.3.patterns = [
-  {include = "#resource-type"},  # DXGI types + Resource types
-  {include = "#constant"},
-  {include = "#boolean-value"},
-  {include = "#path-value"},
-  {include = "#fixed-value"},
-]
-captures.4.patterns = [
-  {include = "#string"},
-  {include = "#path-value"},
-  {include = "#fixed-value"},
-]
-captures.5.patterns = [
   {include = "#static-operational-expression"},
+  {include = "#resource-type"},
+  {include = "#boolean-value"},
   {include = "#string"},
   {include = "#path-value"},
-  {include = "#list-expression"},
   {include = "#fuzzy-match-expression"},
-  {include = "#fixed-value"},
+  {include = "#fixed-value-option-list"},
 ]
 
 # Hash statement
@@ -535,7 +305,7 @@ match = '''(?xi)
   (?:done_|toggle_)hunting | next_marking_mode | mark_snapshot |
   (?:previous|next|mark)_(?:pixel|vertex|compute|geometry|domain|hull)shader |
   (?:previous|next|mark)_(?:index|vertex)buffer | (?:previous|next)_(?:index|vertex)buffer_slot |
-  (?:previous|next|mark)_rendertarget |
+  (?:previous|next|mark)_rendertarget | key | back |
   take_screenshot | reload_fixes | (?:reload|wipe_user)_config | show_original |
   monitor_performance | freeze_performance_monitor | tune[123]_(?:up|down) |
   analyse_frame | toggle_full_screen | force_full_screen_on_key | toggle_input
@@ -547,6 +317,21 @@ match = '''(?xi)
 captures.1.name = "meta.keyword.binding.key keyword.other.migoto"
 captures.2.name = "punctuation.separator.key-value.migoto"
 captures.3.patterns = [{include = "#keybinding-modifier"}]
+
+# Blend State Keys Taking a Blend Expression
+[[repository.setting-statement.patterns]]
+name = "meta.statement.setting.migoto"
+match = '''(?xi)
+^[ \t]*
+\b( (?:blend | alpha) (?:\[(\d+)\])? )\b
+\s* (=) \s*
+([^\r\n]+)
+[ \t]*
+(?:$|\n)'''
+captures.1.name = "meta.keyword.blend-state.key keyword.other.migoto"
+captures.2.name = "constant.numeric.migoto"
+captures.3.name = "punctuation.separator.key-value.migoto"
+captures.4.patterns = [{include = "#blend-expression"}]
 
 # Directory and File Keys
 [[repository.setting-statement.patterns]]
@@ -766,24 +551,6 @@ name = "meta.drawauto-instruction meta.function-call.instruction keyword.other.i
 
 # Expressions for Setting Statements
 
-[repository.list-expression]
-patterns = [
-  {include = "#resource-data-array"},
-  {include = "#blend-expression"},
-  {include = "#fixed-value-option-list"},
-]
-
-[repository.resource-data-array]
-name = "meta.expression.data-array"
-match = '''(?xi)
-\b(\w+)?\b # optional Resource Format specifier (DXGI Format)
-\s*
-([-+\d.\s]+) # content that should be a list of numbers (ints or floats)
-\s*$
-'''
-captures.1.patterns = [{include = "#dxgi-format"}]
-captures.2.patterns = [{include = "#constant-list"}]
-
 [repository.blend-expression]
 name = "meta.expression.blend-state.migoto"
 match = '(?i)\s*\b(?:(\w+)\s+(\w+)\s+(\w+)|(disable))\s*$'
@@ -810,10 +577,10 @@ captures.4.name = "meta.keyword.blend-operator keyword.operator.migoto"
 [repository.fuzzy-match-expression]
 name = "meta.expression.fuzzy-match.migoto"
 match = '''(?xi)
-([><]=?|[!=])? # optional operator
-\s*
 (?:
-  \b (\d+) \b | # number (int)
+  ([><]=?|[!=]) \s* \b (\d+) \b | # an integer w/ operator
+  ([><]=?|[!=])? # optional operator
+  \s*
   (?:
     \b ((?:res_)?(?:width|height)|depth|array) \b # field name
     \s*
@@ -829,13 +596,14 @@ match = '''(?xi)
 '''
 captures.1.name = "keyword.operator.comparison.migoto"
 captures.2.name = "constant.numeric.migoto"
-captures.3.name = "meta.match-field constant.language.migoto"
-captures.4.name = "keyword.operator.math.migoto"
-captures.5.name = "meta.match-field constant.language.migoto"
-captures.6.name = "keyword.operator.math.migoto"
-captures.7.name = "constant.numeric.migoto"
-captures.8.name = "keyword.operator.math.migoto"
-captures.9.name = "constant.numeric.migoto"
+captures.3.name = "keyword.operator.comparison.migoto"
+captures.4.name = "meta.match-field constant.language.migoto"
+captures.5.name = "keyword.operator.math.migoto"
+captures.6.name = "meta.match-field constant.language.migoto"
+captures.7.name = "keyword.operator.math.migoto"
+captures.8.name = "constant.numeric.migoto"
+captures.9.name = "keyword.operator.math.migoto"
+captures.10.name = "constant.numeric.migoto"
 
 # Expressions for General Statements
 
@@ -849,7 +617,13 @@ patterns = [
 
 [repository.resource-usage-modifier]
 name = "meta.keyword.resource-usage-modifier keyword.other.functional.migoto"
-match = '(?i)\b(copy(?:_desc(?:ription)?)?|ref(?:erence)?|raw|stereo|mono|stereo2mono|set_viewport|no_view_cache|resolve_msaa|unless_null)\b'
+match = '''(?xi)\b(
+  copy(?:_desc(?:ription)?)?|
+  ref(?:erence)?|
+  raw|stereo|mono|stereo2mono|
+  set_viewport|no_view_cache|
+  resolve_msaa|unless_null
+)\b'''
 
 # An operational expression is meant to be a combination of a mathematical expression and a comparison expression
 # we can do this because comparisons evaluate to either a 0 or a 1 and thus can be used in mathematical expressions
@@ -1133,19 +907,8 @@ match = '[^-/&!>|<( )$=,\[\]\r\n]+'
 name = "variable.parameter.migoto"
 match = '(?i)\b(?:(?<!$)[xyzw]\d{0,3})\b'
 
-[repository.constant-list]
-match = '(?i)(?:([-+\d.]+) +([-+\d.]+)(?: +([-+\d.]+))?$|([-+\d.]+) +([-+\d.]+))'
-name = "meta.expression.constant-list.migoto"
-captures.1.patterns = [{include = "#constant"}]
-captures.2.patterns = [{include = "#constant"}]
-captures.3.patterns = [{include = "#constant"}]
-captures.4.patterns = [{include = "#constant"}]
-captures.5.patterns = [{include = "#constant"}]
-
 [repository.fixed-value-option-list]
-match = '(?i)\b([\w\s]+)'
-name = "meta.expression.fixed-value-option-list.migoto"
-captures.1.patterns = [
+patterns = [
   {include = "#marking-action-opt"},
   {include = "#frame-analysis-opt"},
   {include = "#fixed-value"},
@@ -1171,9 +934,9 @@ match = '''(?xi)
 
 [repository.constant]
 patterns = [
-  {name = "constant.language.numeric.migoto", match = '\b(?i)(?:inf|NaN)\b'},
-  {name = "constant.numeric.migoto", match = '[+-]?\d+(\.\d+(e[-+]\d+)?)?\b'},
-  {name = "constant.numeric.migoto", match = '[+-]?\.\d+\b'},
+  {name = "constant.language.numeric.migoto", match = '(?i)\b(?:inf|NaN)\b'},
+  {name = "constant.numeric.migoto", match = '(?i)\b\d+(\.\d+(e[-+]\d+)?)?\b'},
+  {name = "constant.numeric.migoto", match = '\b\.\d+\b'},
   {name = "constant.numeric.migoto", match = '(?i)\b0x[a-f0-9]+\b'},
   {name = "constant.numeric.migoto", match = '(?i)\b0b[01]+\b'},
 ]
@@ -1197,7 +960,14 @@ match = '(?i)\b([a-z0-9]\w+)\b'
 patterns = [
   {
     name = "constant.other.path.migoto",
-    match = '''(?i)(?=.*[\\/])(?:(?:(?:[a-z]:|\.[.]?)[\\/])?(?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)(?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+)''',
+    match = '''(?xi)
+      (?=.*[\\/])
+      (?:
+        (?:(?:[a-z]:|\.[.]?)[\\/])?
+        (?![\s\\/]+)(?:\.\.|\b[^>\\|/<?:*$]+)
+        (?:(?:\\|/)(?:\.\.|[^>\\|/<?:*$\r\n]+))+
+      )
+    ''',
   },
   {
     name = "constant.other.file.migoto",
@@ -1219,7 +989,12 @@ captures.1.name = "constant.numeric.migoto"
 patterns = [
   {
     name = "meta.enum-value.directx entity.name.type.resource.migoto",
-    match = '\b(?i)((?:RW)?(?:Append|Consume)?StructuredBuffer|(?:RW)?(?:ByteAddress)?Buffer|(?:RW)?Texture[123]D|TextureCube)\b',
+    match = '''(?xi)\b(
+      (?:RW)?(?:Append|Consume)?StructuredBuffer|
+      (?:RW)?(?:ByteAddress)?Buffer|
+      (?:RW)?Texture[123]D|
+      TextureCube
+    )\b''',
   },
   {include = "#dxgi-format"},
 ]
